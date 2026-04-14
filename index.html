@@ -636,14 +636,14 @@
     </style>
   </head>
   <body>
-    <div id="_prog"></div>
-    <div id="_cur"></div>
-    <div id="_ring"></div>
-    <div class="top-rule"></div>
+    <div id="_prog" aria-hidden="true"></div>
+    <div id="_cur" aria-hidden="true"></div>
+    <div id="_ring" aria-hidden="true"></div>
+    <div class="top-rule" aria-hidden="true"></div>
 
     <!-- NAV -->
-    <nav>
-      <div class="nav-logo"><img src="/burs-logo-256-2.png" alt="BURS" /></div>
+    <nav aria-label="Primary">
+      <a href="/" class="nav-logo" aria-label="BURS — home"><img src="/burs-logo-256-2.png" alt="BURS" width="256" height="256" /></a>
       <ul class="nav-links">
         <li><a href="#story">The Story</a></li>
         <li><a href="#pricing">Pricing</a></li>
@@ -673,21 +673,21 @@
           <div>across 38 countries</div>
         </div>
       </div>
-      <div class="hero-scroll"><span>Scroll</span><div class="bar"></div></div>
+      <div class="hero-scroll" aria-hidden="true"><span>Scroll</span><div class="bar"></div></div>
     </section>
 
     <!-- STATS -->
-    <div class="stats-bar">
+    <section class="stats-bar" aria-label="Why BURS exists — the numbers">
       <div class="stat" style="transition-delay:0s;"><div class="stat-n">92M</div><div class="stat-l">Tons of clothing wasted yearly</div></div>
       <div class="stat" style="transition-delay:.08s;"><div class="stat-n">80%</div><div class="stat-l">Of your wardrobe never worn</div></div>
       <div class="stat" style="transition-delay:.16s;"><div class="stat-n">&lt;10m</div><div class="stat-l">To scan your full wardrobe</div></div>
       <div class="stat" style="transition-delay:.24s;"><div class="stat-n">5s</div><div class="stat-l">To the perfect outfit</div></div>
       <div class="stat" style="transition-delay:.32s;"><div class="stat-n">$500B</div><div class="stat-l">Lost to underuse per year</div></div>
-    </div>
+    </section>
 
     <!-- PHONE STAGE -->
-    <section id="story" class="phone-stage">
-      <div class="scroll-rail"></div>
+    <section id="story" class="phone-stage" aria-label="How BURS works — five acts">
+      <div class="scroll-rail" aria-hidden="true"></div>
       <div class="phone-stage-inner">
         <div class="stage-copy">
           <div class="stage-act" data-act="1">
@@ -726,11 +726,11 @@
             <div class="act-meta"><span>Travel Capsule</span><span>Premium</span></div>
           </div>
         </div>
-        <div class="stage-phone-col">
-          <div class="beam"></div>
-          <div class="beam-2"></div>
-          <div class="stage-phone-wrap">
-            <div class="stage-phone">
+        <div class="stage-phone-col" aria-label="BURS app preview">
+          <div class="beam" aria-hidden="true"></div>
+          <div class="beam-2" aria-hidden="true"></div>
+          <div class="stage-phone-wrap" role="img" aria-label="An iPhone showing the BURS app — wardrobe scanner, outfit of the day, AI stylist chat, week planner, and travel capsule builder">
+            <div class="stage-phone" aria-hidden="true">
               <div class="screen-stack">
                 <div class="screen active" data-i="0">
                   <div class="ms-time">9:41</div><div class="ms-icons"><span class="s"></span><span class="i"></span></div>
@@ -796,7 +796,7 @@
                 </div>
               </div>
             </div>
-            <div class="chip-layer">
+            <div class="chip-layer" aria-hidden="true">
               <div class="chip" data-act="1">124 pieces</div>
               <div class="chip" data-act="1">Navy Blazer</div>
               <div class="chip square" data-act="1">Wool · Tailored</div>
@@ -963,7 +963,7 @@
         Powered by AI · BURS uses <a href="https://ai.google.dev" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;text-underline-offset:3px;color:inherit">Google Gemini</a> for intelligent styling recommendations
       </div>
     </footer>
-    <div class="bottom-rule"></div>
+    <div class="bottom-rule" aria-hidden="true"></div>
 
     <script>
       // CURSOR — refined with text/link/zone states
