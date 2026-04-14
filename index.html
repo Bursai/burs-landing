@@ -149,6 +149,56 @@
               }
             }
           ]
+        },
+        {
+          "@type": "HowTo",
+          "@id": "https://burs.me/#howto",
+          "name": "How to dress with BURS",
+          "description": "Five steps that take you from an unscanned closet to a perfectly planned wardrobe — scan, read context, refine, plan the week, pack for travel.",
+          "totalTime": "PT10M",
+          "tool": [
+            {"@type": "HowToTool", "name": "iPhone or Android phone"},
+            {"@type": "HowToTool", "name": "BURS app"}
+          ],
+          "step": [
+            {
+              "@type": "HowToStep",
+              "position": 1,
+              "name": "Scan your wardrobe",
+              "text": "Point your phone camera at your clothes. BURS uses computer vision to catalogue every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging."
+            },
+            {
+              "@type": "HowToStep",
+              "position": 2,
+              "name": "Let BURS read your context",
+              "text": "BURS reads the weather, your calendar, your location and yesterday's outfit, then opens with a single confident recommendation."
+            },
+            {
+              "@type": "HowToStep",
+              "position": 3,
+              "name": "Refine with the AI Stylist",
+              "text": "Ask the AI Stylist in plain language — warmer, softer, sharper — and it refines the outfit in a sentence."
+            },
+            {
+              "@type": "HowToStep",
+              "position": 4,
+              "name": "Plan the week ahead",
+              "text": "Sync your calendar and BURS drafts outfits for every event — pitches, dinners, off-sites — before Monday starts."
+            },
+            {
+              "@type": "HowToStep",
+              "position": 5,
+              "name": "Pack for travel",
+              "text": "Tell BURS where and how long. It builds a minimum-viable travel capsule from your own wardrobe — every piece earning its place."
+            }
+          ]
+        },
+        {
+          "@type": "BreadcrumbList",
+          "@id": "https://burs.me/#breadcrumbs",
+          "itemListElement": [
+            {"@type": "ListItem", "position": 1, "name": "Home", "item": "https://burs.me/"}
+          ]
         }
       ]
     }
@@ -175,7 +225,7 @@
 
       /* NAV */
       nav{display:flex;align-items:center;justify-content:space-between;padding:0 72px;height:72px;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(245,240,232,.85);backdrop-filter:blur(20px) saturate(1.4);-webkit-backdrop-filter:blur(20px) saturate(1.4);z-index:100;}
-      .nav-logo img{height:48px;display:block;transition:transform .4s cubic-bezier(.22,1,.36,1);}
+      .nav-logo img{height:48px;width:auto;display:block;transition:transform .4s cubic-bezier(.22,1,.36,1);}
       .nav-logo:hover img{transform:rotate(-3deg) scale(1.05);}
       .nav-links{display:flex;gap:40px;list-style:none;}
       .nav-links a{font-size:11px;letter-spacing:2.2px;text-transform:uppercase;text-decoration:none;color:var(--muted);position:relative;transition:color .3s ease;font-weight:500;}
@@ -491,6 +541,19 @@
       .premium .btn-pric-fill{background:var(--bg);color:var(--ink);}
       .premium .btn-pric-fill:hover{background:#fff;}
 
+      /* FAQ — editorial Q&A, visible content for AI search citations */
+      #faq{background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+      .faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;border-top:1px solid var(--border);}
+      .faq-item{background:var(--bg);padding:44px 48px;border:1px solid var(--border);border-top:none;border-left:none;transition:background .35s cubic-bezier(.22,1,.36,1);}
+      .faq-item:hover{background:var(--surf);}
+      .faq-item > summary{cursor:pointer;list-style:none;display:flex;align-items:flex-start;justify-content:space-between;gap:24px;font-family:"Playfair Display",serif;font-size:clamp(22px,2vw,28px);font-weight:400;line-height:1.25;letter-spacing:-.01em;color:var(--ink);}
+      .faq-item > summary::-webkit-details-marker{display:none;}
+      .faq-item > summary::after{content:"+";font-family:"DM Sans",sans-serif;font-size:24px;font-weight:300;line-height:1;color:var(--muted);flex-shrink:0;transition:transform .4s cubic-bezier(.22,1,.36,1);}
+      .faq-item[open] > summary::after{transform:rotate(45deg);}
+      .faq-item[open] > summary{margin-bottom:20px;}
+      .faq-answer{font-size:15.5px;line-height:1.7;color:var(--muted);max-width:58ch;animation:_faqIn .55s cubic-bezier(.22,1,.36,1);}
+      @keyframes _faqIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:none;}}
+
       /* DOWNLOAD — cinematic */
       .download-sec{text-align:center;padding:200px 72px;position:relative;overflow:hidden;background:linear-gradient(180deg,var(--bg) 0%,var(--surf) 100%);}
       .download-sec::before{content:"";position:absolute;top:50%;left:50%;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(28,25,23,.04) 0%,transparent 60%);transform:translate(-50%,-50%);pointer-events:none;}
@@ -509,7 +572,7 @@
       /* FOOTER */
       footer{padding:56px 72px 32px;border-top:1px solid var(--border);}
       .footer-top{display:flex;justify-content:space-between;align-items:center;width:100%;gap:48px;flex-wrap:wrap;}
-      .footer-logo img{height:72px;}
+      .footer-logo img{height:72px;width:auto;display:block;}
       .footer-links{display:flex;gap:40px;}
       .footer-links a{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--faint);text-decoration:none;transition:color .2s;}
       .footer-links a:hover{color:var(--ink);}
@@ -533,6 +596,8 @@
         .sec,.download-sec,.manifesto{padding:100px 24px;}
         .testi-head{padding:0 24px;}
         .pricing-grid{grid-template-columns:1fr;}
+        .faq-grid{grid-template-columns:1fr;}
+        .faq-item{padding:32px 28px;}
         /* MOBILE PHONE STAGE — phone sticks at top of viewport (46vh), acts scroll past below.
            Achieved via display:flex column-reverse so the phone (DOM-second) becomes visually
            first AND remains painted on TOP of the copy column thanks to z-index. */
@@ -577,7 +642,7 @@
         body{overflow-x:hidden;cursor:auto;}
         #_cur,#_ring{display:none!important;}
         nav{padding:0 16px;height:60px;}
-        .nav-logo img{height:40px;}
+        .nav-logo img{height:40px;width:auto;}
         .nav-links{display:none;}
         .nav-cta{padding:9px 18px;font-size:10px;}
         .hero{padding:60px 20px 50px;}
@@ -647,6 +712,7 @@
       <ul class="nav-links">
         <li><a href="#story">The Story</a></li>
         <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#faq">FAQ</a></li>
         <li><a href="#download">Download</a></li>
       </ul>
       <a href="/auth" class="nav-cta"><span>Get the App</span></a>
@@ -929,6 +995,40 @@
       </div>
     </section>
 
+    <!-- FAQ — visible, citable content for AI search engines -->
+    <section id="faq" aria-labelledby="faq-title">
+      <div class="sec">
+        <div class="sec-eyebrow reveal">Questions</div>
+        <h2 class="sec-headline reveal d1" id="faq-title">Everything you<br /><em>wanted to ask.</em></h2>
+        <div class="faq-grid">
+          <details class="faq-item reveal">
+            <summary>What is BURS?</summary>
+            <p class="faq-answer">BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day — no shopping, no algorithmic feed. Just your closet, finally working for you.</p>
+          </details>
+          <details class="faq-item reveal d1">
+            <summary>How does the wardrobe scan work?</summary>
+            <p class="faq-answer">You point your phone camera at your clothes. BURS uses computer vision to catalogue every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging, no spreadsheets, no uploading to a marketplace.</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>Is BURS free?</summary>
+            <p class="faq-answer">Yes. The free tier includes unlimited wardrobe scanning and daily outfit suggestions. Premium ($9.99 / month) unlocks the AI Stylist chat, week-ahead planning, the travel capsule builder, and priority support.</p>
+          </details>
+          <details class="faq-item reveal d1">
+            <summary>Does BURS work on iPhone and Android?</summary>
+            <p class="faq-answer">BURS ships on iOS and Android with an identical experience. Your wardrobe syncs across every device you sign in on, so the outfit you planned on your phone is waiting on your tablet.</p>
+          </details>
+          <details class="faq-item reveal">
+            <summary>Will BURS suggest clothes I do not own?</summary>
+            <p class="faq-answer">No. BURS is built around the principle that your best outfits already live in your closet. It only recommends pieces already in your wardrobe — the opposite of a shopping app. You never get pushed into buying anything.</p>
+          </details>
+          <details class="faq-item reveal d1">
+            <summary>How does BURS handle my photos and data?</summary>
+            <p class="faq-answer">Your wardrobe photos stay private to your account. BURS does not sell your data and does not train public models on your images. You can delete every piece and every photo from inside the app at any time.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
     <!-- DOWNLOAD -->
     <section id="download">
       <div class="download-sec">
@@ -951,7 +1051,7 @@
     <!-- FOOTER -->
     <footer>
       <div class="footer-top">
-        <div class="footer-logo"><img src="/burs-logo-256-2.png" alt="BURS logo" loading="lazy" /></div>
+        <div class="footer-logo"><img src="/burs-logo-256-2.png" alt="BURS logo" width="256" height="256" loading="lazy" /></div>
         <nav class="footer-links">
           <a href="/privacy">Privacy</a>
           <a href="/terms">Terms</a>
