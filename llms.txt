@@ -2,7 +2,7 @@
 
 > BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day — plans the week ahead, and packs the right capsule for any trip. No shopping, no feed. Just your closet, finally working for you.
 
-BURS turns the clothes in your closet into a personal styling service. The app is available on iOS and Android. A free tier covers unlimited wardrobe scanning and daily outfit suggestions; the premium tier adds the AI Stylist chat, the week planner, and the travel capsule builder.
+BURS turns the clothes in your closet into a personal styling service. The app is available on iOS and Android. BURS Premium is 119 kr/month or 899 kr/year in Sweden (€10.99/month or €89.99/year elsewhere) and unlocks wardrobe scanning, context-aware outfit suggestions, the AI Stylist chat, the week planner, and the travel capsule builder. There is no free tier; cancel anytime.
 
 ## What BURS does
 
@@ -25,8 +25,9 @@ People who own enough clothes but still feel like they have nothing to wear. BUR
 
 ## Pricing
 
-- **Free** — unlimited wardrobe scanning, daily outfit suggestions, context reading.
-- **Premium ($9.99 / month)** — AI Stylist chat, week planner, travel capsule builder, priority support.
+- **BURS Premium** — 119 kr/month or 899 kr/year in Sweden (€10.99/month or €89.99/year elsewhere). Annual saves ~37% vs monthly.
+- **What you get:** unlimited wardrobe scanning, context-aware outfit of the day, AI Stylist chat, week planner, travel capsule builder, wardrobe insights, priority support.
+- **No free tier. No ads.** Cancel anytime from your account settings.
 
 ## Privacy
 
@@ -41,7 +42,7 @@ BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the 
 You point your phone camera at your clothes. BURS uses computer vision to catalogue every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging.
 
 ### Is BURS free?
-Yes. The free tier includes unlimited wardrobe scanning and daily outfit suggestions. Premium adds the AI Stylist chat, the week planner, and the travel capsule builder for $9.99 / month.
+No. BURS is a premium app — 119 kr/month or 899 kr/year in Sweden (€10.99/month or €89.99/year elsewhere). No free tier, no ads. Cancel anytime from your account settings.
 
 ### Does BURS work on iPhone and Android?
 Yes. BURS ships on iOS and Android with an identical experience. Your wardrobe syncs across every device you sign in on.

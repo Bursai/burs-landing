@@ -7,8 +7,8 @@
     <meta name="color-scheme" content="light" />
 
     <!-- Primary SEO -->
-    <title>BURS — AI Wardrobe Stylist · Outfits from your own closet</title>
-    <meta name="description" content="BURS is an AI wardrobe stylist that scans your closet, reads the weather and your calendar, and picks the perfect outfit in under five seconds. Plan your week, pack for travel, and dress with intention — every day." />
+    <title>BURS — AI Wardrobe Stylist · Your closet, finally working for you</title>
+    <meta name="description" content="BURS is an AI wardrobe stylist that scans your clothes, reads your calendar and the weather, and gives you the perfect outfit in 5 seconds. Plan your week, pack for travel, and stop standing in front of a full closet with nothing to wear. 899 kr/year." />
     <meta name="keywords" content="AI wardrobe stylist, AI outfit planner, virtual stylist app, closet app, outfit of the day AI, AI fashion assistant, wardrobe scanner, capsule wardrobe, travel packing app, BURS" />
     <meta name="author" content="BURS" />
     <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
@@ -77,16 +77,12 @@
           "image": "https://burs.me/og-image.png",
           "description": "AI wardrobe stylist that scans your closet, reads the weather and calendar, and surfaces the perfect outfit in five seconds. Plan your week and pack for travel from your own wardrobe.",
           "publisher": {"@id": "https://burs.me/#org"},
-          "offers": [
-            {"@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD"},
-            {"@type": "Offer", "name": "Premium", "price": "9.99", "priceCurrency": "USD"}
-          ],
-          "aggregateRating": {
-            "@type": "AggregateRating",
-            "ratingValue": "4.9",
-            "ratingCount": "12400",
-            "bestRating": "5",
-            "worstRating": "1"
+          "offers": {
+            "@type": "Offer",
+            "name": "BURS Premium",
+            "price": "899",
+            "priceCurrency": "SEK",
+            "description": "899 kr per year, or 119 kr per month. Cancel anytime."
           },
           "featureList": [
             "Wardrobe scanner — catalogues your full closet in under 10 minutes",
@@ -105,7 +101,7 @@
               "name": "What is BURS?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day — no shopping, no algorithmic feed."
+                "text": "BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day."
               }
             },
             {
@@ -121,7 +117,7 @@
               "name": "Is BURS free?",
               "acceptedAnswer": {
                 "@type": "Answer",
-                "text": "Yes. BURS has a free tier with unlimited wardrobe scanning and daily outfit suggestions. Premium unlocks the AI Stylist chat, week-ahead planning, and the travel capsule builder."
+                "text": "BURS is a premium app — 119 kr/month or 899 kr/year. No free tier, no ads. Cancel anytime from your account settings."
               }
             },
             {
@@ -254,8 +250,14 @@
       .hero-headline .l2 .line-inner{animation-delay:.45s;}
       .hero-headline .l3 .line-inner{animation-delay:.55s;}
       .hero-headline em{font-style:italic;font-weight:400;color:var(--muted);}
-      .hero-sub{font-size:19px;line-height:1.7;color:var(--muted);max-width:560px;margin-bottom:64px;opacity:0;animation:_fadeUp 1s ease forwards .9s;}
-      .hero-actions{display:flex;align-items:center;gap:36px;opacity:0;animation:_fadeUp 1s ease forwards 1.05s;}
+      .hero-sub{font-size:19px;line-height:1.7;color:var(--muted);max-width:600px;margin-bottom:56px;opacity:0;animation:_fadeUp 1s ease forwards .9s;}
+      /* In-hero stat row — sits between subhead and CTA */
+      .hero-stats{display:grid;grid-template-columns:repeat(4,1fr);max-width:920px;margin:0 0 56px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);opacity:0;animation:_fadeUp 1s ease forwards 1s;}
+      .hero-stats .stat{padding:28px 18px 26px;border-right:1px solid var(--border);text-align:left;opacity:1;transform:none;background:transparent;}
+      .hero-stats .stat:last-child{border-right:none;}
+      .hero-stats .stat-n{font-size:46px;margin-bottom:8px;}
+      .hero-stats .stat-l{font-size:9.5px;max-width:none;margin:0;text-align:left;}
+      .hero-actions{display:flex;align-items:center;gap:36px;opacity:0;animation:_fadeUp 1s ease forwards 1.15s;}
       .btn-primary{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;background:var(--ink);color:var(--bg);padding:20px 40px;text-decoration:none;transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:10px;}
       .btn-primary::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(245,240,232,.18) 50%,transparent 70%);transform:translateX(-100%);transition:transform .8s cubic-bezier(.22,1,.36,1);}
       .btn-primary:hover::after{transform:translateX(100%);}
@@ -266,9 +268,6 @@
       .btn-ghost:hover::after{transform:scaleX(1);}
       .btn-ghost .arrow{transition:transform .35s cubic-bezier(.22,1,.36,1);}
       .btn-ghost:hover .arrow{transform:translateX(4px);}
-      /* Hero meta strip — credibility line */
-      .hero-meta{position:absolute;right:0;bottom:0;display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--faint);opacity:0;animation:_fadeUp 1s ease forwards 1.3s;}
-      .hero-meta .v{font-family:"Playfair Display",serif;font-size:14px;font-style:italic;color:var(--ink);letter-spacing:0;text-transform:none;}
       /* Scroll indicator */
       .hero-scroll{position:absolute;bottom:24px;left:72px;display:flex;align-items:center;gap:14px;font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:var(--faint);opacity:0;animation:_fadeUp 1s ease forwards 1.5s;}
       .hero-scroll .bar{width:48px;height:1px;background:var(--ink);position:relative;overflow:hidden;}
@@ -279,15 +278,11 @@
       @keyframes _fadeUp{to{opacity:1;transform:none;}}
       @keyframes _fadeIn{to{opacity:1;}}
 
-      /* STATS */
-      .stats-bar{display:flex;border-bottom:1px solid var(--border);background:var(--bg);}
-      .stat{flex:1;padding:56px 28px;text-align:center;border-right:1px solid var(--border);opacity:0;transform:translateY(20px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1),background .4s;position:relative;}
-      .stat:last-child{border-right:none;}
-      .stat.vis{opacity:1;transform:none;}
-      .stat:hover{background:var(--surf);}
+      /* STAT primitive (reused inside .hero-stats) */
+      .stat{position:relative;}
       .stat-n{font-family:"Playfair Display",serif;font-size:60px;font-weight:900;line-height:1;margin-bottom:12px;letter-spacing:-.02em;}
       .stat-n em{font-style:italic;font-weight:400;color:var(--muted);font-size:.7em;}
-      .stat-l{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--faint);max-width:160px;margin:0 auto;line-height:1.5;}
+      .stat-l{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--faint);line-height:1.5;}
 
       /* ========== PHONE STAGE ========== */
       .phone-stage{position:relative;border-bottom:1px solid var(--border);}
@@ -481,26 +476,7 @@
       .chip[data-act="5"]:nth-child(3){--cx:-255px;--cy:170px;}
       .chip[data-act="5"]:nth-child(4){--cx:265px;--cy:80px;}
 
-      /* TESTIMONIALS */
       section{border-bottom:1px solid var(--border);}
-      .testi-wrap{padding:120px 0 80px;background:var(--bg);position:relative;}
-      .testi-head{padding:0 72px;margin-bottom:64px;display:flex;justify-content:space-between;align-items:flex-end;gap:48px;flex-wrap:wrap;}
-      .testi-head .l{flex:1;}
-      .testi-head .e{font-size:11px;letter-spacing:5px;text-transform:uppercase;color:var(--faint);margin-bottom:20px;display:flex;align-items:center;gap:16px;}
-      .testi-head .e::before{content:"";display:block;width:48px;height:1px;background:var(--ink);}
-      .testi-head .h{font-family:"Playfair Display",serif;font-size:clamp(40px,4.5vw,72px);font-weight:900;line-height:.9;letter-spacing:-.02em;}
-      .testi-head .h em{font-style:italic;font-weight:400;color:var(--muted);}
-      .testi-head .r{font-size:14px;color:var(--muted);max-width:320px;line-height:1.7;text-align:right;}
-      .testi-scroll{overflow:hidden;padding:0 0 40px;mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);}
-      .testi-track{display:flex;gap:28px;width:max-content;animation:_scroll 64s linear infinite;}
-      .testi-track:hover{animation-play-state:paused;}
-      @keyframes _scroll{from{transform:translateX(0);}to{transform:translateX(-50%);}}
-      .testi-card{width:380px;flex-shrink:0;padding:44px 40px;border:1px solid var(--border);background:var(--surf);transition:transform .4s cubic-bezier(.22,1,.36,1),box-shadow .4s,border-color .4s;display:flex;flex-direction:column;}
-      .testi-card:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(28,25,23,.1);border-color:var(--ink);}
-      .testi-stars{color:var(--ink);font-size:12px;letter-spacing:3px;margin-bottom:24px;}
-      .testi-text{font-family:"Playfair Display",serif;font-size:18px;line-height:1.55;color:var(--ink);margin-bottom:32px;font-style:italic;font-weight:400;flex:1;}
-      .testi-name{font-size:11px;letter-spacing:2.5px;text-transform:uppercase;color:var(--faint);font-weight:500;display:flex;align-items:center;gap:12px;}
-      .testi-name::before{content:"";display:block;width:24px;height:1px;background:var(--faint);}
 
       /* MANIFESTO */
       .manifesto{padding:180px 72px;border-bottom:1px solid var(--border);position:relative;overflow:hidden;background:var(--bg);}
@@ -521,25 +497,23 @@
       .sec-eyebrow::before{content:"";display:block;width:48px;height:1px;background:var(--ink);}
       .sec-headline{font-family:"Playfair Display",serif;font-size:clamp(48px,5.4vw,88px);font-weight:900;line-height:.86;margin-bottom:96px;letter-spacing:-.02em;max-width:880px;}
       .sec-headline em{font-style:italic;font-weight:400;color:var(--muted);}
-      .pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px;}
+      .pricing-solo{max-width:560px;margin:0 auto;}
       .price-card{padding:72px 56px;opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1),box-shadow .4s,background .3s;position:relative;overflow:hidden;}
       .price-card.vis{opacity:1;transform:none;}
       .price-card:hover{box-shadow:0 30px 80px rgba(28,25,23,.12);transform:translateY(-6px);}
-      .price-card.free{background:var(--surf);border:1px solid var(--border);}
       .price-card.premium{background:var(--ink);color:var(--bg);}
-      .price-card.premium::before{content:"Most popular";position:absolute;top:24px;right:24px;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;padding:5px 12px;border:1px solid rgba(245,240,232,.3);border-radius:99px;color:rgba(245,240,232,.7);}
+      .price-card.premium::before{content:"Best value";position:absolute;top:24px;right:24px;font-size:9px;letter-spacing:2.5px;text-transform:uppercase;padding:5px 12px;border:1px solid rgba(245,240,232,.3);border-radius:99px;color:rgba(245,240,232,.7);}
       .price-tag{font-size:11px;letter-spacing:4px;text-transform:uppercase;opacity:.55;margin-bottom:24px;}
-      .price-amount{font-family:"Playfair Display",serif;font-size:84px;font-weight:900;line-height:1;margin-bottom:10px;letter-spacing:-.02em;}
-      .price-period{font-size:13px;opacity:.55;margin-bottom:44px;}
+      .price-amount{font-family:"Playfair Display",serif;font-size:clamp(68px,7vw,96px);font-weight:900;line-height:1;margin-bottom:14px;letter-spacing:-.02em;display:flex;align-items:baseline;gap:10px;}
+      .price-amount .price-per{font-family:"DM Sans",sans-serif;font-size:15px;font-weight:400;opacity:.6;letter-spacing:0;}
+      .price-savings{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#c9b98a;margin-bottom:14px;font-weight:500;}
+      .price-alt{font-size:13px;opacity:.55;margin-bottom:44px;}
       .price-features{list-style:none;margin-bottom:52px;}
       .price-features li{font-size:14.5px;padding:13px 0;border-bottom:1px solid rgba(28,25,23,.08);display:flex;align-items:center;gap:14px;}
       .premium .price-features li{border-color:rgba(245,240,232,.1);}
       .price-features li::before{content:"";display:block;width:14px;height:1px;background:currentColor;opacity:.45;}
-      .btn-pric-fill{display:inline-flex;align-items:center;gap:10px;padding:18px 40px;text-decoration:none;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;transition:all .35s cubic-bezier(.22,1,.36,1);font-weight:500;}
-      .free .btn-pric-fill{background:var(--ink);color:var(--bg);}
-      .free .btn-pric-fill:hover{background:#0a0908;}
-      .premium .btn-pric-fill{background:var(--bg);color:var(--ink);}
-      .premium .btn-pric-fill:hover{background:#fff;}
+      .btn-pric-fill{display:inline-flex;align-items:center;gap:10px;padding:18px 40px;text-decoration:none;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;transition:all .35s cubic-bezier(.22,1,.36,1);font-weight:500;background:var(--bg);color:var(--ink);}
+      .btn-pric-fill:hover{background:#fff;}
 
       /* FAQ — editorial Q&A, visible content for AI search citations */
       #faq{background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
@@ -591,11 +565,13 @@
         nav{padding:0 24px;}
         .hero{padding:100px 24px 80px;min-height:auto;}
         .hero::before{display:none;}
-        .hero-meta{position:static;align-items:flex-start;margin-top:48px;}
+        .hero-stats{grid-template-columns:repeat(2,1fr);margin-bottom:40px;}
+        .hero-stats .stat{padding:22px 16px;}
+        .hero-stats .stat:nth-child(2){border-right:none;}
+        .hero-stats .stat:nth-child(1),.hero-stats .stat:nth-child(2){border-bottom:1px solid var(--border);}
+        .hero-stats .stat-n{font-size:38px;}
         .hero-scroll{display:none;}
         .sec,.download-sec,.manifesto{padding:100px 24px;}
-        .testi-head{padding:0 24px;}
-        .pricing-grid{grid-template-columns:1fr;}
         .faq-grid{grid-template-columns:1fr;}
         .faq-item{padding:32px 28px;}
         /* MOBILE PHONE STAGE — phone sticks at top of viewport (46vh), acts scroll past below.
@@ -634,8 +610,6 @@
         /* Hide chips on mobile — narrow viewport has no room for parallax UI without clutter */
         .chip-layer{display:none;}
         .scroll-rail{top:60px;}
-        .stats-bar{flex-wrap:wrap;}
-        .stat{flex:1 1 50%;}
       }
 
       @media(max-width:640px){
@@ -650,11 +624,9 @@
         .hero-sub{font-size:15px;margin-bottom:40px;}
         .hero-actions{flex-direction:column;align-items:stretch;gap:18px;}
         .btn-primary{text-align:center;justify-content:center;}
-        .btn-ghost{text-align:center;justify-content:center;}
-        .stats-bar{flex-direction:column;}
-        .stat{flex:1 1 100%;border-right:none;border-bottom:1px solid var(--border);padding:32px 20px;}
-        .stat:last-child{border-bottom:none;}
-        .stat-n{font-size:48px;}
+        .hero-stats .stat-n{font-size:32px;}
+        .hero-stats .stat-l{font-size:8.5px;}
+        .hero-stats .stat{padding:18px 12px;}
         /* Tighter narrow-viewport overrides on top of the 1024px mobile stage block */
         .stage-act{padding:24px 20px 48px;}
         .stage-act .act-headline{font-size:clamp(34px,10vw,48px);}
@@ -681,9 +653,6 @@
         .dl-sub{font-size:15px;}
         .store-row{flex-direction:column;align-items:center;}
         .store-btn{width:100%;max-width:280px;justify-content:center;}
-        .testi-head{flex-direction:column;align-items:flex-start;}
-        .testi-head .r{text-align:left;}
-        .testi-card{width:300px;padding:36px 30px;}
         .manifesto-text{font-size:clamp(26px,6vw,38px);}
         footer{padding:48px 20px 28px;}
         .footer-top{flex-direction:column;align-items:center;text-align:center;gap:24px;}
@@ -723,32 +692,40 @@
       <div class="hero-inner">
         <div class="hero-eyebrow"><span class="e-tag">Live · 2026</span><span>Your AI Wardrobe Stylist</span></div>
         <h1 class="hero-headline">
-          <span class="line l1"><span class="line-inner">Dress with</span></span>
-          <span class="line l2"><span class="line-inner">intention,</span></span>
-          <span class="line l3"><span class="line-inner"><em>every day.</em></span></span>
+          <span class="line l1"><span class="line-inner">Your wardrobe,</span></span>
+          <span class="line l2"><span class="line-inner">finally working</span></span>
+          <span class="line l3"><span class="line-inner"><em>for you.</em></span></span>
         </h1>
         <p class="hero-sub">
-          BURS scans your wardrobe, reads the weather, checks your calendar, and surfaces the perfect outfit — before you open your closet.
+          BURS scans your clothes, reads your calendar and the weather, and gives you the perfect outfit in 5 seconds. No more standing in front of a full closet feeling like you have nothing to wear.
         </p>
-        <div class="hero-actions">
-          <a href="/auth" class="btn-primary"><span>Get Started Free</span><span>→</span></a>
-          <a href="#story" class="btn-ghost"><span>See how it works</span><span class="arrow">↓</span></a>
+        <!-- STATS — positioned under the subhead so the reader meets the pain
+             immediately after the promise, before the CTA. -->
+        <div class="hero-stats" aria-label="Why BURS exists — the numbers">
+          <div class="stat" style="transition-delay:0s;"><div class="stat-n">80%</div><div class="stat-l">Of your wardrobe never worn</div></div>
+          <div class="stat" style="transition-delay:.08s;"><div class="stat-n">5s</div><div class="stat-l">To the perfect outfit</div></div>
+          <div class="stat" style="transition-delay:.16s;"><div class="stat-n">&lt;10m</div><div class="stat-l">To scan your full wardrobe</div></div>
+          <div class="stat" style="transition-delay:.24s;"><div class="stat-n">$500B</div><div class="stat-l">Lost to wardrobe underuse yearly</div></div>
         </div>
-        <div class="hero-meta">
-          <div class="v">Trusted by 12,400+ early users</div>
-          <div>across 38 countries</div>
+        <div class="hero-actions">
+          <a href="/auth" class="btn-primary" data-price="cta"><span>Get BURS — 899 kr/year</span><span>→</span></a>
         </div>
       </div>
       <div class="hero-scroll" aria-hidden="true"><span>Scroll</span><div class="bar"></div></div>
     </section>
 
-    <!-- STATS -->
-    <section class="stats-bar" aria-label="Why BURS exists — the numbers">
-      <div class="stat" style="transition-delay:0s;"><div class="stat-n">92M</div><div class="stat-l">Tons of clothing wasted yearly</div></div>
-      <div class="stat" style="transition-delay:.08s;"><div class="stat-n">80%</div><div class="stat-l">Of your wardrobe never worn</div></div>
-      <div class="stat" style="transition-delay:.16s;"><div class="stat-n">&lt;10m</div><div class="stat-l">To scan your full wardrobe</div></div>
-      <div class="stat" style="transition-delay:.24s;"><div class="stat-n">5s</div><div class="stat-l">To the perfect outfit</div></div>
-      <div class="stat" style="transition-delay:.32s;"><div class="stat-n">$500B</div><div class="stat-l">Lost to underuse per year</div></div>
+    <!-- MANIFESTO — emotional bridge between the pain stats and the product walkthrough -->
+    <section class="manifesto reveal" aria-label="Philosophy">
+      <div class="manifesto-inner">
+        <div class="manifesto-eye">A new philosophy of getting dressed</div>
+        <p class="manifesto-text">
+          <span class="word">Most</span> <span class="word">of</span> <span class="word">us</span> <span class="word">already</span> <span class="word">own</span> <span class="word">enough.</span>
+          <span class="word">We&nbsp;just</span> <span class="word">forgot</span> <span class="word">what</span> <span class="word">we</span> <span class="word">have.</span>
+          <span class="word"><em>BURS</em></span> <span class="word"><em>remembers</em></span> <span class="word"><em>—</em></span>
+          <span class="word">so</span> <span class="word">your</span> <span class="word">closet</span> <span class="word">finally</span> <span class="word">works</span> <span class="word">for</span> <span class="word">you.</span>
+        </p>
+        <div class="manifesto-sig">Made with intention</div>
+      </div>
     </section>
 
     <!-- PHONE STAGE -->
@@ -889,109 +866,30 @@
       </div>
     </section>
 
-    <!-- TESTIMONIALS -->
-    <section class="testi-wrap">
-      <div class="testi-head">
-        <div class="l">
-          <div class="e">Loved by people</div>
-          <h2 class="h">Worn with<br/><em>quiet confidence.</em></h2>
-        </div>
-        <div class="r">12,400+ early users in 38 countries are getting dressed faster, wearing more of their wardrobe, and buying less.</div>
-      </div>
-      <div class="testi-scroll">
-        <div class="testi-track">
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"I've had clothes I forgot I owned for two years. BURS surfaced them in the first week."</p><div class="testi-name">— Sofia K., Stockholm</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"The calendar integration is genuinely magic. It knew I had a formal dinner before I did."</p><div class="testi-name">— Marcus L., London</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"I used to spend 20 minutes deciding what to wear. Now it takes 30 seconds."</p><div class="testi-name">— Amira H., Dubai</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Packed for a 10-day trip to Japan with 6 items. Every outfit worked perfectly."</p><div class="testi-name">— Lena V., Berlin</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Finally stopped buying things I already have. My wardrobe feels like mine again."</p><div class="testi-name">— Priya N., Mumbai</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"The mood outfit feature is unexpected. It asked how I was feeling. That hit different."</p><div class="testi-name">— James O., New York</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"I've had clothes I forgot I owned for two years. BURS surfaced them in the first week."</p><div class="testi-name">— Sofia K., Stockholm</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"The calendar integration is genuinely magic. It knew I had a formal dinner before I did."</p><div class="testi-name">— Marcus L., London</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"I used to spend 20 minutes deciding what to wear. Now it takes 30 seconds."</p><div class="testi-name">— Amira H., Dubai</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Packed for a 10-day trip to Japan with 6 items. Every outfit worked perfectly."</p><div class="testi-name">— Lena V., Berlin</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"Finally stopped buying things I already have. My wardrobe feels like mine again."</p><div class="testi-name">— Priya N., Mumbai</div></div>
-          <div class="testi-card"><div class="testi-stars">★★★★★</div><p class="testi-text">"The mood outfit feature is unexpected. It asked how I was feeling. That hit different."</p><div class="testi-name">— James O., New York</div></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PRICING -->
+    <!-- PRICING — single Premium plan, annual leads -->
     <section id="pricing">
       <div class="sec">
         <div class="sec-eyebrow reveal">Pricing</div>
-        <h2 class="sec-headline reveal d1">Simple, honest<br /><em>pricing.</em></h2>
-        <div class="pricing-grid">
-          <div class="price-card free reveal">
-            <div class="price-tag">Free forever</div>
-            <div class="price-amount" id="price-free">0 kr</div>
-            <div class="price-period">No credit card needed</div>
-            <ul class="price-features">
-              <li>Up to 10 garments</li>
-              <li>10 outfit recommendations / month</li>
-              <li>Weather-aware suggestions</li>
-              <li>Basic wardrobe scan</li>
-            </ul>
-            <a href="/auth" class="btn-pric-fill">Start Free</a>
-          </div>
+        <h2 class="sec-headline reveal d1">One plan.<br /><em>All of BURS.</em></h2>
+        <div class="pricing-solo">
           <div class="price-card premium reveal d1">
-            <div class="price-tag">Premium</div>
-            <div class="price-amount" id="price-premium">79 kr</div>
-            <div class="price-period" id="price-period">per month · or 699 kr/year (save 26%)</div>
+            <div class="price-tag">BURS Premium</div>
+            <div class="price-amount"><span data-price="year">899 kr</span><span class="price-per">/year</span></div>
+            <div class="price-savings" data-price="savings">Save 37% — less than 2 cups of coffee a month</div>
+            <div class="price-alt">or <span data-price="month">119 kr</span>/month · cancel anytime</div>
             <ul class="price-features">
-              <li>Unlimited garments</li>
-              <li>Unlimited outfit recommendations</li>
-              <li>AI Stylist Chat</li>
+              <li>Unlimited wardrobe scanning</li>
+              <li>Context-aware outfit of the day</li>
+              <li>AI Stylist chat</li>
               <li>Calendar sync (Google + ICS)</li>
-              <li>Mood Outfit generator</li>
-              <li>Travel Capsule planner</li>
-              <li>Wardrobe Insights &amp; analytics</li>
-              <li>Week planning mode</li>
+              <li>Week planner</li>
+              <li>Travel capsule builder</li>
+              <li>Wardrobe insights &amp; analytics</li>
+              <li>Priority support</li>
             </ul>
-            <a href="/auth" class="btn-pric-fill">Get Premium</a>
+            <a href="/auth" class="btn-pric-fill">Get BURS</a>
           </div>
-          <script>
-          (function(){
-            var P={
-              sv:{m:'79 kr',y:'699 kr',s:'0 kr'},
-              no:{m:'79 kr',y:'699 kr',s:'0 kr'},
-              da:{m:'59 kr',y:'499 kr',s:'0 kr'},
-              fi:{m:'7,99 €',y:'69,99 €',s:'0 €'},
-              de:{m:'7,99 €',y:'69,99 €',s:'0 €'},
-              fr:{m:'7,99 €',y:'69,99 €',s:'0 €'},
-              es:{m:'7,99 €',y:'69,99 €',s:'0 €'},
-              it:{m:'7,99 €',y:'69,99 €',s:'0 €'},
-              pt:{m:'7,99 €',y:'69,99 €',s:'0 €'},
-              nl:{m:'7,99 €',y:'69,99 €',s:'0 €'},
-              en:{m:'$7.99',y:'$69.99',s:'$0'},
-              'en-gb':{m:'£7.99',y:'£69.99',s:'£0'},
-              pl:{m:'29,99 zł',y:'249 zł',s:'0 zł'},
-              ar:{m:'25 د.إ',y:'219 د.إ',s:'0 د.إ'}
-            };
-            var raw=(navigator.language||'sv').toLowerCase();
-            var p=P[raw]||P[raw.split('-')[0]]||P['sv'];
-            var sv=Math.round((1-parseFloat(p.y.replace(/[^\d.,]/g,'').replace(',','.'))/
-              (parseFloat(p.m.replace(/[^\d.,]/g,'').replace(',','.'))*12))*100);
-            document.getElementById('price-free').textContent=p.s;
-            document.getElementById('price-premium').textContent=p.m;
-            document.getElementById('price-period').textContent='per month · or '+p.y+'/year (save '+sv+'%)';
-          })();
-          </script>
         </div>
-      </div>
-    </section>
-
-    <!-- MANIFESTO -->
-    <section class="manifesto reveal">
-      <div class="manifesto-inner">
-        <div class="manifesto-eye">A new philosophy of getting dressed</div>
-        <p class="manifesto-text">
-          <span class="word">Most</span> <span class="word">of</span> <span class="word">us</span> <span class="word">already</span> <span class="word">own</span> <span class="word">enough.</span>
-          <span class="word">We&nbsp;just</span> <span class="word">forgot</span> <span class="word">what</span> <span class="word">we</span> <span class="word">have.</span>
-          <span class="word"><em>BURS</em></span> <span class="word"><em>remembers</em></span> <span class="word"><em>—</em></span>
-          <span class="word">so</span> <span class="word">your</span> <span class="word">closet</span> <span class="word">finally</span> <span class="word">works</span> <span class="word">for</span> <span class="word">you.</span>
-        </p>
-        <div class="manifesto-sig">Made with intention</div>
       </div>
     </section>
 
@@ -1003,7 +901,7 @@
         <div class="faq-grid">
           <details class="faq-item reveal">
             <summary>What is BURS?</summary>
-            <p class="faq-answer">BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day — no shopping, no algorithmic feed. Just your closet, finally working for you.</p>
+            <p class="faq-answer">BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day.</p>
           </details>
           <details class="faq-item reveal d1">
             <summary>How does the wardrobe scan work?</summary>
@@ -1011,7 +909,7 @@
           </details>
           <details class="faq-item reveal">
             <summary>Is BURS free?</summary>
-            <p class="faq-answer">Yes. The free tier includes unlimited wardrobe scanning and daily outfit suggestions. Premium ($9.99 / month) unlocks the AI Stylist chat, week-ahead planning, the travel capsule builder, and priority support.</p>
+            <p class="faq-answer" data-price="faq">BURS is a premium app — 119 kr/month or 899 kr/year. No free tier, no ads. Cancel anytime from your account settings.</p>
           </details>
           <details class="faq-item reveal d1">
             <summary>Does BURS work on iPhone and Android?</summary>
@@ -1034,13 +932,15 @@
       <div class="download-sec">
         <div class="dl-eyebrow reveal">Download</div>
         <h2 class="dl-headline reveal d1">Your wardrobe,<br /><em>finally sorted.</em></h2>
-        <p class="dl-sub reveal d2">Download BURS free. Scan your wardrobe in minutes. Get dressed with complete confidence, every single day.</p>
+        <p class="dl-sub reveal d2">Scan your wardrobe in minutes. Get dressed with complete confidence, every single day.</p>
         <div class="store-row reveal d3">
-          <a href="/auth" class="store-btn">
+          <!-- TODO(store-links): replace [APPSTORE_URL] with the real App Store listing URL -->
+          <a href="[APPSTORE_URL]" class="store-btn" data-store="appstore">
             <svg width="22" height="26" viewBox="0 0 22 26" fill="currentColor"><path d="M18.04 13.84c-.03-3.21 2.62-4.75 2.74-4.83-1.49-2.18-3.82-2.48-4.64-2.51-1.97-.2-3.86 1.17-4.86 1.17-1.01 0-2.56-1.14-4.21-1.11-2.16.03-4.16 1.26-5.27 3.18-2.25 3.9-.58 9.68 1.62 12.85 1.07 1.55 2.34 3.29 4.01 3.23 1.62-.07 2.23-1.05 4.18-1.05 1.95 0 2.5 1.05 4.2 1.02 1.73-.03 2.83-1.57 3.89-3.13 1.23-1.79 1.73-3.52 1.76-3.61-.04-.02-3.38-1.3-3.42-5.21zM14.88 4.28c.89-1.08 1.49-2.58 1.33-4.07-1.28.05-2.84.85-3.76 1.93-.83.95-1.55 2.48-1.36 3.94 1.43.11 2.89-.73 3.79-1.8z"/></svg>
             <div><span class="store-btn-sub">Download on the</span>App Store</div>
           </a>
-          <a href="/auth" class="store-btn">
+          <!-- TODO(store-links): replace [PLAYSTORE_URL] with the real Google Play listing URL -->
+          <a href="[PLAYSTORE_URL]" class="store-btn" data-store="playstore">
             <svg width="24" height="26" viewBox="0 0 24 26" fill="none"><path d="M1.5 0.5L13.5 12.5L1.5 24.5C0.9 24.2 0.5 23.6 0.5 22.9V2.1C0.5 1.4 0.9 0.8 1.5 0.5Z" fill="#00C4FF"/><path d="M17.5 8.5L13.5 12.5L1.5 0.5C1.7 0.4 1.9 0.4 2.1 0.5L17.5 8.5Z" fill="#00F076"/><path d="M23 10.9C23.6 11.3 24 11.9 24 12.5C24 13.1 23.6 13.7 23 14.1L17.5 16.5L13.5 12.5L17.5 8.5L23 10.9Z" fill="#FFCA00"/><path d="M1.5 24.5L13.5 12.5L17.5 16.5L2.1 24.5C1.9 24.6 1.7 24.6 1.5 24.5Z" fill="#FF3A44"/></svg>
             <div><span class="store-btn-sub">Get it on</span>Google Play</div>
           </a>
@@ -1060,18 +960,64 @@
         <div class="footer-copy">&copy; 2026 BURS</div>
       </div>
       <div class="footer-ai">
-        Powered by AI · BURS uses <a href="https://ai.google.dev" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;text-underline-offset:3px;color:inherit">Google Gemini</a> for intelligent styling recommendations
+        Made with intention · Stockholm, Sweden
       </div>
     </footer>
     <div class="bottom-rule" aria-hidden="true"></div>
 
     <script>
+      // ============================================================
+      // IP-BASED CURRENCY DETECTION
+      // Detect the user's country via ipapi.co and swap every price
+      // on the page (pricing card, hero CTA, FAQ answer) to the right
+      // currency silently. Default stays SEK to avoid any layout flash
+      // — the swap only happens when we KNOW the user is outside Sweden.
+      // ============================================================
+      (function(){
+        const PRICES={
+          SE:{month:"119 kr",year:"899 kr",
+              cta:"Get BURS — 899 kr/year",
+              savings:"Save 37% — less than 2 cups of coffee a month",
+              faq:"BURS Premium is 119 kr/month or 899 kr/year. No free tier, no ads. Cancel anytime from your account settings."},
+          INTL:{month:"€10.99",year:"€89.99",
+              cta:"Get BURS — €89.99/year",
+              savings:"Save 32% — less than 2 cups of coffee a month",
+              faq:"BURS Premium is €10.99/month or €89.99/year. No free tier, no ads. Cancel anytime from your account settings."}
+        };
+        function applyPrices(bundle){
+          document.querySelectorAll('[data-price="month"]').forEach(el=>{el.textContent=bundle.month;});
+          document.querySelectorAll('[data-price="year"]').forEach(el=>{el.textContent=bundle.year;});
+          document.querySelectorAll('[data-price="savings"]').forEach(el=>{el.textContent=bundle.savings;});
+          document.querySelectorAll('[data-price="faq"]').forEach(el=>{el.textContent=bundle.faq;});
+          document.querySelectorAll('[data-price="cta"]').forEach(el=>{
+            // CTA button has two spans — the first holds the label text
+            const label=el.querySelector("span:first-child");
+            if(label)label.textContent=bundle.cta;
+          });
+        }
+        // Default paint — SEK, so the page never flashes a different price.
+        // (Markup already has SEK text; this call is defensive in case markup drifts.)
+        applyPrices(PRICES.SE);
+        // Fetch the country; timeout after 3s so a flaky network never blocks rendering.
+        const ctrl=("AbortController" in window)?new AbortController():null;
+        const timer=ctrl&&setTimeout(()=>ctrl.abort(),3000);
+        fetch("https://ipapi.co/json/",{signal:ctrl&&ctrl.signal})
+          .then(r=>r.ok?r.json():null)
+          .then(d=>{
+            if(timer)clearTimeout(timer);
+            if(!d)return;
+            const country=(d.country_code||d.country||"").toUpperCase();
+            if(country&&country!=="SE"){applyPrices(PRICES.INTL);}
+          })
+          .catch(()=>{/* silent — keep SEK default */});
+      })();
+
       // CURSOR — refined with text/link/zone states
       const _c=document.getElementById("_cur"),_r=document.getElementById("_ring");
       let mx=0,my=0,rx=0,ry=0;
       document.addEventListener("mousemove",e=>{mx=e.clientX;my=e.clientY;});
       (function t(){_c.style.left=mx+"px";_c.style.top=my+"px";rx+=(mx-rx)*.14;ry+=(my-ry)*.14;_r.style.left=rx+"px";_r.style.top=ry+"px";requestAnimationFrame(t);})();
-      document.querySelectorAll("a,button,.testi-card,.price-card,.stage-act").forEach(el=>{
+      document.querySelectorAll("a,button,.price-card,.stage-act,.faq-item").forEach(el=>{
         el.addEventListener("mouseenter",()=>_r.classList.add("big"));
         el.addEventListener("mouseleave",()=>_r.classList.remove("big"));
       });
@@ -1257,39 +1203,37 @@
       else{window.addEventListener("load",initStage);}
     </script>
 
-    <!-- GDPR Cookie Consent Banner -->
+    <!-- Cookie notice — minimal GDPR-compliant: we only set essential cookies,
+         so a single "Got it" acknowledgement satisfies transparency without forcing a choice. -->
     <style>
       #cookie-banner{position:fixed;bottom:0;left:0;right:0;z-index:60;padding:16px;opacity:0;transform:translateY(20px);transition:opacity .4s ease,transform .4s ease;pointer-events:none;}
       #cookie-banner.visible{opacity:1;transform:translateY(0);pointer-events:auto;}
-      #cookie-inner{max-width:560px;margin:0 auto;background:rgba(28,25,23,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px 24px;display:flex;flex-wrap:wrap;align-items:center;gap:16px;font-size:14px;color:rgba(255,255,255,.75);line-height:1.5;}
+      #cookie-inner{max-width:520px;margin:0 auto;background:rgba(28,25,23,.92);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:18px 22px;display:flex;flex-wrap:wrap;align-items:center;gap:16px;font-size:13.5px;color:rgba(255,255,255,.75);line-height:1.5;}
       #cookie-inner a{color:#fff;text-decoration:underline;text-underline-offset:2px;}
       #cookie-inner a:hover{opacity:.8;}
-      .cookie-btns{display:flex;gap:12px;flex-shrink:0;}
-      .cookie-btn{padding:8px 20px;border-radius:999px;font-size:13px;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;border:none;}
-      .cookie-decline{background:transparent;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.75);}
-      .cookie-decline:hover{border-color:rgba(255,255,255,.4);color:#fff;}
-      .cookie-accept{background:#fff;color:#1C1917;}
-      .cookie-accept:hover{opacity:.9;}
+      .cookie-btn{padding:8px 22px;border-radius:999px;font-size:12px;font-weight:500;cursor:pointer;transition:all .2s;font-family:inherit;border:none;background:#fff;color:#1C1917;letter-spacing:.5px;flex-shrink:0;}
+      .cookie-btn:hover{opacity:.9;}
       @media(max-width:640px){#cookie-inner{flex-direction:column;align-items:flex-start;}}
     </style>
-    <div id="cookie-banner">
+    <div id="cookie-banner" role="dialog" aria-live="polite" aria-label="Cookie notice">
       <div id="cookie-inner">
-        <p style="flex:1;">We use cookies to improve your experience. <a href="/privacy">Privacy&nbsp;Policy</a></p>
-        <div class="cookie-btns">
-          <button class="cookie-btn cookie-decline" onclick="cookieRespond('declined')">Decline</button>
-          <button class="cookie-btn cookie-accept" onclick="cookieRespond('accepted')">Accept</button>
-        </div>
+        <p style="flex:1;margin:0;">BURS uses essential cookies to keep you signed in. <a href="/privacy">Privacy&nbsp;Policy</a></p>
+        <button class="cookie-btn" onclick="cookieAck()">Got it</button>
       </div>
     </div>
     <script>
       (function(){
         var KEY='burs-cookie-consent';
-        if(!localStorage.getItem(KEY)){
+        if(!document.cookie.split(';').some(function(c){return c.trim().indexOf(KEY+'=')===0;})
+           &&!localStorage.getItem(KEY)){
           var b=document.getElementById('cookie-banner');
           requestAnimationFrame(function(){b.classList.add('visible');});
         }
-        window.cookieRespond=function(c){
-          localStorage.setItem(KEY,c);
+        window.cookieAck=function(){
+          // Set both cookie (for servers) and localStorage (for future sessions)
+          var oneYear=60*60*24*365;
+          document.cookie=KEY+'=acknowledged; Max-Age='+oneYear+'; Path=/; SameSite=Lax';
+          try{localStorage.setItem(KEY,'acknowledged');}catch(e){}
           var b=document.getElementById('cookie-banner');
           b.classList.remove('visible');
           setTimeout(function(){b.remove();},400);
