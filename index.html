@@ -61,9 +61,9 @@
 
       /* ========== PHONE STAGE ========== */
       .phone-stage{position:relative;border-bottom:1px solid var(--border);}
-      .phone-stage-inner{display:grid;grid-template-columns:1fr 1fr;gap:0;position:relative;}
-      .scroll-rail{position:absolute;top:0;left:0;right:0;height:1px;background:var(--border);z-index:2;}
-      .scroll-rail::after{content:"";position:absolute;top:0;left:0;height:100%;width:var(--rail,0%);background:var(--ink);transition:width .08s linear;}
+      .phone-stage-inner{display:grid;grid-template-columns:1fr 1fr;gap:0;position:relative;align-items:start;}
+      .scroll-rail{position:sticky;top:0;left:0;right:0;height:2px;background:var(--border);z-index:50;grid-column:1/-1;}
+      .scroll-rail::after{content:"";position:absolute;top:0;left:0;height:100%;width:var(--rail,0%);background:var(--ink);transition:width .12s linear;}
 
       /* Copy column */
       .stage-copy{border-right:1px solid var(--border);}
@@ -78,20 +78,86 @@
       .stage-act .act-meta{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--faint);display:flex;gap:18px;flex-wrap:wrap;}
       .stage-act .act-meta span{padding:6px 12px;border:1px solid var(--border);}
 
-      /* Phone column (pinned) */
-      .stage-phone-col{position:relative;display:flex;align-items:center;justify-content:center;min-height:100vh;background:linear-gradient(180deg,var(--surf) 0%,var(--bg) 50%,var(--surf) 100%);overflow:hidden;}
+      /* Phone column — STICKY (no GSAP pin needed; sticky plays nice with grid) */
+      .stage-phone-col{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,var(--surf) 0%,var(--bg) 50%,var(--surf) 100%);overflow:hidden;align-self:start;}
       .stage-phone-col::before{content:"";position:absolute;inset:0;background-image:linear-gradient(0deg,transparent 0%,transparent 49.5%,rgba(28,25,23,.04) 50%,transparent 50.5%,transparent 100%),linear-gradient(90deg,transparent 0%,transparent 49.5%,rgba(28,25,23,.04) 50%,transparent 50.5%,transparent 100%);background-size:60px 60px;opacity:.6;pointer-events:none;}
       .stage-phone-wrap{position:relative;width:300px;height:610px;z-index:3;}
 
       /* Radial beam glow behind phone */
-      .beam{position:absolute;top:50%;left:50%;width:700px;height:700px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(28,25,23,.08) 0%,rgba(28,25,23,.04) 30%,transparent 65%);filter:blur(30px) hue-rotate(0deg);z-index:1;transition:filter .4s ease;pointer-events:none;}
+      .beam{position:absolute;top:50%;left:50%;width:780px;height:780px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(28,25,23,.10) 0%,rgba(28,25,23,.04) 35%,transparent 70%);filter:blur(30px) hue-rotate(0deg);z-index:1;will-change:filter,transform;pointer-events:none;}
 
       /* Phone frame */
-      .stage-phone{position:absolute;inset:0;border-radius:36px;border:1px solid rgba(28,25,23,.18);overflow:hidden;box-shadow:0 48px 120px rgba(28,25,23,.22),0 0 0 10px rgba(28,25,23,.035),inset 0 0 0 1px rgba(255,255,255,.4);background:var(--surf);z-index:2;}
-      .stage-phone::before{content:"";position:absolute;top:10px;left:50%;transform:translateX(-50%);width:96px;height:22px;background:var(--ink);border-radius:0 0 14px 14px;z-index:10;opacity:.85;}
+      .stage-phone{position:absolute;inset:0;border-radius:42px;border:1px solid rgba(28,25,23,.22);overflow:hidden;box-shadow:0 48px 120px rgba(28,25,23,.22),0 0 0 10px rgba(28,25,23,.035),inset 0 0 0 1px rgba(255,255,255,.5);background:#0e0d0c;z-index:2;}
+      .stage-phone::before{content:"";position:absolute;top:12px;left:50%;transform:translateX(-50%);width:104px;height:24px;background:#0a0908;border-radius:0 0 16px 16px;z-index:20;}
       .screen-stack{position:absolute;inset:0;}
-      .screen-stack .screen{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.04);filter:blur(8px);will-change:opacity,transform,filter;}
+      .screen-stack .screen{position:absolute;inset:0;width:100%;height:100%;opacity:0;transform:scale(1.05);filter:blur(8px);will-change:opacity,transform,filter;display:flex;flex-direction:column;padding:46px 22px 26px;color:#F5F0E8;font-family:"DM Sans",sans-serif;}
       .screen-stack .screen.active{opacity:1;transform:scale(1);filter:blur(0);}
+
+      /* Mock-screen UI shared bits */
+      .ms-time{position:absolute;top:18px;left:24px;font-size:11px;font-weight:600;color:#fff;z-index:5;}
+      .ms-batt{position:absolute;top:18px;right:24px;font-size:10px;color:#fff;letter-spacing:1px;z-index:5;}
+      .ms-eye{font-size:9px;letter-spacing:2.6px;text-transform:uppercase;color:rgba(245,240,232,.55);margin-bottom:6px;}
+      .ms-h{font-family:"Playfair Display",serif;font-size:30px;font-weight:900;line-height:1;margin-bottom:14px;letter-spacing:-.01em;}
+      .ms-h em{font-style:italic;font-weight:400;color:rgba(245,240,232,.6);}
+      .ms-sub{font-size:11px;color:rgba(245,240,232,.55);line-height:1.5;margin-bottom:14px;}
+      .ms-divider{height:1px;background:rgba(245,240,232,.12);margin:10px 0;}
+      .ms-pill{display:inline-block;padding:5px 10px;border:1px solid rgba(245,240,232,.2);border-radius:99px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,.7);margin-right:6px;margin-bottom:6px;}
+
+      /* Screen 0: Wardrobe — backdrop + tile grid */
+      .screen[data-i="0"]{background:radial-gradient(120% 80% at 50% 0%,#23314f 0%,#0e1322 60%,#070912 100%);}
+      .screen[data-i="0"] .ms-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:6px;flex:1;}
+      .screen[data-i="0"] .ms-tile{border-radius:6px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.05);}
+      .screen[data-i="0"] .ms-tile.t1{background:linear-gradient(135deg,#1f2c4a,#0d1426);}
+      .screen[data-i="0"] .ms-tile.t2{background:linear-gradient(135deg,#7a5b34,#3a2c19);}
+      .screen[data-i="0"] .ms-tile.t3{background:linear-gradient(135deg,#3a3a3a,#171717);}
+      .screen[data-i="0"] .ms-tile.t4{background:linear-gradient(135deg,#a48d6a,#5d4d36);}
+      .screen[data-i="0"] .ms-tile.t5{background:linear-gradient(135deg,#2c4a3f,#0f1d18);}
+      .screen[data-i="0"] .ms-tile.t6{background:linear-gradient(135deg,#5a2b2b,#2a1212);}
+      .screen[data-i="0"] .ms-tile.t7{background:linear-gradient(135deg,#3d3a52,#1a1828);}
+      .screen[data-i="0"] .ms-tile.t8{background:linear-gradient(135deg,#5c5043,#2a221b);}
+      .screen[data-i="0"] .ms-tile.t9{background:linear-gradient(135deg,#1c2326,#0a0e10);}
+
+      /* Screen 1: Today — single big outfit recommendation */
+      .screen[data-i="1"]{background:radial-gradient(120% 80% at 50% 0%,#3a2a1d 0%,#1a1209 60%,#080604 100%);}
+      .screen[data-i="1"] .ms-card{margin-top:8px;padding:18px;border:1px solid rgba(245,240,232,.14);border-radius:14px;background:rgba(245,240,232,.04);backdrop-filter:blur(8px);flex:1;display:flex;flex-direction:column;}
+      .screen[data-i="1"] .ms-card-h{font-family:"Playfair Display",serif;font-style:italic;font-size:15px;color:#F5F0E8;margin-bottom:10px;}
+      .screen[data-i="1"] .ms-look{flex:1;border-radius:10px;background:linear-gradient(180deg,#5b4a35 0%,#2a2118 50%,#1a140d 100%);position:relative;overflow:hidden;margin-bottom:10px;}
+      .screen[data-i="1"] .ms-look::after{content:"";position:absolute;inset:auto 0 0 0;height:38%;background:linear-gradient(180deg,transparent,rgba(0,0,0,.5));}
+      .screen[data-i="1"] .ms-meta{font-size:9px;color:rgba(245,240,232,.6);letter-spacing:1.5px;text-transform:uppercase;}
+
+      /* Screen 2: Stylist — chat */
+      .screen[data-i="2"]{background:radial-gradient(120% 80% at 50% 0%,#1a2c3a 0%,#0a141c 60%,#04080c 100%);}
+      .screen[data-i="2"] .ms-bubble{padding:10px 13px;border-radius:14px;font-size:11px;line-height:1.5;margin-bottom:8px;max-width:78%;}
+      .screen[data-i="2"] .ms-bubble.bot{background:rgba(245,240,232,.08);color:rgba(245,240,232,.85);border:1px solid rgba(245,240,232,.1);align-self:flex-start;}
+      .screen[data-i="2"] .ms-bubble.me{background:#F5F0E8;color:#1C1917;align-self:flex-end;margin-left:auto;}
+      .screen[data-i="2"] .ms-chat{display:flex;flex-direction:column;flex:1;padding-top:6px;}
+      .screen[data-i="2"] .ms-input{margin-top:auto;padding:10px 14px;border:1px solid rgba(245,240,232,.18);border-radius:99px;font-size:10px;color:rgba(245,240,232,.4);}
+
+      /* Screen 3: Planner — week list */
+      .screen[data-i="3"]{background:radial-gradient(120% 80% at 50% 0%,#2a2540 0%,#10101d 60%,#050509 100%);}
+      .screen[data-i="3"] .ms-week{display:flex;flex-direction:column;gap:6px;margin-top:6px;flex:1;}
+      .screen[data-i="3"] .ms-day{display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid rgba(245,240,232,.1);border-radius:9px;background:rgba(245,240,232,.025);}
+      .screen[data-i="3"] .ms-day .d{font-family:"Playfair Display",serif;font-style:italic;font-size:12px;color:rgba(245,240,232,.55);width:34px;}
+      .screen[data-i="3"] .ms-day .e{font-size:10px;color:#F5F0E8;flex:1;}
+      .screen[data-i="3"] .ms-day .o{width:26px;height:26px;border-radius:5px;background:linear-gradient(135deg,#5d4d36,#2a2118);}
+      .screen[data-i="3"] .ms-day:nth-child(2) .o{background:linear-gradient(135deg,#1f2c4a,#0d1426);}
+      .screen[data-i="3"] .ms-day:nth-child(3) .o{background:linear-gradient(135deg,#3a3a3a,#171717);}
+      .screen[data-i="3"] .ms-day:nth-child(4) .o{background:linear-gradient(135deg,#7a5b34,#3a2c19);}
+      .screen[data-i="3"] .ms-day:nth-child(5) .o{background:linear-gradient(135deg,#2c4a3f,#0f1d18);}
+
+      /* Screen 4: Travel — capsule */
+      .screen[data-i="4"]{background:radial-gradient(120% 80% at 50% 0%,#2c3a2a 0%,#0e1a0c 60%,#040804 100%);}
+      .screen[data-i="4"] .ms-cap{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:6px;}
+      .screen[data-i="4"] .ms-cap div{aspect-ratio:1;border-radius:6px;border:1px solid rgba(255,255,255,.05);}
+      .screen[data-i="4"] .ms-cap div:nth-child(1){background:linear-gradient(135deg,#5d4d36,#2a2118);}
+      .screen[data-i="4"] .ms-cap div:nth-child(2){background:linear-gradient(135deg,#1c2326,#0a0e10);}
+      .screen[data-i="4"] .ms-cap div:nth-child(3){background:linear-gradient(135deg,#3a3a3a,#171717);}
+      .screen[data-i="4"] .ms-cap div:nth-child(4){background:linear-gradient(135deg,#7a5b34,#3a2c19);}
+      .screen[data-i="4"] .ms-cap div:nth-child(5){background:linear-gradient(135deg,#2c4a3f,#0f1d18);}
+      .screen[data-i="4"] .ms-cap div:nth-child(6){background:linear-gradient(135deg,#3d3a52,#1a1828);}
+      .screen[data-i="4"] .ms-stat{margin-top:auto;padding-top:14px;display:flex;justify-content:space-between;border-top:1px solid rgba(245,240,232,.1);}
+      .screen[data-i="4"] .ms-stat .v{font-family:"Playfair Display",serif;font-size:22px;font-weight:900;color:#F5F0E8;}
+      .screen[data-i="4"] .ms-stat .l{font-size:8px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,240,232,.5);margin-top:2px;}
 
       /* Parallax chip layer */
       .chip-layer{position:absolute;inset:-80px;pointer-events:none;z-index:4;}
@@ -325,11 +391,63 @@
           <div class="stage-phone-wrap">
             <div class="stage-phone">
               <div class="screen-stack">
-                <img class="screen active" data-i="0" src="/images/screenshot-wardrobe.png" alt="Wardrobe scan" />
-                <img class="screen" data-i="1" src="/images/screenshot-today.png" alt="Today screen" />
-                <img class="screen" data-i="2" src="/images/screenshot-stylist.png" alt="AI Stylist chat" />
-                <img class="screen" data-i="3" src="/images/screenshot-planner.png" alt="Week planner" />
-                <img class="screen" data-i="4" src="/images/screenshot-travel.png" alt="Travel capsule" />
+                <div class="screen active" data-i="0">
+                  <div class="ms-time">9:41</div><div class="ms-batt">●●●○</div>
+                  <div class="ms-eye">Wardrobe · 124 pieces</div>
+                  <div class="ms-h">Your<br/><em>closet.</em></div>
+                  <div class="ms-grid">
+                    <div class="ms-tile t1"></div><div class="ms-tile t2"></div><div class="ms-tile t3"></div>
+                    <div class="ms-tile t4"></div><div class="ms-tile t5"></div><div class="ms-tile t6"></div>
+                    <div class="ms-tile t7"></div><div class="ms-tile t8"></div><div class="ms-tile t9"></div>
+                  </div>
+                </div>
+                <div class="screen" data-i="1">
+                  <div class="ms-time">9:41</div><div class="ms-batt">●●●○</div>
+                  <div class="ms-eye">Friday · 14°C · Clear</div>
+                  <div class="ms-h">Today's<br/><em>look.</em></div>
+                  <div class="ms-card">
+                    <div class="ms-card-h">Quietly sharp.</div>
+                    <div class="ms-look"></div>
+                    <div class="ms-meta">Navy Blazer · Linen · Wool</div>
+                  </div>
+                </div>
+                <div class="screen" data-i="2">
+                  <div class="ms-time">9:41</div><div class="ms-batt">●●●○</div>
+                  <div class="ms-eye">AI Stylist · Online</div>
+                  <div class="ms-h">Refine<br/><em>the look.</em></div>
+                  <div class="ms-chat">
+                    <div class="ms-bubble bot">Want me to swap the layer for something warmer?</div>
+                    <div class="ms-bubble me">Yes, something softer.</div>
+                    <div class="ms-bubble bot">Try the camel cardigan — it lifts the palette.</div>
+                    <div class="ms-input">Ask the stylist…</div>
+                  </div>
+                </div>
+                <div class="screen" data-i="3">
+                  <div class="ms-time">9:41</div><div class="ms-batt">●●●○</div>
+                  <div class="ms-eye">Week · 5 events</div>
+                  <div class="ms-h">Plan the<br/><em>week.</em></div>
+                  <div class="ms-week">
+                    <div class="ms-day"><div class="d">Mon</div><div class="e">Pitch · 10am</div><div class="o"></div></div>
+                    <div class="ms-day"><div class="d">Tue</div><div class="e">Studio</div><div class="o"></div></div>
+                    <div class="ms-day"><div class="d">Wed</div><div class="e">Calls</div><div class="o"></div></div>
+                    <div class="ms-day"><div class="d">Thu</div><div class="e">Dinner · 7pm</div><div class="o"></div></div>
+                    <div class="ms-day"><div class="d">Fri</div><div class="e">Off-site</div><div class="o"></div></div>
+                  </div>
+                </div>
+                <div class="screen" data-i="4">
+                  <div class="ms-time">9:41</div><div class="ms-batt">●●●○</div>
+                  <div class="ms-eye">Tokyo · 10 days</div>
+                  <div class="ms-h">Pack<br/><em>light.</em></div>
+                  <div class="ms-sub">Six pieces. Twenty-four outfits. One carry-on.</div>
+                  <div class="ms-cap">
+                    <div></div><div></div><div></div><div></div><div></div><div></div>
+                  </div>
+                  <div class="ms-stat">
+                    <div><div class="v">6</div><div class="l">Pieces</div></div>
+                    <div><div class="v">24</div><div class="l">Outfits</div></div>
+                    <div><div class="v">1</div><div class="l">Carry-on</div></div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="chip-layer">
@@ -529,84 +647,100 @@
         btn.addEventListener("mouseleave",()=>{btn.style.transform="";});
       });
 
-      // PHONE STAGE — GSAP ScrollTrigger
-      window.addEventListener("load",function(){
+      // PHONE STAGE — GSAP ScrollTrigger (no pin; CSS position:sticky handles the pinning)
+      function initStage(){
         if(!window.gsap||!window.ScrollTrigger)return;
         const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         const mobile=window.innerWidth<1024;
         if(reduced||mobile){
-          // Static fallback: show all screens stacked per-act (one phone per act on mobile is handled by CSS grid breakdown)
-          document.querySelectorAll(".screen-stack .screen").forEach(s=>s.classList.add("active"));
-          document.querySelectorAll(".chip").forEach(c=>c.style.opacity=".6");
+          // Static fallback: show first screen, fade others to 0 (mobile gets stacked layout via CSS)
+          document.querySelectorAll(".screen-stack .screen").forEach((s,i)=>{
+            s.style.opacity=i===0?1:0;
+            s.style.filter="none";s.style.transform="none";
+          });
           return;
         }
         gsap.registerPlugin(ScrollTrigger);
         const screens=gsap.utils.toArray(".screen-stack .screen");
         const acts=gsap.utils.toArray(".stage-act");
         const beam=document.querySelector(".beam");
+        const N=screens.length; // 5
 
-        // Pin phone column for entire stage
-        const totalActs=acts.length; // 5
+        // Init all screens hidden except first
+        gsap.set(screens,{opacity:0,scale:1.04,filter:"blur(8px)"});
+        gsap.set(screens[0],{opacity:1,scale:1,filter:"blur(0px)"});
+        gsap.set(".chip",{opacity:0});
+
+        // ONE master scrub timeline tied to the stage scroll length.
+        // No pin — CSS position:sticky on .stage-phone-col handles it.
         const tl=gsap.timeline({
           scrollTrigger:{
             trigger:".phone-stage",
             start:"top top",
             end:"bottom bottom",
-            pin:".stage-phone-col",
-            pinSpacing:false,
-            scrub:.8
+            scrub:.6,
+            invalidateOnRefresh:true
           }
         });
 
-        // For each transition between acts, crossfade screens + hue-shift beam
-        for(let i=0;i<totalActs-1;i++){
-          const segStart=i/(totalActs-1);
-          // Outgoing screen
-          tl.to(screens[i],{opacity:0,scale:1.08,filter:"blur(10px)",duration:1,ease:"power2.inOut"},segStart);
-          // Incoming screen
-          tl.fromTo(screens[i+1],{opacity:0,scale:.94,filter:"blur(10px)"},{opacity:1,scale:1,filter:"blur(0px)",duration:1,ease:"power2.inOut"},segStart);
-          // Beam hue shift (warm -> cool -> warm within narrow range)
-          tl.to(beam,{filter:`blur(30px) hue-rotate(${(i+1)*18}deg)`,duration:1,ease:"power1.inOut"},segStart);
+        // Build the screen morph sequence — each segment 1 unit long,
+        // total length = N-1 (4 transitions for 5 screens).
+        for(let i=0;i<N-1;i++){
+          // Outgoing
+          tl.to(screens[i],{opacity:0,scale:.96,filter:"blur(8px)",ease:"power2.inOut",duration:1},i);
+          // Incoming
+          tl.fromTo(screens[i+1],
+            {opacity:0,scale:1.06,filter:"blur(10px)"},
+            {opacity:1,scale:1,filter:"blur(0px)",ease:"power2.inOut",duration:1},i);
+          // Beam shift
+          tl.to(beam,{filter:`blur(34px) hue-rotate(${(i+1)*22}deg)`,scale:1+(i+1)*.04,ease:"power1.inOut",duration:1},i);
         }
 
-        // Per-act chip groups (parallax in/out + scrubbed drift)
-        acts.forEach((act,i)=>{
-          const chips=gsap.utils.toArray(`.chip[data-act="${i+1}"]`);
-          gsap.set(chips,{opacity:0,x:0,y:0});
-          ScrollTrigger.create({
-            trigger:act,
-            start:"top 70%",
-            end:"bottom 30%",
-            scrub:.8,
-            onUpdate:(self)=>{
-              const p=self.progress; // 0..1 for this act
-              chips.forEach((c,ci)=>{
-                const depth=(ci%2===0?1:-1)*(0.4+ci*.15);
-                const cx=parseFloat(getComputedStyle(c).getPropertyValue("--cx"))||0;
-                const cy=parseFloat(getComputedStyle(c).getPropertyValue("--cy"))||0;
-                // Fade in first third, stay, fade out last third
-                const op=p<.2?p/.2:(p>.8?(1-p)/.2:1);
-                c.style.opacity=op;
-                c.style.transform=`translate(calc(-50% + ${cx}px), calc(-50% + ${cy + (p-.5)*60*depth}px))`;
-                c.style.left="50%";
-                c.style.top="50%";
-              });
-            }
-          });
+        // Chip parallax — driven by the same global progress so chips for act i
+        // are visible only while screen i is dominant.
+        const allChips=gsap.utils.toArray(".chip");
+        ScrollTrigger.create({
+          trigger:".phone-stage",
+          start:"top top",
+          end:"bottom bottom",
+          scrub:.6,
+          onUpdate:(self)=>{
+            const p=self.progress*(N-1); // 0..N-1
+            allChips.forEach((c)=>{
+              const act=parseInt(c.dataset.act,10)-1; // 0..4
+              const local=p-act; // distance from this chip's act center (0 = perfect)
+              // Visible when local in [-0.5, 0.5]
+              const op=Math.max(0,1-Math.abs(local)*2);
+              const cx=parseFloat(getComputedStyle(c).getPropertyValue("--cx"))||0;
+              const cy=parseFloat(getComputedStyle(c).getPropertyValue("--cy"))||0;
+              const depth=(act%2===0?1:-1);
+              c.style.opacity=op;
+              c.style.transform=`translate(calc(-50% + ${cx}px), calc(-50% + ${cy + local*70*depth}px))`;
+              c.style.left="50%";
+              c.style.top="50%";
+            });
+          }
+        });
 
-          // Copy reveal on enter (non-scrubbed)
+        // Copy reveal on enter (non-scrubbed)
+        acts.forEach((act)=>{
           ScrollTrigger.create({
             trigger:act,
-            start:"top 75%",
+            start:"top 78%",
             once:true,
             onEnter:()=>{
               gsap.from(act.querySelectorAll(".act-num,.act-eyebrow,.act-headline,.act-desc,.act-meta"),{
-                y:36,opacity:0,stagger:.08,duration:.85,ease:"power3.out"
+                y:40,opacity:0,stagger:.09,duration:.9,ease:"power3.out"
               });
             }
           });
         });
-      });
+
+        // Refresh once everything is laid out
+        ScrollTrigger.refresh();
+      }
+      if(document.readyState==="complete"){initStage();}
+      else{window.addEventListener("load",initStage);}
     </script>
 
     <!-- GDPR Cookie Consent Banner -->
