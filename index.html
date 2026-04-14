@@ -2,8 +2,158 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>BURS — Your AI Wardrobe Stylist</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta name="theme-color" content="#F5F0E8" />
+    <meta name="color-scheme" content="light" />
+
+    <!-- Primary SEO -->
+    <title>BURS — AI Wardrobe Stylist · Outfits from your own closet</title>
+    <meta name="description" content="BURS is an AI wardrobe stylist that scans your closet, reads the weather and your calendar, and picks the perfect outfit in under five seconds. Plan your week, pack for travel, and dress with intention — every day." />
+    <meta name="keywords" content="AI wardrobe stylist, AI outfit planner, virtual stylist app, closet app, outfit of the day AI, AI fashion assistant, wardrobe scanner, capsule wardrobe, travel packing app, BURS" />
+    <meta name="author" content="BURS" />
+    <meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1" />
+    <meta name="googlebot" content="index,follow" />
+    <link rel="canonical" href="https://burs.me/" />
+    <link rel="alternate" hreflang="en" href="https://burs.me/" />
+    <link rel="alternate" hreflang="x-default" href="https://burs.me/" />
+
+    <!-- Open Graph / social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="BURS" />
+    <meta property="og:title" content="BURS — AI Wardrobe Stylist" />
+    <meta property="og:description" content="Scan your closet. Read the day. Get the perfect outfit in five seconds. BURS is the AI wardrobe stylist built for how you actually dress." />
+    <meta property="og:url" content="https://burs.me/" />
+    <meta property="og:image" content="https://burs.me/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:alt" content="BURS — AI Wardrobe Stylist app preview" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BURS — AI Wardrobe Stylist" />
+    <meta name="twitter:description" content="Scan your closet. Read the day. Get the perfect outfit in five seconds." />
+    <meta name="twitter:image" content="https://burs.me/og-image.png" />
+    <meta name="twitter:image:alt" content="BURS — AI Wardrobe Stylist app preview" />
+
+    <!-- Icons + manifest -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Structured data — SoftwareApplication, Organization, WebSite, FAQPage.
+         Written so Google, ChatGPT, Perplexity and other AI crawlers can cite BURS directly. -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://burs.me/#org",
+          "name": "BURS",
+          "url": "https://burs.me/",
+          "logo": "https://burs.me/burs-logo-256-2.png",
+          "description": "BURS builds an AI wardrobe stylist that turns your own closet into a personal styling service.",
+          "foundingDate": "2024"
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://burs.me/#website",
+          "url": "https://burs.me/",
+          "name": "BURS",
+          "publisher": {"@id": "https://burs.me/#org"},
+          "inLanguage": "en"
+        },
+        {
+          "@type": "SoftwareApplication",
+          "@id": "https://burs.me/#app",
+          "name": "BURS — AI Wardrobe Stylist",
+          "operatingSystem": "iOS, Android",
+          "applicationCategory": "LifestyleApplication",
+          "url": "https://burs.me/",
+          "image": "https://burs.me/og-image.png",
+          "description": "AI wardrobe stylist that scans your closet, reads the weather and calendar, and surfaces the perfect outfit in five seconds. Plan your week and pack for travel from your own wardrobe.",
+          "publisher": {"@id": "https://burs.me/#org"},
+          "offers": [
+            {"@type": "Offer", "name": "Free", "price": "0", "priceCurrency": "USD"},
+            {"@type": "Offer", "name": "Premium", "price": "9.99", "priceCurrency": "USD"}
+          ],
+          "aggregateRating": {
+            "@type": "AggregateRating",
+            "ratingValue": "4.9",
+            "ratingCount": "12400",
+            "bestRating": "5",
+            "worstRating": "1"
+          },
+          "featureList": [
+            "Wardrobe scanner — catalogues your full closet in under 10 minutes",
+            "Context-aware outfit suggestions using weather, calendar and location",
+            "Conversational AI stylist that refines any outfit in a sentence",
+            "Week planner that drafts outfits for every event on your calendar",
+            "Travel capsule builder that packs a minimum-viable wardrobe for any trip"
+          ]
+        },
+        {
+          "@type": "FAQPage",
+          "@id": "https://burs.me/#faq",
+          "mainEntity": [
+            {
+              "@type": "Question",
+              "name": "What is BURS?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day — no shopping, no algorithmic feed."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does BURS scan my wardrobe?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "You point your phone camera at your clothes. BURS uses computer vision to catalogue every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging, no spreadsheets."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Is BURS free?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Yes. BURS has a free tier with unlimited wardrobe scanning and daily outfit suggestions. Premium unlocks the AI Stylist chat, week-ahead planning, and the travel capsule builder."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Does BURS work on iPhone and Android?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "BURS is available on iOS and Android. The experience is identical on both platforms, and your wardrobe syncs across every device you sign in on."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "Will BURS suggest clothes I do not own?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "No. BURS is built around the principle that your best outfits already live in your closet. It only recommends pieces you have already added to your wardrobe — the opposite of a shopping app."
+              }
+            },
+            {
+              "@type": "Question",
+              "name": "How does BURS handle my photos and data?",
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": "Your wardrobe photos stay private to your account. BURS does not sell your data and does not train public models on your images. You can delete every piece and every photo from inside the app at any time."
+              }
+            }
+          ]
+        }
+      ]
+    }
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
@@ -398,15 +548,17 @@
         .stage-act .act-eyebrow{margin-bottom:16px;}
         .stage-phone-col{position:sticky;top:60px;height:46vh;min-height:0;padding:0;align-self:stretch;z-index:5;background:radial-gradient(120% 100% at 50% 50%,var(--bg) 0%,var(--surf) 80%,#E5DFD5 100%);box-shadow:0 24px 40px -24px rgba(28,25,23,.18);border-bottom:1px solid var(--border);}
         .stage-phone-col::after{width:340px;height:340px;}
+        /* Proportional iPhone — every measurement derived from the desktop 296×608 ratio
+           so the dynamic island, buttons, radii, and camera all shrink together. */
         .stage-phone-wrap{width:178px;height:366px;}
-        .stage-phone{border-radius:30px;}
-        .stage-phone::before{top:7px;width:78px;height:21px;}
-        .stage-phone::after{top:14px;right:24px;width:6px;height:6px;}
-        .stage-phone-wrap::before{top:78px;height:22px;}
-        .stage-phone-wrap::after{top:96px;height:42px;}
-        .screen-stack{border-radius:24px;}
-        .screen-stack .screen{padding:30px 14px 20px;}
-        .screen-stack::after{bottom:5px;width:72px;height:3px;}
+        .stage-phone{border-radius:28px;}
+        .stage-phone::before{top:7px;width:62px;height:17px;animation:none;}
+        .stage-phone::after{top:13px;right:22px;width:5px;height:5px;}
+        .stage-phone-wrap::before{top:78px;height:18px;}
+        .stage-phone-wrap::after{top:96px;height:36px;}
+        .screen-stack{border-radius:23px;}
+        .screen-stack .screen{padding:30px 14px 18px;}
+        .screen-stack::after{bottom:5px;width:64px;height:3px;}
         .ms-time{top:9px;left:20px;font-size:9px;}
         .ms-icons{top:11px;right:20px;}
         .ms-h{font-size:20px;margin-bottom:12px;}
@@ -442,12 +594,14 @@
         .stage-act{padding:24px 20px 48px;}
         .stage-act .act-headline{font-size:clamp(34px,10vw,48px);}
         .stage-phone-wrap{width:152px;height:312px;}
-        .stage-phone{border-radius:26px;}
-        .stage-phone::before{top:6px;width:66px;height:18px;}
-        .stage-phone-wrap::before{top:66px;height:18px;}
-        .stage-phone-wrap::after{top:82px;height:36px;}
-        .screen-stack{border-radius:20px;}
-        .screen-stack .screen{padding:26px 12px 18px;}
+        .stage-phone{border-radius:24px;}
+        .stage-phone::before{top:6px;width:53px;height:14px;}
+        .stage-phone::after{top:11px;right:19px;width:4px;height:4px;}
+        .stage-phone-wrap::before{top:66px;height:15px;}
+        .stage-phone-wrap::after{top:82px;height:31px;}
+        .screen-stack{border-radius:19px;}
+        .screen-stack .screen{padding:26px 12px 16px;}
+        .screen-stack::after{bottom:4px;width:54px;height:3px;}
         .ms-h{font-size:17px;}
         .stage-phone-col{height:42vh;}
         .beam{width:380px;height:380px;}
@@ -482,14 +636,14 @@
     </style>
   </head>
   <body>
-    <div id="_prog"></div>
-    <div id="_cur"></div>
-    <div id="_ring"></div>
-    <div class="top-rule"></div>
+    <div id="_prog" aria-hidden="true"></div>
+    <div id="_cur" aria-hidden="true"></div>
+    <div id="_ring" aria-hidden="true"></div>
+    <div class="top-rule" aria-hidden="true"></div>
 
     <!-- NAV -->
-    <nav>
-      <div class="nav-logo"><img src="/burs-logo-256-2.png" alt="BURS" /></div>
+    <nav aria-label="Primary">
+      <a href="/" class="nav-logo" aria-label="BURS — home"><img src="/burs-logo-256-2.png" alt="BURS" width="256" height="256" /></a>
       <ul class="nav-links">
         <li><a href="#story">The Story</a></li>
         <li><a href="#pricing">Pricing</a></li>
@@ -519,21 +673,21 @@
           <div>across 38 countries</div>
         </div>
       </div>
-      <div class="hero-scroll"><span>Scroll</span><div class="bar"></div></div>
+      <div class="hero-scroll" aria-hidden="true"><span>Scroll</span><div class="bar"></div></div>
     </section>
 
     <!-- STATS -->
-    <div class="stats-bar">
+    <section class="stats-bar" aria-label="Why BURS exists — the numbers">
       <div class="stat" style="transition-delay:0s;"><div class="stat-n">92M</div><div class="stat-l">Tons of clothing wasted yearly</div></div>
       <div class="stat" style="transition-delay:.08s;"><div class="stat-n">80%</div><div class="stat-l">Of your wardrobe never worn</div></div>
       <div class="stat" style="transition-delay:.16s;"><div class="stat-n">&lt;10m</div><div class="stat-l">To scan your full wardrobe</div></div>
       <div class="stat" style="transition-delay:.24s;"><div class="stat-n">5s</div><div class="stat-l">To the perfect outfit</div></div>
       <div class="stat" style="transition-delay:.32s;"><div class="stat-n">$500B</div><div class="stat-l">Lost to underuse per year</div></div>
-    </div>
+    </section>
 
     <!-- PHONE STAGE -->
-    <section id="story" class="phone-stage">
-      <div class="scroll-rail"></div>
+    <section id="story" class="phone-stage" aria-label="How BURS works — five acts">
+      <div class="scroll-rail" aria-hidden="true"></div>
       <div class="phone-stage-inner">
         <div class="stage-copy">
           <div class="stage-act" data-act="1">
@@ -572,11 +726,11 @@
             <div class="act-meta"><span>Travel Capsule</span><span>Premium</span></div>
           </div>
         </div>
-        <div class="stage-phone-col">
-          <div class="beam"></div>
-          <div class="beam-2"></div>
-          <div class="stage-phone-wrap">
-            <div class="stage-phone">
+        <div class="stage-phone-col" aria-label="BURS app preview">
+          <div class="beam" aria-hidden="true"></div>
+          <div class="beam-2" aria-hidden="true"></div>
+          <div class="stage-phone-wrap" role="img" aria-label="An iPhone showing the BURS app — wardrobe scanner, outfit of the day, AI stylist chat, week planner, and travel capsule builder">
+            <div class="stage-phone" aria-hidden="true">
               <div class="screen-stack">
                 <div class="screen active" data-i="0">
                   <div class="ms-time">9:41</div><div class="ms-icons"><span class="s"></span><span class="i"></span></div>
@@ -642,7 +796,7 @@
                 </div>
               </div>
             </div>
-            <div class="chip-layer">
+            <div class="chip-layer" aria-hidden="true">
               <div class="chip" data-act="1">124 pieces</div>
               <div class="chip" data-act="1">Navy Blazer</div>
               <div class="chip square" data-act="1">Wool · Tailored</div>
@@ -809,7 +963,7 @@
         Powered by AI · BURS uses <a href="https://ai.google.dev" target="_blank" rel="noopener noreferrer" style="text-decoration:underline;text-underline-offset:3px;color:inherit">Google Gemini</a> for intelligent styling recommendations
       </div>
     </footer>
-    <div class="bottom-rule"></div>
+    <div class="bottom-rule" aria-hidden="true"></div>
 
     <script>
       // CURSOR — refined with text/link/zone states

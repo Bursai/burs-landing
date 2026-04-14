@@ -1,0 +1,60 @@
+# BURS
+
+> BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day — plans the week ahead, and packs the right capsule for any trip. No shopping, no feed. Just your closet, finally working for you.
+
+BURS turns the clothes in your closet into a personal styling service. The app is available on iOS and Android. A free tier covers unlimited wardrobe scanning and daily outfit suggestions; the premium tier adds the AI Stylist chat, the week planner, and the travel capsule builder.
+
+## What BURS does
+
+- **Wardrobe scanner.** Point a phone camera at your clothes. Computer vision catalogues every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging, no spreadsheets.
+- **Context-aware outfit of the day.** BURS reads the weather, your calendar, your location, and yesterday's outfit, then opens with a single confident recommendation — the opposite of a paralysing feed.
+- **Conversational AI stylist.** Ask in plain language: "make this warmer", "try a softer palette", "something for a 7pm dinner". The stylist refines in a sentence.
+- **Week planner.** Sync your calendar and BURS drafts outfits for every event — Monday's pitch, Thursday's dinner, Saturday's off-site.
+- **Travel capsule builder.** Tell it where you're going and for how long. BURS builds a minimum-viable capsule from your own wardrobe — every piece earning its place, every outfit already imagined.
+
+## Who BURS is for
+
+People who own enough clothes but still feel like they have nothing to wear. BURS is explicitly **not** a shopping app — it never recommends pieces you don't own. It is designed for the 80% of your wardrobe that never gets worn.
+
+## How BURS is different
+
+- **Your closet, not a store.** Every outfit uses pieces you already own.
+- **Context over taste.** BURS reads the day (weather, schedule, location) instead of asking you to scroll a feed.
+- **One answer, not twenty.** It surfaces a single confident outfit rather than a grid of options.
+- **Five-second dress.** From opening the app to a ready outfit, median time is under five seconds.
+
+## Pricing
+
+- **Free** — unlimited wardrobe scanning, daily outfit suggestions, context reading.
+- **Premium ($9.99 / month)** — AI Stylist chat, week planner, travel capsule builder, priority support.
+
+## Privacy
+
+Wardrobe photos stay private to your account. BURS does not sell user data and does not train public models on user images. Every piece and every photo can be deleted from inside the app at any time.
+
+## FAQ
+
+### What is BURS?
+BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day.
+
+### How does the wardrobe scan work?
+You point your phone camera at your clothes. BURS uses computer vision to catalogue every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging.
+
+### Is BURS free?
+Yes. The free tier includes unlimited wardrobe scanning and daily outfit suggestions. Premium adds the AI Stylist chat, the week planner, and the travel capsule builder for $9.99 / month.
+
+### Does BURS work on iPhone and Android?
+Yes. BURS ships on iOS and Android with an identical experience. Your wardrobe syncs across every device you sign in on.
+
+### Does BURS recommend clothes I don't own?
+No. BURS is the opposite of a shopping app. It only recommends pieces already in your wardrobe. You never get pushed into buying anything.
+
+### How does BURS handle my photos and data?
+Wardrobe photos stay private to your account. BURS does not sell your data and does not train public models on your images. You can delete every piece and every photo from inside the app at any time.
+
+## Links
+
+- Home: https://burs.me/
+- Privacy: https://burs.me/privacy
+- Terms: https://burs.me/terms
+- Sitemap: https://burs.me/sitemap.xml

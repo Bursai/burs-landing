@@ -1,6 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://burs.me/</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>
-  <url><loc>https://burs.me/privacy</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
-  <url><loc>https://burs.me/terms</loc><changefreq>yearly</changefreq><priority>0.3</priority></url>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
+  <url>
+    <loc>https://burs.me/</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://burs.me/og-image.png</image:loc>
+      <image:title>BURS — AI Wardrobe Stylist</image:title>
+      <image:caption>BURS is an AI wardrobe stylist that turns your closet into a personal styling service.</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://burs.me/privacy</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://burs.me/terms</loc>
+    <lastmod>2026-04-14</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
 </urlset>
