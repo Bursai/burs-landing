@@ -37,6 +37,15 @@ $requiredMarkers = @(
   'ScrollTrigger.min.js'
 )
 
+$requiredMarkers += @(
+  'class="scene-inner"',
+  'class="scene-shot"',
+  'class="scene-media-daylook"',
+  'class="atlas-grid"',
+  '@media(max-width:1024px)',
+  '@media(max-width:640px)'
+)
+
 $missing = foreach ($marker in $requiredMarkers) {
   if ($html -notmatch [regex]::Escape($marker)) { $marker }
 }
