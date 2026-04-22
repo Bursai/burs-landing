@@ -544,12 +544,12 @@
         .stage-act .act-desc{font-size:15px;margin-bottom:20px;}
         .stage-act .act-num{margin-bottom:14px;}
         .stage-act .act-eyebrow{margin-bottom:16px;}
-        .stage-phone-col{position:sticky;top:60px;height:clamp(520px,62svh,680px);min-height:0;padding:0;align-self:stretch;z-index:5;background:radial-gradient(120% 100% at 50% 50%,var(--bg) 0%,var(--surf) 80%,#E5DFD5 100%);box-shadow:0 24px 40px -24px rgba(28,25,23,.18);border-bottom:1px solid var(--border);}
+        .stage-phone-col{--tablet-phone-w:min(330px,38vw,31svh);position:sticky;top:60px;height:max(clamp(520px,62svh,680px),calc((var(--tablet-phone-w) * 706 / 326) + 18px));min-height:0;padding:0;align-self:stretch;z-index:5;background:radial-gradient(120% 100% at 50% 50%,var(--bg) 0%,var(--surf) 80%,#E5DFD5 100%);box-shadow:0 24px 40px -24px rgba(28,25,23,.18);border-bottom:1px solid var(--border);}
         .stage-phone-col::after{width:340px;height:340px;}
         /* Proportional iPhone — every measurement derived from the desktop 296×608 ratio
            so the dynamic island, buttons, and radii all shrink together. */
         .stage-act:hover{transform:none;}
-        .stage-phone-wrap{width:min(330px,38vw,31svh);height:auto;aspect-ratio:326/706;}
+        .stage-phone-wrap{width:var(--tablet-phone-w);height:auto;aspect-ratio:326/706;}
         .stage-phone{border-radius:clamp(46px,7vw,58px);}
         .stage-phone .frame-sheen{border-radius:clamp(46px,7vw,58px);}
         .stage-phone::before{top:2.1%;width:35%;height:4.7%;animation:none;}
