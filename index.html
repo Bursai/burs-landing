@@ -531,20 +531,15 @@
         .sec,.download-sec,.manifesto{padding:100px 24px;}
         .faq-grid{grid-template-columns:1fr;}
         .faq-item{padding:32px 28px;}
-        /* MOBILE PHONE STAGE — phone sticks at top of viewport (46vh), acts scroll past below.
-           Achieved via display:flex column-reverse so the phone (DOM-second) becomes visually
-           first AND remains painted on TOP of the copy column thanks to z-index. */
-        .phone-stage-inner{display:flex;flex-direction:column-reverse;}
-        .stage-copy{border-right:none;}
-        /* Each act takes a full viewport so the screen morph stays in step with the act story.
-           Content sits at the act center, which lands in the lower viewport half — the slice
-           the sticky phone (top 46vh + 60px) does not cover. */
-        .stage-act{min-height:clamp(620px,82svh,820px);padding:46px 40px 72px;justify-content:flex-start;align-items:flex-start;border-bottom:1px solid var(--border);}
+        /* Tablet story stage keeps the desktop side-by-side composition, just compressed. */
+        .phone-stage-inner{display:grid;grid-template-columns:minmax(0,.94fr) minmax(0,1.06fr);align-items:start;}
+        .stage-copy{border-right:1px solid var(--border);}
+        .stage-act{min-height:calc(100svh - 64px);padding:52px 34px 68px;justify-content:center;align-items:flex-start;border-bottom:1px solid var(--border);}
         .stage-act .act-headline{font-size:clamp(38px,9vw,56px);margin-bottom:20px;}
         .stage-act .act-desc{font-size:15px;margin-bottom:20px;}
         .stage-act .act-num{margin-bottom:14px;}
         .stage-act .act-eyebrow{margin-bottom:16px;}
-        .stage-phone-col{--tablet-phone-w:min(330px,38vw,31svh);position:sticky;top:60px;height:max(clamp(520px,62svh,680px),calc((var(--tablet-phone-w) * 706 / 326) + 18px));min-height:0;padding:0;align-self:stretch;z-index:5;background:radial-gradient(120% 100% at 50% 50%,var(--bg) 0%,var(--surf) 80%,#E5DFD5 100%);box-shadow:0 24px 40px -24px rgba(28,25,23,.18);border-bottom:1px solid var(--border);}
+        .stage-phone-col{--tablet-phone-w:clamp(252px,32vw,300px);position:sticky;top:64px;height:calc(100svh - 64px);min-height:0;padding:0;align-self:stretch;z-index:5;background:radial-gradient(120% 100% at 50% 50%,var(--bg) 0%,var(--surf) 80%,#E5DFD5 100%);box-shadow:0 24px 40px -24px rgba(28,25,23,.18);border-bottom:1px solid var(--border);}
         .stage-phone-col::after{width:340px;height:340px;}
         /* Proportional iPhone — every measurement derived from the desktop 296×608 ratio
            so the dynamic island, buttons, and radii all shrink together. */
@@ -598,6 +593,8 @@
         .hero-stats .stat-n{font-size:28px;margin-bottom:8px;}
         .hero-stats .stat:first-child .stat-n{font-size:30px;}
         .hero-stats .stat-l{font-size:9px;letter-spacing:1.8px;}
+        .phone-stage-inner{display:flex;flex-direction:column-reverse;}
+        .stage-copy{border-right:none;}
         /* Tighter narrow-viewport overrides on top of the 1024px mobile stage block */
         .stage-act{min-height:clamp(430px,56svh,540px);padding:26px 20px 50px;justify-content:flex-start;}
         .stage-act .act-headline{font-size:clamp(32px,9.2vw,44px);}
