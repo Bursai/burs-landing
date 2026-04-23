@@ -500,14 +500,12 @@
         });
       })();
       (function(){
-        if(typeof gsap==='undefined' || typeof ScrollTrigger==='undefined')return;
-        gsap.registerPlugin(ScrollTrigger);
-        // document.querySelectorAll(''[data-scene]'')
         const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
         const sceneEls=[...document.querySelectorAll('[data-scene]')];
         const hero=document.querySelector('.story-hero');
         const heroReveal=hero ? hero.querySelector('.reveal') : null;
-        function resetForReducedMotion(){
+        const motionState={active:false,heroTl:null,animations:[]};
+        function setReducedMotionStyles(){
           if(heroReveal)gsap.set(heroReveal,{clearProps:'all',opacity:1,y:0,scale:1});
           sceneEls.forEach(scene=>{
             gsap.set(scene.querySelectorAll('.reveal'),{clearProps:'all',opacity:1,y:0,x:0,scale:1});
@@ -517,60 +515,104 @@
             if(media)gsap.set(media,{clearProps:'transform'});
           });
         }
-        if(reducedMotion.matches){
-          resetForReducedMotion();
-          return;
+        function killMotion(){
+          if(motionState.heroTl){
+            motionState.heroTl.kill();
+            motionState.heroTl=null;
+          }
+          motionState.animations.forEach(animation=>{
+            if(animation.scrollTrigger)animation.scrollTrigger.kill();
+            animation.kill();
+          });
+          motionState.animations=[];
+          motionState.active=false;
         }
-        const heroTl=gsap.timeline({defaults:{ease:'power3.out'}});
-        if(heroReveal){
-          heroTl.from(heroReveal,{opacity:0,y:28,duration:.9});
+        function applyReducedMotion(){
+          killMotion();
+          setReducedMotionStyles();
         }
-        sceneEls.forEach((scene,index)=>{
-          const copy=scene.querySelector('.scene-copy');
-          const media=scene.querySelector('.scene-media, .scene-media-daylook');
-          const reveals=scene.querySelectorAll('.reveal');
-          const mediaAsset=scene.querySelector('.scene-shot, .daylook-shell');
-          const isStyleDNA=scene.getAttribute('data-scene')==='style-dna';
-          const revealDuration=isStyleDNA ? 1.15 : .85;
-          const revealEase=isStyleDNA ? 'power2.out' : 'power3.out';
-          const parallaxAmount=isStyleDNA ? 6 : 10;
-          if(reveals.length){
-            gsap.from(reveals,{
-              opacity:0,
-              y:isStyleDNA ? 36 : 44,
-              duration:revealDuration,
-              ease:revealEase,
-              stagger:.1,
-              scrollTrigger:{
+        function initMotion(){
+          if(motionState.active)return;
+          if(reducedMotion.matches){
+            if(typeof gsap!=='undefined')setReducedMotionStyles();
+            return;
+          }
+          if(typeof gsap==='undefined' || typeof ScrollTrigger==='undefined')return;
+          gsap.registerPlugin(ScrollTrigger);
+          killMotion();
+          motionState.heroTl=gsap.timeline({defaults:{ease:'power3.out'}});
+          if(heroReveal){
+            motionState.heroTl.from(heroReveal,{opacity:0,y:28,duration:.9});
+          }
+          sceneEls.forEach(scene=>{
+            const copy=scene.querySelector('.scene-copy');
+            const media=scene.querySelector('.scene-media, .scene-media-daylook');
+            const reveals=scene.querySelectorAll('.reveal');
+            const mediaAsset=scene.querySelector('.scene-shot, .daylook-shell');
+            const isStyleDNA=scene.getAttribute('data-scene')==='style-dna';
+            const revealDuration=isStyleDNA ? 1.15 : .85;
+            const revealEase=isStyleDNA ? 'power2.out' : 'power3.out';
+            const parallaxAmount=isStyleDNA ? 6 : 10;
+            if(reveals.length){
+              const revealAnimation=gsap.from(reveals,{
+                opacity:0,
+                y:isStyleDNA ? 36 : 44,
+                duration:revealDuration,
+                ease:revealEase,
+                stagger:.1,
+                scrollTrigger:{
+                  trigger:scene,
+                  start:'top 72%',
+                  once:true
+                }
+              });
+              motionState.animations.push(revealAnimation);
+            }
+            if(mediaAsset){
+              const mediaAnimation=gsap.fromTo(mediaAsset,{y:-parallaxAmount},{y:parallaxAmount, ease:'none', scrollTrigger:{
                 trigger:scene,
-                start:'top 72%',
-                once:true
-              }
-            });
-          }
-          if(mediaAsset){
-            gsap.fromTo(mediaAsset,{y:-parallaxAmount},{y:parallaxAmount, ease:'none', scrollTrigger:{
-              trigger:scene,
-              start:'top bottom',
-              end:'bottom top',
-              scrub:isStyleDNA ? 1.7 : 1.15
-            }});
-          } else if(media){
-            gsap.fromTo(media,{y:-parallaxAmount},{y:parallaxAmount, ease:'none', scrollTrigger:{
-              trigger:scene,
-              start:'top bottom',
-              end:'bottom top',
-              scrub:isStyleDNA ? 1.7 : 1.15
-            }});
-          }
-          if(copy && !copy.classList.contains('reveal')){
-            gsap.from(copy,{opacity:0,y:40,duration:revealDuration,ease:revealEase,scrollTrigger:{trigger:scene,start:'top 72%',once:true}});
-          }
-        });
+                start:'top bottom',
+                end:'bottom top',
+                scrub:isStyleDNA ? 1.7 : 1.15
+              }});
+              motionState.animations.push(mediaAnimation);
+            } else if(media){
+              const mediaAnimation=gsap.fromTo(media,{y:-parallaxAmount},{y:parallaxAmount, ease:'none', scrollTrigger:{
+                trigger:scene,
+                start:'top bottom',
+                end:'bottom top',
+                scrub:isStyleDNA ? 1.7 : 1.15
+              }});
+              motionState.animations.push(mediaAnimation);
+            }
+            if(copy && !copy.classList.contains('reveal')){
+              const copyAnimation=gsap.from(copy,{opacity:0,y:40,duration:revealDuration,ease:revealEase,scrollTrigger:{trigger:scene,start:'top 72%',once:true}});
+              motionState.animations.push(copyAnimation);
+            }
+          });
+          motionState.active=true;
+        }
+        const bootMotion=()=>{
+          initMotion();
+          return true;
+        };
+        if(document.readyState==='loading'){
+          document.addEventListener('DOMContentLoaded',bootMotion,{once:true});
+        } else {
+          bootMotion();
+        }
         reducedMotion.addEventListener ? reducedMotion.addEventListener('change',event=>{
-          if(event.matches)resetForReducedMotion();
+          if(event.matches){
+            applyReducedMotion();
+          } else {
+            initMotion();
+          }
         }) : reducedMotion.addListener(event=>{
-          if(event.matches)resetForReducedMotion();
+          if(event.matches){
+            applyReducedMotion();
+          } else {
+            initMotion();
+          }
         });
       })();
     </script>
