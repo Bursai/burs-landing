@@ -441,11 +441,23 @@
       .sec-eyebrow::before{content:"";display:block;width:48px;height:1px;background:var(--ink);}
       .sec-headline{font-family:"Playfair Display",serif;font-size:clamp(48px,5.4vw,88px);font-weight:900;font-style:italic;line-height:1.05;margin-bottom:80px;letter-spacing:0;max-width:980px;padding-bottom:0.1em;font-variant-ligatures:none;}
       .sec-headline em{font-style:italic;font-weight:400;color:var(--muted);}
-      .pricing-solo{max-width:1120px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:stretch;}
-      .price-card{padding:56px 42px;opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1),box-shadow .4s,background .3s;position:relative;overflow:hidden;border:1px solid var(--border);border-radius:8px;background:rgba(245,240,232,.42);}
+      .pricing-panel{max-width:760px;margin:0 auto;}
+      .billing-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:0 0 28px;}
+      .billing-toggle{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;gap:6px;padding:6px;min-width:246px;border:1px solid var(--border);border-radius:999px;background:rgba(245,240,232,.74);backdrop-filter:blur(14px) saturate(1.25);-webkit-backdrop-filter:blur(14px) saturate(1.25);}
+      .billing-toggle::after{content:"";position:absolute;top:6px;left:6px;width:calc(50% - 6px);height:calc(100% - 12px);border-radius:999px;background:var(--ink);box-shadow:0 14px 34px -24px rgba(28,25,23,.7);transition:transform .48s cubic-bezier(.22,1,.36,1),box-shadow .36s cubic-bezier(.22,1,.36,1);}
+      .billing-toggle[data-billing="month"]::after{transform:translateX(calc(100% + 6px));}
+      .billing-toggle button{appearance:none;border:none;background:transparent;color:var(--muted);font:inherit;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;font-weight:700;padding:12px 18px;border-radius:999px;cursor:pointer;position:relative;z-index:1;transition:color .35s cubic-bezier(.22,1,.36,1),transform .35s cubic-bezier(.22,1,.36,1);}
+      .billing-toggle button:hover{color:var(--ink);}
+      .billing-toggle button.is-active{color:var(--bg);transform:translateY(-1px);}
+      .billing-discount{display:inline-flex;align-items:center;padding:9px 13px;border-radius:999px;border:1px solid rgba(201,168,108,.45);background:rgba(201,168,108,.12);color:var(--gold);font-size:10px;letter-spacing:1.8px;text-transform:uppercase;font-weight:700;white-space:nowrap;overflow:hidden;max-width:180px;opacity:1;transform:translateX(0) scale(1);transform-origin:left center;transition:max-width .42s cubic-bezier(.22,1,.36,1),padding .34s cubic-bezier(.22,1,.36,1),border-color .3s ease,opacity .26s ease,transform .42s cubic-bezier(.22,1,.36,1);}
+      [data-pricing-root][data-billing="month"] .billing-discount{max-width:0;padding-left:0;padding-right:0;border-color:transparent;opacity:0;transform:translateX(-10px) scale(.96);}
+      .pricing-solo{max-width:640px;margin:0 auto;}
+      .price-card{padding:56px 42px;opacity:0;transform:translateY(30px);transition:opacity .8s cubic-bezier(.22,1,.36,1),transform .8s cubic-bezier(.22,1,.36,1),box-shadow .4s,background .3s,border-color .35s,color .35s;position:relative;overflow:hidden;border:1px solid var(--border);border-radius:8px;background:rgba(245,240,232,.42);}
+      .price-card[data-plan-view]{min-height:720px;}
+      .price-card.is-swapping{animation:_priceSwap .55s cubic-bezier(.22,1,.36,1);}
       .price-card.vis{opacity:1;transform:none;}
       .price-card:hover{box-shadow:0 30px 80px rgba(28,25,23,.12);transform:translateY(-6px);}
-      .price-card.premium{background:var(--ink);color:var(--bg);}
+      .price-card.premium{background:var(--ink);color:var(--bg);border-color:rgba(201,168,108,.34);box-shadow:0 30px 90px -52px rgba(28,25,23,.66);}
       .price-card.premium::before{content:"";position:absolute;inset:0;background:linear-gradient(135deg,rgba(201,168,108,.22),transparent 28%,transparent 72%,rgba(245,240,232,.08));pointer-events:none;}
       .price-badge{display:inline-flex;align-items:center;width:max-content;max-width:100%;font-size:9px;letter-spacing:2px;text-transform:uppercase;padding:7px 12px;border:1px solid rgba(201,168,108,.55);border-radius:99px;color:var(--gold);margin-bottom:26px;font-weight:700;position:relative;z-index:1;}
       .price-tag{font-size:11px;letter-spacing:4px;text-transform:uppercase;opacity:.6;margin-bottom:24px;position:relative;z-index:1;}
@@ -463,6 +475,7 @@
       .btn-pric-fill::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 22%,rgba(255,255,255,.46) 48%,transparent 72%);transform:translateX(-120%);animation:_ctaShimmer 3.8s ease-in-out infinite;}
       .btn-pric-fill span{position:relative;z-index:1;}
       .btn-pric-fill:hover{background:#d7bb82;transform:translateY(-3px);}
+      @keyframes _priceSwap{0%{opacity:.72;transform:translateY(22px) scale(.985);filter:blur(5px);}100%{opacity:1;transform:translateY(0) scale(1);filter:blur(0);}}
       @keyframes _ctaShimmer{0%,42%{transform:translateX(-120%);}70%,100%{transform:translateX(120%);}}
       /* FAQ — editorial Q&A, visible content for AI search citations */
       #faq{background:var(--surf);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
@@ -567,7 +580,7 @@
         /* Hide chips on mobile — narrow viewport has no room for parallax UI without clutter */
         .chip-layer{display:none;}
         .scroll-rail{top:60px;}
-        .pricing-solo{grid-template-columns:1fr;max-width:620px;}
+        .pricing-panel{max-width:620px;}
       }
 
       @media(max-width:640px){
@@ -628,6 +641,7 @@
         .sec,.download-sec,.manifesto{padding:80px 20px;}
         .sec-headline{font-size:clamp(36px,9vw,52px);margin-bottom:56px;}
         .price-card{padding:48px 28px;}
+        .price-card[data-plan-view]{min-height:auto;}
         .price-amount{font-size:48px;}
         .price-features li{font-size:14px;}
         .dl-headline{font-size:clamp(44px,11vw,68px);}
@@ -837,41 +851,34 @@
       <div class="sec">
         <div class="sec-eyebrow reveal">Pricing</div>
         <h2 class="sec-headline reveal d1">Less than two coffees a month. <br /><em>An AI stylist, every morning.</em></h2>
-        <div class="pricing-solo">
-          <div class="price-card premium reveal d1">
-            <div class="price-badge">Most Popular — Save 37%</div>
-            <div class="price-tag">Annual</div>
-            <div class="price-amount"><span data-price="year">899 kr</span><span class="price-per">/year</span></div>
-            <div class="trial-pill">3 days free trial included</div>
-            <ul class="price-features">
-              <li>Unlimited live garment scans</li>
-              <li>Context-aware outfit of the day</li>
-              <li>AI Stylist chat</li>
-              <li>Calendar sync (Google + ICS)</li>
-              <li>Week planner</li>
-              <li>Travel capsule builder</li>
-              <li>Wardrobe insights &amp; analytics</li>
-              <li>Priority support</li>
-            </ul>
-            <a href="https://www.burs.me/auth" class="btn-pric-fill"><span>Start Free Trial →</span></a>
+        <div class="pricing-panel reveal d1" data-pricing-root data-billing="year">
+          <div class="billing-row">
+            <div class="billing-discount">Save 37% yearly</div>
+            <div class="billing-toggle" data-billing="year" role="group" aria-label="Billing cadence">
+              <button type="button" class="is-active" data-billing-toggle="year" aria-pressed="true">Yearly</button>
+              <button type="button" data-billing-toggle="month" aria-pressed="false">Monthly</button>
+            </div>
           </div>
-          <div class="price-card reveal d2">
-            <div class="price-tag">Monthly</div>
-            <div class="price-amount"><span data-price="month">119 kr</span><span class="price-per">/month</span></div>
-            <div class="price-savings">Less than 2 cups of coffee a month</div>
-            <div class="price-alt">Cancel anytime</div>
-            <div class="trial-pill">3 days free trial included</div>
-            <ul class="price-features">
-              <li>Unlimited live garment scans</li>
-              <li>Context-aware outfit of the day</li>
-              <li>AI Stylist chat</li>
-              <li>Calendar sync (Google + ICS)</li>
-              <li>Week planner</li>
-              <li>Travel capsule builder</li>
-              <li>Wardrobe insights &amp; analytics</li>
-              <li>Priority support</li>
-            </ul>
-            <a href="https://www.burs.me/auth" class="btn-pric-fill"><span>Get BURS →</span></a>
+          <div class="pricing-solo">
+            <div class="price-card premium reveal d1" data-plan-view aria-live="polite">
+              <div class="price-tag" data-plan-tag>Annual</div>
+              <div class="price-amount"><span data-plan-price data-price="year">899 kr</span><span class="price-per" data-plan-per>/year</span></div>
+              <div class="price-savings" data-plan-savings>Save 37% with annual billing</div>
+              <div class="price-alt" data-plan-alt>The full BURS plan, locked in for the year.</div>
+              <div class="trial-pill">3 days free trial included</div>
+              <ul class="price-features">
+                <li>20 renders per month</li>
+                <li>Unlimited live garment scans</li>
+                <li>Context-aware outfit of the day</li>
+                <li>AI Stylist chat</li>
+                <li>Calendar sync (Google + ICS)</li>
+                <li>Week planner</li>
+                <li>Travel capsule builder</li>
+                <li>Wardrobe insights &amp; analytics</li>
+                <li>Priority support</li>
+              </ul>
+              <a href="https://www.burs.me/auth" class="btn-pric-fill"><span data-plan-cta>Start Free Trial →</span></a>
+            </div>
           </div>
         </div>
       </div>
@@ -999,10 +1006,72 @@
         }
         var detectedCurrency=detectCurrency();
         window.BURS_DETECTED_CURRENCY=detectedCurrency;
-        applyPrices(PRICES[detectedCurrency]||PRICES.USD);
+        window.BURS_PRICE_BUNDLE=PRICES[detectedCurrency]||PRICES.USD;
+        applyPrices(window.BURS_PRICE_BUNDLE);
+        window.dispatchEvent(new Event('burs:prices-updated'));
       })();
 
       // CURSOR — refined with text/link/zone states
+      (function(){
+        document.querySelectorAll('[data-pricing-root]').forEach(root=>{
+          const toggle=root.querySelector('.billing-toggle');
+          const buttons=[...root.querySelectorAll('[data-billing-toggle]')];
+          const card=root.querySelector('.price-card[data-plan-view]');
+          const priceEl=root.querySelector('[data-plan-price]');
+          const perEl=root.querySelector('[data-plan-per]');
+          const tagEl=root.querySelector('[data-plan-tag]');
+          const savingsEl=root.querySelector('[data-plan-savings]');
+          const altEl=root.querySelector('[data-plan-alt]');
+          const ctaEl=root.querySelector('[data-plan-cta]');
+          if(!toggle||!card||buttons.length===0||!priceEl||!perEl||!tagEl||!savingsEl||!altEl||!ctaEl)return;
+          const plans={
+            year:{tag:'Annual',priceKey:'year',per:'/year',savings:'Save 37% with annual billing',alt:'The full BURS plan, locked in for the year.',cta:'Start Free Trial →',premium:true},
+            month:{tag:'Monthly',priceKey:'month',per:'/month',savings:'Full access with flexible monthly billing',alt:'Cancel anytime.',cta:'Get BURS →',premium:false}
+          };
+          let currentMode=root.getAttribute('data-billing')||'year';
+          function setBilling(mode, animate){
+            currentMode=plans[mode]?mode:'year';
+            const plan=plans[currentMode];
+            const bundle=window.BURS_PRICE_BUNDLE||{year:'899 kr',month:'119 kr'};
+            root.setAttribute('data-billing',currentMode);
+            card.setAttribute('data-mode',currentMode);
+            toggle.setAttribute('data-billing',currentMode);
+            priceEl.textContent=bundle[plan.priceKey];
+            perEl.textContent=plan.per;
+            tagEl.textContent=plan.tag;
+            savingsEl.textContent=plan.savings;
+            altEl.textContent=plan.alt;
+            ctaEl.textContent=plan.cta;
+            card.classList.toggle('premium',plan.premium);
+            buttons.forEach(btn=>{
+              const active=btn.getAttribute('data-billing-toggle')===currentMode;
+              btn.classList.toggle('is-active',active);
+              btn.setAttribute('aria-pressed',active?'true':'false');
+            });
+            if(animate&&window.gsap){
+              const content=[tagEl,priceEl,perEl,savingsEl,altEl,ctaEl,...card.querySelectorAll('.price-features li,.trial-pill')];
+              gsap.killTweensOf([card,...content]);
+              gsap.fromTo(card,
+                { y: 24, scale: 0.985, filter: 'blur(5px)' },
+                { y: 0, scale: 1, filter: 'blur(0px)', duration: 0.55, ease: 'power3.out' }
+              );
+              gsap.fromTo(content,
+                { y: 12, opacity: 0 },
+                { y: 0, opacity: 1, duration: 0.42, ease: 'power2.out', stagger: 0.018, delay: 0.06 }
+              );
+            }else if(animate){
+              card.classList.remove('is-swapping');
+              void card.offsetWidth;
+              card.classList.add('is-swapping');
+              window.setTimeout(()=>card.classList.remove('is-swapping'),560);
+            }
+          }
+          buttons.forEach(btn=>btn.addEventListener('click',()=>setBilling(btn.getAttribute('data-billing-toggle'),true)));
+          window.addEventListener('burs:prices-updated',()=>setBilling(currentMode,false));
+          setBilling(currentMode,false);
+        });
+      })();
+
       const _c=document.getElementById("_cur"),_r=document.getElementById("_ring");
       let mx=0,my=0,rx=0,ry=0;
       document.addEventListener("mousemove",e=>{mx=e.clientX;my=e.clientY;});
