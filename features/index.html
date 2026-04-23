@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <meta name="theme-color" content="#F5F0E8" />
     <meta name="color-scheme" content="light" />
-    <title>BURS Features — AI Wardrobe, Outfit Planner, AI Stylist &amp; More</title>
+    <title>BURS Features &mdash; AI Wardrobe, Outfit Planner, AI Stylist &amp; More</title>
     <meta name="description" content="Explore every BURS feature: AI wardrobe scanning, outfit of the day, AI stylist chat, calendar sync, travel capsule, wardrobe gaps, mood outfits, ghost mannequin and more." />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href="https://burs.me/features" />
@@ -16,13 +16,13 @@
     <link rel="sitemap" type="application/xml" href="/sitemap.xml" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="BURS" />
-    <meta property="og:title" content="BURS Features — AI Wardrobe, Outfit Planner, AI Stylist &amp; More" />
+    <meta property="og:title" content="BURS Features &mdash; AI Wardrobe, Outfit Planner, AI Stylist &amp; More" />
     <meta property="og:description" content="Explore every BURS feature: AI wardrobe scanning, outfit of the day, AI stylist chat, calendar sync, travel capsule, wardrobe gaps, mood outfits, ghost mannequin and more." />
     <meta property="og:url" content="https://burs.me/features" />
     <meta property="og:image" content="https://burs.me/burs-logo-256-2.png" />
     <meta property="og:image:alt" content="BURS logo for the AI wardrobe stylist app" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="BURS Features — AI Wardrobe, Outfit Planner, AI Stylist &amp; More" />
+    <meta name="twitter:title" content="BURS Features &mdash; AI Wardrobe, Outfit Planner, AI Stylist &amp; More" />
     <meta name="twitter:description" content="Explore every BURS feature: AI wardrobe scanning, outfit of the day, AI stylist chat, calendar sync, travel capsule, wardrobe gaps, mood outfits, ghost mannequin and more." />
     <meta name="twitter:image" content="https://burs.me/burs-logo-256-2.png" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -281,10 +281,10 @@
             <div class="daylook-shell">
               <div class="daylook-head">
                 <span>08:10</span>
-                <span>Cloudy · 10°C</span>
+                <span>Cloudy &middot; 10&deg;C</span>
               </div>
               <div class="daylook-title">Today's look</div>
-              <div class="daylook-event">Client lunch · 12:30</div>
+              <div class="daylook-event">Client lunch &middot; 12:30</div>
               <div class="daylook-grid">
                 <span></span><span></span><span></span><span></span>
               </div>
@@ -385,7 +385,7 @@
                 <ul class="price-features">
                   <li>20 renders per month</li><li>Unlimited live garment scans</li><li>Context-aware outfit of the day</li><li>AI Stylist chat</li><li>Calendar sync (Google + ICS)</li><li>Week planner</li><li>Travel capsule builder</li><li>Wardrobe insights &amp; analytics</li><li>Priority support</li>
                 </ul>
-                <a href="https://www.burs.me/auth" class="btn-pric-fill"><span data-plan-cta>Start Free Trial →</span></a>
+                <a href="https://www.burs.me/auth" class="btn-pric-fill"><span data-plan-cta>Start Free Trial &rarr;</span></a>
               </div>
             </div>
           </div>
@@ -432,7 +432,7 @@
       })();
       (function(){
         const PRICES={
-          SEK:{month:"119 kr",year:"899 kr"},GBP:{month:"£9.99",year:"£74.99"},AED:{month:"39 AED",year:"289 AED"},USD:{month:"$10.99",year:"$79.99"},EUR:{month:"€9.99",year:"€74.99"}
+          SEK:{month:"119 kr",year:"899 kr"},GBP:{month:"\u00a39.99",year:"\u00a374.99"},AED:{month:"39 AED",year:"289 AED"},USD:{month:"$10.99",year:"$79.99"},EUR:{month:"\u20ac9.99",year:"\u20ac74.99"}
         };
         function detectCurrency(){
           const language=(navigator.language||navigator.userLanguage||"").trim();
@@ -466,8 +466,8 @@
           const ctaEl=root.querySelector('[data-plan-cta]');
           if(!toggle||!card||buttons.length===0||!priceEl||!perEl||!tagEl||!savingsEl||!altEl||!ctaEl)return;
           const plans={
-            year:{tag:'Annual',priceKey:'year',per:'/year',savings:'Save 37% yearly',alt:'The full BURS plan, locked in for the year.',cta:'Start Free Trial →',premium:true},
-            month:{tag:'Monthly',priceKey:'month',per:'/month',savings:'Full access with flexible monthly billing',alt:'Cancel anytime.',cta:'Get BURS →',premium:false}
+            year:{tag:'Annual',priceKey:'year',per:'/year',savings:'Save 37% yearly',alt:'The full BURS plan, locked in for the year.',cta:'Start Free Trial \u2192',premium:true},
+            month:{tag:'Monthly',priceKey:'month',per:'/month',savings:'Full access with flexible monthly billing',alt:'Cancel anytime.',cta:'Get BURS \u2192',premium:false}
           };
           let currentMode=root.getAttribute('data-billing')||'year';
           function setBilling(mode, animate){

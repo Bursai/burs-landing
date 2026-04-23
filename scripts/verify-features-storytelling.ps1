@@ -65,6 +65,13 @@ if ($sceneCount -ne 5) {
   exit 1
 }
 
+$expectedSceneOrder = @('scan', 'ootd', 'stylist', 'planner', 'style-dna')
+$actualSceneOrder = @([regex]::Matches($html, 'data-scene="([^"]+)"') | ForEach-Object { $_.Groups[1].Value })
+if (($actualSceneOrder -join ',') -ne ($expectedSceneOrder -join ',')) {
+  Write-Error "SCENE_ORDER_FAIL expected=$($expectedSceneOrder -join ',') actual=$($actualSceneOrder -join ',')"
+  exit 1
+}
+
 $planViewCount = ([regex]::Matches($html, 'data-plan-view(?=[\s=>])')).Count
 if ($planViewCount -ne 1) {
   Write-Error "PLAN_VIEW_COUNT_FAIL expected=1 actual=$planViewCount"
@@ -80,6 +87,34 @@ if ($atlasCardCount -lt 5) {
 if ($html -notmatch 'Save 37% yearly') {
   Write-Error "MISSING_MARKER Save 37% yearly"
   exit 1
+}
+
+$requiredAtlasItems = @(
+  'Travel Capsule',
+  'Wardrobe Gaps',
+  'Mood Outfit',
+  'Ghost Mannequin',
+  'Wardrobe Insights &amp; Analytics'
+)
+
+foreach ($item in $requiredAtlasItems) {
+  if ($html -notmatch [regex]::Escape($item)) {
+    Write-Error "ATLAS_ITEM_MISSING $item"
+    exit 1
+  }
+}
+
+$requiredPricingItems = @(
+  '20 renders per month',
+  'data-billing-toggle="year"',
+  'data-billing-toggle="month"'
+)
+
+foreach ($item in $requiredPricingItems) {
+  if ($html -notmatch [regex]::Escape($item)) {
+    Write-Error "PRICING_ITEM_MISSING $item"
+    exit 1
+  }
 }
 
 Write-Output "PASS features story structure markers found"
