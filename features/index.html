@@ -235,15 +235,17 @@
     <main id="main-content">
       <section class="story-hero">
         <div class="story-hero-inner">
-          <div class="eyebrow">Features</div>
-          <h1>A wardrobe is only useful when it becomes usable.</h1>
-          <p>BURS turns an underused closet into a system you can actually rely on every morning.</p>
+          <div class="reveal">
+            <div class="eyebrow">Features</div>
+            <h1>A wardrobe is only useful when it becomes usable.</h1>
+            <p>BURS turns an underused closet into a system you can actually rely on every morning.</p>
+          </div>
         </div>
       </section>
 
       <section class="feature-scene scene-scan" data-scene="scan">
         <div class="scene-inner">
-          <div class="scene-copy">
+          <div class="scene-copy reveal">
             <div class="scene-kicker">Scene I</div>
             <h2>Live Garment Scan</h2>
             <p>Point your camera at one garment and BURS reads it live in under 2 seconds. No tagging, no admin, no spreadsheet energy.</p>
@@ -253,7 +255,7 @@
               <li>No manual organization workflow</li>
             </ul>
           </div>
-          <div class="scene-media">
+          <div class="scene-media reveal">
             <img src="/assets/act-i-wardrobe-screen.jpeg" alt="BURS wardrobe screen showing scanned garments and wardrobe categories" class="scene-shot" loading="eager" decoding="async" />
           </div>
         </div>
@@ -261,7 +263,7 @@
 
       <section class="feature-scene scene-ootd" data-scene="ootd">
         <div class="scene-inner">
-          <div class="scene-copy">
+          <div class="scene-copy reveal">
             <div class="scene-kicker">Scene II</div>
             <h2>Outfit of the Day</h2>
             <p>Every morning, BURS reads the weather, your calendar, and your context, then returns one calm, confident answer.</p>
@@ -272,6 +274,7 @@
             </ul>
           </div>
           <div class="scene-media-daylook" role="img" aria-label="BURS outfit of the day visual showing morning weather, calendar cues, and one recommended outfit">
+            <div class="reveal">
             <div class="daylook-shell">
               <div class="daylook-head">
                 <span>08:10</span>
@@ -284,13 +287,14 @@
               </div>
               <div class="daylook-cta">Wear this</div>
             </div>
+            </div>
           </div>
         </div>
       </section>
 
       <section class="feature-scene scene-stylist" data-scene="stylist">
         <div class="scene-inner">
-          <div class="scene-copy">
+          <div class="scene-copy reveal">
             <div class="scene-kicker">Scene III</div>
             <h2>AI Stylist Chat</h2>
             <p>Ask BURS to make a look sharper, softer, warmer, or more relaxed. It refines against the wardrobe you actually own.</p>
@@ -300,7 +304,7 @@
               <li>Ask against your real closet</li>
             </ul>
           </div>
-          <div class="scene-media">
+          <div class="scene-media reveal">
             <img src="/assets/act-iii-stylist-screen.jpeg" alt="BURS AI stylist chat screen showing outfit refinement and save actions" class="scene-shot" loading="lazy" decoding="async" />
           </div>
         </div>
@@ -308,7 +312,7 @@
 
       <section class="feature-scene scene-planner" data-scene="planner">
         <div class="scene-inner">
-          <div class="scene-copy">
+          <div class="scene-copy reveal">
             <div class="scene-kicker">Scene IV</div>
             <h2>Week Planner</h2>
             <p>Calendar sync turns a run of events into a dressed week. BURS plans ahead so the next seven days feel clear before they start.</p>
@@ -318,7 +322,7 @@
               <li>Event-aware outfit preparation</li>
             </ul>
           </div>
-          <div class="scene-media">
+          <div class="scene-media reveal">
             <img src="/assets/act-iv-week-screen.jpeg" alt="BURS week planner screen showing planned outfits for the week" class="scene-shot" loading="lazy" decoding="async" />
           </div>
         </div>
@@ -326,7 +330,7 @@
 
       <section class="feature-scene scene-style-dna" data-scene="style-dna">
         <div class="scene-inner">
-          <div class="scene-copy">
+          <div class="scene-copy reveal">
             <div class="scene-kicker">Scene V</div>
             <h2>Style DNA</h2>
             <p>After a few days of scans, saves, refinements, and daily use, BURS starts learning your fit, taste, and preferences well enough to become genuinely presentable.</p>
@@ -336,7 +340,7 @@
               <li>Turns taste into a repeatable system</li>
             </ul>
           </div>
-          <div class="scene-media">
+          <div class="scene-media reveal">
             <img src="/assets/act-ii-style-dna-screen.jpeg" alt="BURS Style DNA screen showing personal style profile settings" class="scene-shot" loading="lazy" decoding="async" />
           </div>
         </div>
@@ -493,6 +497,80 @@
           buttons.forEach(btn=>btn.addEventListener('click',()=>setBilling(btn.getAttribute('data-billing-toggle'),true)));
           window.addEventListener('burs:prices-updated',()=>setBilling(currentMode,false));
           setBilling(currentMode,false);
+        });
+      })();
+      (function(){
+        if(typeof gsap==='undefined' || typeof ScrollTrigger==='undefined')return;
+        gsap.registerPlugin(ScrollTrigger);
+        // document.querySelectorAll(''[data-scene]'')
+        const reducedMotion=window.matchMedia('(prefers-reduced-motion: reduce)');
+        const sceneEls=[...document.querySelectorAll('[data-scene]')];
+        const hero=document.querySelector('.story-hero');
+        const heroReveal=hero ? hero.querySelector('.reveal') : null;
+        function resetForReducedMotion(){
+          if(heroReveal)gsap.set(heroReveal,{clearProps:'all',opacity:1,y:0,scale:1});
+          sceneEls.forEach(scene=>{
+            gsap.set(scene.querySelectorAll('.reveal'),{clearProps:'all',opacity:1,y:0,x:0,scale:1});
+            const media=scene.querySelector('.scene-media, .scene-media-daylook');
+            const mediaAsset=scene.querySelector('.scene-shot, .daylook-shell');
+            if(mediaAsset)gsap.set(mediaAsset,{clearProps:'all',y:0});
+            if(media)gsap.set(media,{clearProps:'transform'});
+          });
+        }
+        if(reducedMotion.matches){
+          resetForReducedMotion();
+          return;
+        }
+        const heroTl=gsap.timeline({defaults:{ease:'power3.out'}});
+        if(heroReveal){
+          heroTl.from(heroReveal,{opacity:0,y:28,duration:.9});
+        }
+        sceneEls.forEach((scene,index)=>{
+          const copy=scene.querySelector('.scene-copy');
+          const media=scene.querySelector('.scene-media, .scene-media-daylook');
+          const reveals=scene.querySelectorAll('.reveal');
+          const mediaAsset=scene.querySelector('.scene-shot, .daylook-shell');
+          const isStyleDNA=scene.getAttribute('data-scene')==='style-dna';
+          const revealDuration=isStyleDNA ? 1.15 : .85;
+          const revealEase=isStyleDNA ? 'power2.out' : 'power3.out';
+          const parallaxAmount=isStyleDNA ? 6 : 10;
+          if(reveals.length){
+            gsap.from(reveals,{
+              opacity:0,
+              y:isStyleDNA ? 36 : 44,
+              duration:revealDuration,
+              ease:revealEase,
+              stagger:.1,
+              scrollTrigger:{
+                trigger:scene,
+                start:'top 72%',
+                once:true
+              }
+            });
+          }
+          if(mediaAsset){
+            gsap.fromTo(mediaAsset,{y:-parallaxAmount},{y:parallaxAmount, ease:'none', scrollTrigger:{
+              trigger:scene,
+              start:'top bottom',
+              end:'bottom top',
+              scrub:isStyleDNA ? 1.7 : 1.15
+            }});
+          } else if(media){
+            gsap.fromTo(media,{y:-parallaxAmount},{y:parallaxAmount, ease:'none', scrollTrigger:{
+              trigger:scene,
+              start:'top bottom',
+              end:'bottom top',
+              scrub:isStyleDNA ? 1.7 : 1.15
+            }});
+          }
+          if(copy && !copy.classList.contains('reveal')){
+            gsap.from(copy,{opacity:0,y:40,duration:revealDuration,ease:revealEase,scrollTrigger:{trigger:scene,start:'top 72%',once:true}});
+          }
+        });
+        reducedMotion.addEventListener ? reducedMotion.addEventListener('change',event=>{
+          if(event.matches)resetForReducedMotion();
+        }) : reducedMotion.addListener(event=>{
+          if(event.matches)resetForReducedMotion();
         });
       })();
     </script>

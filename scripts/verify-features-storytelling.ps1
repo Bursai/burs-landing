@@ -34,7 +34,11 @@ $requiredMarkers = @(
   'class="feature-atlas"',
   'class="pricing-panel"',
   'gsap.min.js',
-  'ScrollTrigger.min.js'
+  'ScrollTrigger.min.js',
+  'gsap.registerPlugin(ScrollTrigger)',
+  'document.querySelectorAll(''[data-scene]'')',
+  'prefers-reduced-motion',
+  'class="reveal"'
 )
 
 $requiredMarkers += @(
