@@ -45,6 +45,7 @@ $requiredMarkers += @(
   'class="scene-inner"',
   'class="scene-shot"',
   'class="scene-media-daylook"',
+  'act-ii-outfit-of-day-screen.jpg',
   'class="atlas-grid"',
   '@media(max-width:1024px)',
   '@media(max-width:640px)'

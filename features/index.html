@@ -105,6 +105,7 @@
       .scene-points li::before{content:"";width:12px;height:7px;border-left:1.5px solid var(--gold);border-bottom:1.5px solid var(--gold);transform:rotate(-45deg) translateY(4px);flex-shrink:0;}
       .scene-media{min-height:560px;border:1px solid var(--border);border-radius:8px;background:linear-gradient(160deg,rgba(237,232,223,.95),rgba(245,240,232,.76));position:relative;overflow:hidden;display:grid;place-items:center;padding:28px;box-shadow:0 24px 64px rgba(28,25,23,.06);}
       .scene-shot{width:min(100%,440px);height:auto;aspect-ratio:1320/2868;object-fit:cover;display:block;border-radius:30px;background:var(--surf);box-shadow:0 36px 80px rgba(28,25,23,.16);}
+      .scene-shot-wide{width:min(100%,560px);aspect-ratio:1320/1016;border-radius:22px;}
       .scene-media-daylook{padding:30px;min-height:560px;border:1px solid var(--border);border-radius:8px;background:linear-gradient(160deg,rgba(237,232,223,.98),rgba(245,240,232,.86));position:relative;overflow:hidden;display:grid;place-items:center;box-shadow:0 24px 64px rgba(28,25,23,.06);}
       .daylook-shell{width:min(100%,440px);border:1px solid rgba(201,168,108,.32);border-radius:30px;background:linear-gradient(180deg,rgba(251,248,241,.98),rgba(237,230,216,.98));padding:24px;box-shadow:0 36px 80px rgba(28,25,23,.12);display:grid;gap:16px;}
       .daylook-head{display:flex;justify-content:space-between;gap:16px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);}
@@ -175,6 +176,7 @@
         .feature-scene:nth-of-type(even) .scene-copy,.feature-scene:nth-of-type(even) .scene-media{order:initial;}
         .scene-media,.scene-media-daylook{min-height:auto;}
         .scene-shot,.daylook-shell{width:min(100%,460px);}
+        .scene-shot-wide{width:min(100%,680px);}
         .atlas-grid{grid-template-columns:repeat(2,minmax(0,1fr));}
         .pricing-panel{max-width:620px;}
       }
@@ -193,6 +195,7 @@
         .scene-copy h2,.pricing h2,.atlas-inner h2{font-size:clamp(36px,11vw,56px);}
         .scene-media,.scene-media-daylook{padding:16px;}
         .scene-shot,.daylook-shell{width:min(100%,320px);border-radius:26px;}
+        .scene-shot-wide{width:100%;border-radius:20px;}
         .scene-media{min-height:auto;}
         .atlas-grid{grid-template-columns:1fr;}
         .billing-row{gap:10px;}
@@ -276,21 +279,8 @@
               <li>One clear look instead of browsing</li>
             </ul>
           </div>
-          <div class="scene-media-daylook" role="img" aria-label="BURS outfit of the day visual showing morning weather, calendar cues, and one recommended outfit">
-            <div class="reveal">
-            <div class="daylook-shell">
-              <div class="daylook-head">
-                <span>08:10</span>
-                <span>Cloudy &middot; 10&deg;C</span>
-              </div>
-              <div class="daylook-title">Today's look</div>
-              <div class="daylook-event">Client lunch &middot; 12:30</div>
-              <div class="daylook-grid">
-                <span></span><span></span><span></span><span></span>
-              </div>
-              <div class="daylook-cta">Wear this</div>
-            </div>
-            </div>
+          <div class="scene-media-daylook">
+            <img src="/assets/act-ii-outfit-of-day-screen.jpg" alt="BURS outfit of the day screen showing a casual look, weather context, and Wear today action" class="scene-shot scene-shot-wide reveal" width="1320" height="1016" loading="lazy" decoding="async" />
           </div>
         </div>
       </section>
