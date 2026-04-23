@@ -65,4 +65,21 @@ if ($sceneCount -ne 5) {
   exit 1
 }
 
+$planViewCount = ([regex]::Matches($html, 'data-plan-view(?=[\s=>])')).Count
+if ($planViewCount -ne 1) {
+  Write-Error "PLAN_VIEW_COUNT_FAIL expected=1 actual=$planViewCount"
+  exit 1
+}
+
+$atlasCardCount = ([regex]::Matches($html, 'class="atlas-card"')).Count
+if ($atlasCardCount -lt 5) {
+  Write-Error "ATLAS_CARD_COUNT_FAIL expected>=5 actual=$atlasCardCount"
+  exit 1
+}
+
+if ($html -notmatch 'Save 37% yearly') {
+  Write-Error "MISSING_MARKER Save 37% yearly"
+  exit 1
+}
+
 Write-Output "PASS features story structure markers found"

@@ -195,6 +195,9 @@
         .scene-shot,.daylook-shell{width:min(100%,320px);border-radius:26px;}
         .scene-media{min-height:auto;}
         .atlas-grid{grid-template-columns:1fr;}
+        .billing-row{gap:10px;}
+        .billing-toggle{min-width:0;width:100%;}
+        .billing-discount{max-width:100%;}
         .price-card{padding:42px 26px;}
         .price-card[data-plan-view]{min-height:auto;}
         .price-amount{font-size:46px;}
@@ -376,7 +379,7 @@
               <div class="price-card premium" data-plan-view aria-live="polite">
                 <div class="price-tag" data-plan-tag>Annual</div>
                 <div class="price-amount"><span data-plan-price data-price="year">899 kr</span><span class="price-per" data-plan-per>/year</span></div>
-                <div class="price-savings" data-plan-savings>Save 37% with annual billing</div>
+                <div class="price-savings" data-plan-savings>Save 37% yearly</div>
                 <div class="price-alt" data-plan-alt>The full BURS plan, locked in for the year.</div>
                 <div class="trial-pill">3 days free trial included</div>
                 <ul class="price-features">
@@ -463,7 +466,7 @@
           const ctaEl=root.querySelector('[data-plan-cta]');
           if(!toggle||!card||buttons.length===0||!priceEl||!perEl||!tagEl||!savingsEl||!altEl||!ctaEl)return;
           const plans={
-            year:{tag:'Annual',priceKey:'year',per:'/year',savings:'Save 37% with annual billing',alt:'The full BURS plan, locked in for the year.',cta:'Start Free Trial →',premium:true},
+            year:{tag:'Annual',priceKey:'year',per:'/year',savings:'Save 37% yearly',alt:'The full BURS plan, locked in for the year.',cta:'Start Free Trial →',premium:true},
             month:{tag:'Monthly',priceKey:'month',per:'/month',savings:'Full access with flexible monthly billing',alt:'Cancel anytime.',cta:'Get BURS →',premium:false}
           };
           let currentMode=root.getAttribute('data-billing')||'year';
