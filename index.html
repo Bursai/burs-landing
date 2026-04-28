@@ -559,45 +559,101 @@
       .beam-2{position:absolute;top:50%;left:50%;width:400px;height:400px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(184,160,120,.22) 0%,transparent 65%);filter:blur(40px);z-index:1;pointer-events:none;animation:_pulse 4s ease-in-out infinite;}
       @keyframes _pulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}}
 
-      /* Titanium iPhone frame */
+      /* Titanium iPhone frame — realistic Pro */
       .stage-phone{
-        position:absolute;inset:0;border-radius:48px;overflow:hidden;background:#08070a;z-index:2;
+        position:absolute;inset:0;border-radius:54px;overflow:hidden;
+        background:
+          /* very thin chassis ring inside the radius */
+          linear-gradient(135deg,#3a3530 0%,#1a1715 28%,#272320 50%,#1a1715 75%,#3a3530 100%);
+        z-index:2;
         box-shadow:
-          0 70px 160px -24px rgba(28,25,23,.32),
-          0 30px 60px -16px rgba(28,25,23,.18),
-          0 0 0 1px rgba(28,25,23,.4),
-          0 0 0 2px rgba(180,168,150,.4),
-          0 0 0 4px rgba(28,25,23,.6),
-          0 0 0 5px rgba(220,210,190,.28),
+          /* ambient + contact drop */
+          0 90px 160px -30px rgba(0,0,0,.55),
+          0 40px 80px -24px rgba(0,0,0,.35),
+          0 6px 16px -8px rgba(0,0,0,.4),
+          /* outer titanium ring */
+          0 0 0 1px rgba(0,0,0,.7),
+          0 0 0 2px rgba(176,162,140,.5),
+          0 0 0 3px rgba(58,52,46,.85),
+          0 0 0 4px rgba(28,25,23,.7),
+          0 0 0 5px rgba(210,196,170,.18),
+          /* inner highlight ring (glass edge) */
           inset 0 0 0 1px rgba(255,255,255,.08),
-          inset 0 1px 0 0 rgba(255,255,255,.18);
+          inset 0 2px 0 0 rgba(255,255,255,.18),
+          inset 0 -2px 0 0 rgba(0,0,0,.4);
       }
+      /* Inner chassis bezel (the black band visible between titanium and screen) */
       .stage-phone::before{
-        content:"";position:absolute;top:11px;left:50%;transform:translateX(-50%);
-        width:104px;height:28px;background:#040305;border-radius:99px;z-index:30;
-        box-shadow:inset 0 0 0 .5px rgba(255,255,255,.06),inset 0 -1px 2px rgba(255,255,255,.04);
-        animation:_islandbreathe 5s ease-in-out infinite;
+        content:"";position:absolute;inset:7px;
+        border-radius:47px;background:#040303;z-index:1;
+        box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
       }
-      @keyframes _islandbreathe{0%,100%{width:104px;}50%{width:108px;}}
-      .stage-phone::after{
-        content:"";position:absolute;top:21px;right:36px;
-        width:8px;height:8px;border-radius:50%;
-        background:radial-gradient(circle at 35% 35%,#3a3a48 0%,#0a0a0d 60%);z-index:31;
-        box-shadow:inset 0 0 0 .5px rgba(255,255,255,.1);
+      /* Dynamic Island — deeper, more dimensional */
+      .dynamic-island{
+        position:absolute;top:14px;left:50%;transform:translateX(-50%);
+        width:118px;height:34px;border-radius:99px;z-index:30;
+        background:radial-gradient(120% 100% at 50% 100%,#0a0a0c 0%,#020203 100%);
+        box-shadow:
+          inset 0 0 0 .5px rgba(255,255,255,.04),
+          inset 0 -1px 2px rgba(255,255,255,.03),
+          inset 0 1px 1px rgba(0,0,0,.8),
+          0 1px 2px rgba(255,255,255,.04);
+        animation:_islandbreathe 6s ease-in-out infinite;
       }
-      .stage-phone-wrap::before{content:"";position:absolute;left:-3px;top:130px;width:3px;height:30px;background:linear-gradient(90deg,#9a8e76,#d4c9b0,#9a8e76);border-radius:2px 0 0 2px;z-index:1;}
-      .stage-phone-wrap::after{content:"";position:absolute;right:-3px;top:160px;width:3px;height:60px;background:linear-gradient(90deg,#9a8e76,#d4c9b0,#9a8e76);border-radius:0 2px 2px 0;z-index:1;}
+      .dynamic-island::after{
+        /* camera eye */
+        content:"";position:absolute;top:50%;right:14px;transform:translateY(-50%);
+        width:9px;height:9px;border-radius:50%;
+        background:radial-gradient(circle at 35% 35%,#1a1c24 0%,#040406 65%);
+        box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08),inset 0 0 3px rgba(0,150,255,.04);
+      }
+      .dynamic-island::before{
+        /* tiny sensor */
+        content:"";position:absolute;top:50%;left:14px;transform:translateY(-50%);
+        width:4px;height:4px;border-radius:50%;
+        background:radial-gradient(circle at 30% 30%,#13151c 0%,#020204 70%);
+      }
+      @keyframes _islandbreathe{0%,100%{width:118px;}50%{width:124px;}}
 
-      .screen-stack{position:absolute;inset:0;border-radius:40px;overflow:hidden;transform-style:preserve-3d;}
+      /* Side buttons — left: mute/action + vol up + vol down. right: power. */
+      .phone-btn{
+        position:absolute;border-radius:1.5px;z-index:1;
+        background:linear-gradient(90deg,#878072 0%,#c9bea4 35%,#e9dfc5 50%,#c9bea4 65%,#878072 100%);
+        box-shadow:0 0 0 .5px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.4);
+      }
+      .phone-btn.left{left:-2.5px;}
+      .phone-btn.right{right:-2.5px;}
+      .phone-btn.b-action{top:96px;width:2.5px;height:30px;}
+      .phone-btn.b-volup{top:140px;width:2.5px;height:48px;}
+      .phone-btn.b-voldown{top:200px;width:2.5px;height:48px;}
+      .phone-btn.b-power{top:160px;width:2.5px;height:80px;}
+
+      .screen-stack{position:absolute;inset:7px;border-radius:47px;overflow:hidden;transform-style:preserve-3d;background:#040303;z-index:2;}
       .screen-stack .screen{
         position:absolute;inset:0;width:100%;height:100%;
         opacity:0;transform:scale(1.05);filter:blur(8px);
         will-change:opacity,transform,filter;
-        display:flex;flex-direction:column;padding:48px 20px 26px;
-        color:#F5F0E8;font-family:"Playfair Display",serif;
+        background:#F5F0E8;
       }
       .screen-stack .screen.active{opacity:1;transform:scale(1);filter:blur(0);}
-      .screen-stack::after{content:"";position:absolute;bottom:7px;left:50%;transform:translateX(-50%);width:108px;height:4px;border-radius:99px;background:rgba(245,240,232,.3);z-index:25;}
+      .screen-stack .screen-img{
+        position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+        display:block;user-select:none;-webkit-user-drag:none;pointer-events:none;
+      }
+      /* Home indicator omitted — real screenshots include their own bottom UI */
+
+      /* Glossy glass glare across the screen — fixed inside the chassis */
+      .phone-glare{
+        position:absolute;inset:7px;border-radius:47px;pointer-events:none;z-index:6;
+        background:
+          /* top inner highlight */
+          linear-gradient(180deg,rgba(255,255,255,.06) 0%,transparent 14%),
+          /* corner shine */
+          radial-gradient(60% 60% at 18% 12%,rgba(255,255,255,.14),transparent 60%),
+          /* sweeping reflection */
+          linear-gradient(115deg,transparent 35%,rgba(255,255,255,.05) 48%,rgba(255,255,255,.09) 52%,transparent 65%);
+        mix-blend-mode:screen;opacity:.7;
+      }
 
       /* Mock-screen UI shared bits */
       .ms-time{position:absolute;top:14px;left:30px;font-size:12px;font-weight:600;color:#fff;z-index:5;letter-spacing:-.2px;}
@@ -869,17 +925,41 @@
       .trip-frame .trip-meta p{font-size:13px;line-height:1.5;color:rgba(245,240,232,.7);max-width:30ch;}
       /* Mini phone inside frame */
       .mini-phone{
-        position:absolute;z-index:3;width:170px;height:348px;
-        border-radius:30px;background:#08070a;overflow:hidden;
-        box-shadow:0 40px 80px -20px rgba(0,0,0,.6),0 0 0 1px rgba(28,25,23,.4),0 0 0 2px rgba(180,168,150,.32),0 0 0 3px rgba(28,25,23,.6);
+        position:absolute;z-index:3;width:180px;height:368px;
+        border-radius:32px;overflow:hidden;
+        background:linear-gradient(135deg,#3a3530 0%,#1a1715 30%,#272320 55%,#1a1715 80%,#3a3530 100%);
+        box-shadow:
+          0 50px 100px -22px rgba(0,0,0,.7),
+          0 18px 38px -14px rgba(0,0,0,.45),
+          0 0 0 1px rgba(0,0,0,.6),
+          0 0 0 2px rgba(176,162,140,.45),
+          0 0 0 3px rgba(28,25,23,.7),
+          0 0 0 4px rgba(210,196,170,.16),
+          inset 0 0 0 1px rgba(255,255,255,.06),
+          inset 0 1px 0 rgba(255,255,255,.18);
         transform:rotate(-6deg);will-change:transform;
       }
-      .mini-phone::before{content:"";position:absolute;top:7px;left:50%;transform:translateX(-50%);width:64px;height:18px;background:#040305;border-radius:99px;z-index:5;}
-      .mini-phone .scrn{position:absolute;inset:0;border-radius:24px;overflow:hidden;display:flex;flex-direction:column;padding:32px 12px 16px;color:#F5F0E8;font-family:"Playfair Display",serif;}
-      .mini-phone .scrn .mtime{position:absolute;top:9px;left:18px;font-size:8.5px;font-weight:600;color:#fff;letter-spacing:-.2px;font-family:"DM Sans",sans-serif;}
-      .mini-phone .scrn .mhead{font-size:9px;letter-spacing:2.4px;text-transform:uppercase;color:rgba(245,240,232,.5);margin-bottom:6px;font-family:"DM Sans",sans-serif;}
-      .mini-phone .scrn .mh{font-family:"Playfair Display",serif;font-size:18px;font-weight:900;line-height:1.1;margin-bottom:10px;letter-spacing:0;color:#F5F0E8;}
-      .mini-phone .scrn .mh em{font-style:italic;font-weight:400;color:rgba(245,240,232,.55);}
+      .mini-phone::before{
+        /* Dynamic Island */
+        content:"";position:absolute;top:9px;left:50%;transform:translateX(-50%);
+        width:70px;height:20px;border-radius:99px;
+        background:radial-gradient(120% 100% at 50% 100%,#0a0a0c 0%,#020203 100%);
+        box-shadow:inset 0 0 0 .5px rgba(255,255,255,.06),inset 0 1px 1px rgba(0,0,0,.8);
+        z-index:5;
+      }
+      .mini-phone::after{
+        /* glass glare */
+        content:"";position:absolute;inset:5px;border-radius:28px;pointer-events:none;z-index:6;
+        background:
+          linear-gradient(180deg,rgba(255,255,255,.06) 0%,transparent 14%),
+          radial-gradient(50% 50% at 18% 14%,rgba(255,255,255,.13),transparent 60%);
+        mix-blend-mode:screen;opacity:.7;
+      }
+      .mini-phone .scrn{position:absolute;inset:5px;border-radius:28px;overflow:hidden;background:#040303;z-index:2;}
+      .mini-phone .mini-img{
+        position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+        display:block;user-select:none;-webkit-user-drag:none;pointer-events:none;
+      }
 
       .trip-frame.t-morning{background:linear-gradient(180deg,#3a2618 0%,#0a0604 100%);}
       .trip-frame.t-morning .trip-bg{background-image:url("https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=85&auto=format&fit=crop");opacity:.55;mix-blend-mode:luminosity;}
@@ -1476,70 +1556,29 @@
             <div class="beam-2" aria-hidden="true"></div>
             <div class="stage-phone-wrap" role="img" aria-label="An iPhone showing the BURS app — wardrobe scanner, outfit of the day, AI stylist chat, week planner, and travel capsule builder">
               <div class="stage-phone" aria-hidden="true">
+                <span class="phone-btn left b-action"></span>
+                <span class="phone-btn left b-volup"></span>
+                <span class="phone-btn left b-voldown"></span>
+                <span class="phone-btn right b-power"></span>
+                <div class="dynamic-island"></div>
                 <div class="screen-stack">
                   <div class="screen active" data-i="0">
-                    <div class="ms-time">9:41</div><div class="ms-icons"><span class="s"></span><span class="i"></span></div>
-                    <div class="ms-eye">Wardrobe</div>
-                    <div class="ms-h">Your <br/><em>closet.</em></div>
-                    <div class="ms-count"><span>Catalogued</span><b>124 pieces</b></div>
-                    <div class="ms-grid">
-                      <div class="ms-tile t1"></div><div class="ms-tile t2"></div><div class="ms-tile t3"></div>
-                      <div class="ms-tile t4"></div><div class="ms-tile t5"></div><div class="ms-tile t6"></div>
-                      <div class="ms-tile t7"></div><div class="ms-tile t8"></div><div class="ms-tile t9"></div>
-                    </div>
+                    <img src="/assets/act-i-wardrobe-screen.jpeg" alt="" class="screen-img" loading="eager" decoding="async" />
                   </div>
                   <div class="screen" data-i="1">
-                    <div class="ms-time">9:41</div><div class="ms-icons"><span class="s"></span><span class="i"></span></div>
-                    <div class="ms-eye">Friday · 14°C · Clear</div>
-                    <div class="ms-h">Today's <br/><em>look.</em></div>
-                    <div class="ms-card">
-                      <div class="ms-card-h">Quietly sharp.</div>
-                      <div class="ms-card-sub">For your 7pm dinner</div>
-                      <div class="ms-look">
-                        <div class="ms-look-tag"><span class="t">Navy &amp; camel</span><span class="v">Confidence +12%</span></div>
-                      </div>
-                      <div class="ms-pieces"><div class="p">Blazer</div><div class="p">Linen</div><div class="p">Wool</div></div>
-                    </div>
+                    <img src="/assets/act-ii-style-dna-screen.jpeg" alt="" class="screen-img" loading="lazy" decoding="async" />
                   </div>
                   <div class="screen" data-i="2">
-                    <div class="ms-time">9:41</div><div class="ms-icons"><span class="s"></span><span class="i"></span></div>
-                    <div class="ms-stylist-row"><div class="ms-avatar"></div><div class="info"><div class="name">AI Stylist</div><div class="stat">● Online</div></div></div>
-                    <div class="ms-h">Refine <br/><em>the look.</em></div>
-                    <div class="ms-chat">
-                      <div class="ms-bubble bot">Want me to swap the layer for something warmer?</div>
-                      <div class="ms-bubble me">Yes, something softer.</div>
-                      <div class="ms-bubble bot">Try the camel cardigan — it lifts the palette.</div>
-                      <div class="ms-input">Ask the stylist…</div>
-                    </div>
+                    <img src="/assets/act-iii-stylist-screen.jpeg" alt="" class="screen-img" loading="lazy" decoding="async" />
                   </div>
                   <div class="screen" data-i="3">
-                    <div class="ms-time">9:41</div><div class="ms-icons"><span class="s"></span><span class="i"></span></div>
-                    <div class="ms-eye">Calendar</div>
-                    <div class="ms-h">Plan the <br/><em>week.</em></div>
-                    <div class="ms-weekhead"><div class="w">This week</div><div class="n">5 events</div></div>
-                    <div class="ms-week">
-                      <div class="ms-day now"><div class="d">Mon</div><div class="e">Investor pitch<small>10:00 · Office</small></div><div class="o"></div></div>
-                      <div class="ms-day"><div class="d">Tue</div><div class="e">Studio session<small>All day</small></div><div class="o"></div></div>
-                      <div class="ms-day"><div class="d">Wed</div><div class="e">Client calls<small>Remote</small></div><div class="o"></div></div>
-                      <div class="ms-day"><div class="d">Thu</div><div class="e">Dinner · Nobu<small>19:00 · Mayfair</small></div><div class="o"></div></div>
-                      <div class="ms-day"><div class="d">Fri</div><div class="e">Off-site<small>Cotswolds</small></div><div class="o"></div></div>
-                    </div>
+                    <img src="/assets/act-iv-week-screen.jpeg" alt="" class="screen-img" loading="lazy" decoding="async" />
                   </div>
                   <div class="screen" data-i="4">
-                    <div class="ms-time">9:41</div><div class="ms-icons"><span class="s"></span><span class="i"></span></div>
-                    <div class="ms-eye">Travel Capsule</div>
-                    <div class="ms-h">Pack <br/><em>light.</em></div>
-                    <div class="ms-trip"><div class="l">Tokyo</div><div class="d">10 days · Apr</div></div>
-                    <div class="ms-cap">
-                      <div></div><div></div><div></div><div></div><div></div><div></div>
-                    </div>
-                    <div class="ms-stat">
-                      <div><div class="v">6</div><div class="l">Pieces</div></div>
-                      <div><div class="v">24</div><div class="l">Outfits</div></div>
-                      <div><div class="v">1</div><div class="l">Carry-on</div></div>
-                    </div>
+                    <img src="/assets/act-v-travel-screen.jpeg" alt="" class="screen-img" loading="lazy" decoding="async" />
                   </div>
                 </div>
+                <div class="phone-glare" aria-hidden="true"></div>
               </div>
               <div class="chip-layer" aria-hidden="true">
                 <div class="chip" data-act="1">124 pieces</div>
@@ -1660,16 +1699,12 @@
             <span class="trip-tag">Morning · 7:42</span>
             <div class="mini-phone" aria-hidden="true">
               <div class="scrn">
-                <div class="mtime">9:41</div>
-                <div class="mhead">Friday · 14° · Clear</div>
-                <div class="mh">Today's <br/><em>look.</em></div>
-                <div class="look"></div>
-                <div class="pieces"><div>Blazer</div><div>Linen</div><div>Wool</div></div>
+                <img src="/assets/act-iii-stylist-screen.jpeg" alt="" class="mini-img" loading="lazy" decoding="async" />
               </div>
             </div>
             <div class="trip-meta">
               <h3>Before <em>coffee.</em></h3>
-              <p>One decision. The outfit reads the weather, the calendar, the room you're walking into.</p>
+              <p>One decision. The stylist reads the weather, the calendar, the room you're walking into.</p>
             </div>
           </div>
           <div class="trip-frame t-day">
@@ -1677,12 +1712,7 @@
             <span class="trip-tag">Day · 13:15</span>
             <div class="mini-phone" aria-hidden="true">
               <div class="scrn">
-                <div class="mtime">9:41</div>
-                <div class="mhead">Wardrobe</div>
-                <div class="mh">Your <br/><em>closet.</em></div>
-                <div class="grid">
-                  <div></div><div></div><div></div><div></div><div></div><div></div>
-                </div>
+                <img src="/assets/act-i-wardrobe-screen.jpeg" alt="" class="mini-img" loading="lazy" decoding="async" />
               </div>
             </div>
             <div class="trip-meta">
@@ -1695,16 +1725,7 @@
             <span class="trip-tag">Evening · 19:30</span>
             <div class="mini-phone" aria-hidden="true">
               <div class="scrn">
-                <div class="mtime">9:41</div>
-                <div class="mhead">This week</div>
-                <div class="mh">Plan the <br/><em>week.</em></div>
-                <div class="week">
-                  <div class="now"><b>Mon</b>Pitch · 10:00</div>
-                  <div><b>Tue</b>Studio</div>
-                  <div><b>Wed</b>Calls</div>
-                  <div><b>Thu</b>Nobu · 19:00</div>
-                  <div><b>Fri</b>Off-site</div>
-                </div>
+                <img src="/assets/act-iv-week-screen.jpeg" alt="" class="mini-img" loading="lazy" decoding="async" />
               </div>
             </div>
             <div class="trip-meta">
