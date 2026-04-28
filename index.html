@@ -948,8 +948,14 @@
         display:block;user-select:none;-webkit-user-drag:none;pointer-events:none;
       }
 
-      .trip-frame.t-morning{background:linear-gradient(180deg,#3a2618 0%,#0a0604 100%);}
-      .trip-frame.t-morning .trip-bg{background-image:url("https://images.unsplash.com/photo-1483985988355-763728e1935b?w=1400&q=85&auto=format&fit=crop");opacity:.55;mix-blend-mode:luminosity;}
+      /* Morning — cream/neutral closet detail; matches the cream BG + neutral
+         garments inside the AI Stylist screenshot. */
+      .trip-frame.t-morning{background:linear-gradient(180deg,#5d4d36 0%,#1a140d 100%);}
+      .trip-frame.t-morning .trip-bg{
+        background-image:url("https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=1400&q=85&auto=format&fit=crop");
+        opacity:.62;
+        filter:saturate(.7) sepia(.18) contrast(.95);
+      }
       .trip-frame.t-morning .mini-phone{right:-20px;bottom:120px;}
       .trip-frame.t-morning .mini-phone .scrn{background:linear-gradient(180deg,#3a261a 0%,#0a0604 100%);}
       .trip-frame.t-morning .mini-phone .scrn .look{flex:1;border-radius:8px;background:linear-gradient(165deg,#7a5e3a 0%,#1a140d 100%);position:relative;overflow:hidden;margin:6px 0;}
@@ -957,8 +963,14 @@
       .trip-frame.t-morning .mini-phone .scrn .pieces{display:flex;gap:4px;}
       .trip-frame.t-morning .mini-phone .scrn .pieces div{flex:1;font-size:7px;letter-spacing:.8px;text-transform:uppercase;color:rgba(245,240,232,.55);text-align:center;padding:4px 0;border:1px solid rgba(245,240,232,.1);border-radius:4px;font-family:"DM Sans",sans-serif;}
 
-      .trip-frame.t-day{background:linear-gradient(180deg,#16263a 0%,#04080c 100%);}
-      .trip-frame.t-day .trip-bg{background-image:url("https://images.unsplash.com/photo-1469334031218-e382a71b716b?w=1400&q=85&auto=format&fit=crop");opacity:.42;mix-blend-mode:luminosity;}
+      /* Day — organized closet rack with neutral garments; echoes the
+         Wardrobe screenshot's grid of floral / navy / taupe shirts. */
+      .trip-frame.t-day{background:linear-gradient(180deg,#7a6a52 0%,#1c1612 100%);}
+      .trip-frame.t-day .trip-bg{
+        background-image:url("https://images.unsplash.com/photo-1542060748-10c28b62716f?w=1400&q=85&auto=format&fit=crop");
+        opacity:.62;
+        filter:saturate(.7) sepia(.18) contrast(.95);
+      }
       .trip-frame.t-day .mini-phone{left:-20px;top:120px;transform:rotate(5deg);}
       .trip-frame.t-day .mini-phone .scrn{background:linear-gradient(180deg,#16263a 0%,#04080c 100%);}
       .trip-frame.t-day .mini-phone .scrn .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;flex:1;}
