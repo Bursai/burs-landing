@@ -535,7 +535,10 @@
         position:sticky;top:0;height:100vh;
         display:flex;align-items:center;justify-content:center;
         background:radial-gradient(120% 100% at 50% 50%,var(--bg) 0%,var(--surf) 70%,#E5DFD5 100%);
-        overflow:hidden;align-self:start;perspective:1200px;
+        align-self:start;perspective:1200px;
+        /* No overflow:hidden — chips need to escape past the column edge.
+           The decorative grid mask & radial circle below are bounded by
+           their own backgrounds, so they stay contained anyway. */
       }
       .stage-phone-col::before{
         content:"";position:absolute;inset:0;
@@ -549,7 +552,7 @@
         width:560px;height:560px;border-radius:50%;border:1px solid rgba(28,25,23,.05);pointer-events:none;
       }
       .stage-phone-wrap{
-        position:relative;width:300px;height:614px;z-index:3;
+        position:relative;width:336px;height:728px;z-index:3;
         animation:_phonefloat 6.5s ease-in-out infinite;
         transform-style:preserve-3d;will-change:transform;
       }
@@ -561,74 +564,49 @@
 
       /* Titanium iPhone frame — realistic Pro */
       .stage-phone{
-        position:absolute;inset:0;border-radius:54px;overflow:hidden;
+        position:absolute;inset:0;border-radius:60px;overflow:hidden;
         background:
-          /* very thin chassis ring inside the radius */
           linear-gradient(135deg,#3a3530 0%,#1a1715 28%,#272320 50%,#1a1715 75%,#3a3530 100%);
         z-index:2;
         box-shadow:
-          /* ambient + contact drop */
           0 90px 160px -30px rgba(0,0,0,.55),
           0 40px 80px -24px rgba(0,0,0,.35),
           0 6px 16px -8px rgba(0,0,0,.4),
-          /* outer titanium ring */
           0 0 0 1px rgba(0,0,0,.7),
           0 0 0 2px rgba(176,162,140,.5),
           0 0 0 3px rgba(58,52,46,.85),
           0 0 0 4px rgba(28,25,23,.7),
           0 0 0 5px rgba(210,196,170,.18),
-          /* inner highlight ring (glass edge) */
           inset 0 0 0 1px rgba(255,255,255,.08),
           inset 0 2px 0 0 rgba(255,255,255,.18),
           inset 0 -2px 0 0 rgba(0,0,0,.4);
       }
-      /* Inner chassis bezel (the black band visible between titanium and screen) */
+      /* Inner chassis bezel — thin black band between titanium and screen */
       .stage-phone::before{
-        content:"";position:absolute;inset:7px;
-        border-radius:47px;background:#040303;z-index:1;
+        content:"";position:absolute;inset:6px;
+        border-radius:54px;background:#040303;z-index:1;
         box-shadow:inset 0 0 0 1px rgba(255,255,255,.04);
       }
-      /* Dynamic Island — deeper, more dimensional */
-      .dynamic-island{
-        position:absolute;top:14px;left:50%;transform:translateX(-50%);
-        width:118px;height:34px;border-radius:99px;z-index:30;
-        background:radial-gradient(120% 100% at 50% 100%,#0a0a0c 0%,#020203 100%);
-        box-shadow:
-          inset 0 0 0 .5px rgba(255,255,255,.04),
-          inset 0 -1px 2px rgba(255,255,255,.03),
-          inset 0 1px 1px rgba(0,0,0,.8),
-          0 1px 2px rgba(255,255,255,.04);
-        animation:_islandbreathe 6s ease-in-out infinite;
-      }
-      .dynamic-island::after{
-        /* camera eye */
-        content:"";position:absolute;top:50%;right:14px;transform:translateY(-50%);
-        width:9px;height:9px;border-radius:50%;
-        background:radial-gradient(circle at 35% 35%,#1a1c24 0%,#040406 65%);
-        box-shadow:inset 0 0 0 .5px rgba(255,255,255,.08),inset 0 0 3px rgba(0,150,255,.04);
-      }
-      .dynamic-island::before{
-        /* tiny sensor */
-        content:"";position:absolute;top:50%;left:14px;transform:translateY(-50%);
-        width:4px;height:4px;border-radius:50%;
-        background:radial-gradient(circle at 30% 30%,#13151c 0%,#020204 70%);
-      }
-      @keyframes _islandbreathe{0%,100%{width:118px;}50%{width:124px;}}
+      /* Dynamic Island is rendered INSIDE the screenshot itself, so we don't
+         add a CSS one (would double-up). Keep the element for backwards
+         compat but hidden. */
+      .dynamic-island{display:none;}
+      @keyframes _islandbreathe{0%,100%{transform:translateX(-50%) scaleX(1);}50%{transform:translateX(-50%) scaleX(1.04);}}
 
-      /* Side buttons — left: mute/action + vol up + vol down. right: power. */
+      /* Side buttons — sized & positioned for 336×728 Pro Max */
       .phone-btn{
         position:absolute;border-radius:1.5px;z-index:1;
         background:linear-gradient(90deg,#878072 0%,#c9bea4 35%,#e9dfc5 50%,#c9bea4 65%,#878072 100%);
-        box-shadow:0 0 0 .5px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.4);
+        box-shadow:0 0 0 .5px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.45);
       }
       .phone-btn.left{left:-2.5px;}
       .phone-btn.right{right:-2.5px;}
-      .phone-btn.b-action{top:96px;width:2.5px;height:30px;}
-      .phone-btn.b-volup{top:140px;width:2.5px;height:48px;}
-      .phone-btn.b-voldown{top:200px;width:2.5px;height:48px;}
-      .phone-btn.b-power{top:160px;width:2.5px;height:80px;}
+      .phone-btn.b-action{top:108px;width:2.5px;height:32px;}
+      .phone-btn.b-volup{top:158px;width:2.5px;height:54px;}
+      .phone-btn.b-voldown{top:226px;width:2.5px;height:54px;}
+      .phone-btn.b-power{top:178px;width:2.5px;height:90px;}
 
-      .screen-stack{position:absolute;inset:7px;border-radius:47px;overflow:hidden;transform-style:preserve-3d;background:#040303;z-index:2;}
+      .screen-stack{position:absolute;inset:6px;border-radius:54px;overflow:hidden;transform-style:preserve-3d;background:#040303;z-index:2;}
       .screen-stack .screen{
         position:absolute;inset:0;width:100%;height:100%;
         opacity:0;transform:scale(1.05);filter:blur(8px);
@@ -644,15 +622,12 @@
 
       /* Glossy glass glare across the screen — fixed inside the chassis */
       .phone-glare{
-        position:absolute;inset:7px;border-radius:47px;pointer-events:none;z-index:6;
+        position:absolute;inset:6px;border-radius:54px;pointer-events:none;z-index:6;
         background:
-          /* top inner highlight */
           linear-gradient(180deg,rgba(255,255,255,.06) 0%,transparent 14%),
-          /* corner shine */
-          radial-gradient(60% 60% at 18% 12%,rgba(255,255,255,.14),transparent 60%),
-          /* sweeping reflection */
-          linear-gradient(115deg,transparent 35%,rgba(255,255,255,.05) 48%,rgba(255,255,255,.09) 52%,transparent 65%);
-        mix-blend-mode:screen;opacity:.7;
+          radial-gradient(60% 60% at 18% 12%,rgba(255,255,255,.12),transparent 60%),
+          linear-gradient(115deg,transparent 38%,rgba(255,255,255,.04) 48%,rgba(255,255,255,.07) 52%,transparent 62%);
+        mix-blend-mode:screen;opacity:.65;
       }
 
       /* Mock-screen UI shared bits */
@@ -751,39 +726,51 @@
       .screen[data-i="4"] .ms-stat .v{font-family:"Playfair Display",serif;font-size:18px;font-weight:900;color:#F5F0E8;}
       .screen[data-i="4"] .ms-stat .l{font-size:8px;letter-spacing:1.4px;text-transform:uppercase;color:rgba(245,240,232,.5);}
 
-      /* Chips overlay */
-      .chip-layer{position:absolute;inset:0;pointer-events:none;perspective:1000px;transform-style:preserve-3d;z-index:10;}
+      /* Chips overlay — float around the phone in a balanced ring.
+         Phone is 336×728. Half-width=168, half-height=364. To clear the
+         silhouette by ~70px breathing room, |cx|≥240 and |cy|≥260 at
+         vertical extremes. Values match production's chip-layer rhythm. */
+      .chip-layer{position:absolute;inset:-100px;pointer-events:none;perspective:1000px;transform-style:preserve-3d;z-index:10;}
       .chip{
         position:absolute;left:50%;top:50%;
-        font-size:10px;letter-spacing:.3px;color:var(--ink);
-        background:rgba(245,240,232,.92);backdrop-filter:blur(10px);
-        padding:8px 14px;border-radius:99px;
-        border:1px solid var(--line);
+        font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink);
+        background:rgba(245,240,232,.78);
+        backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4);
+        padding:11px 18px;border-radius:999px;
+        border:1px solid rgba(28,25,23,.08);
         white-space:nowrap;font-weight:500;
-        box-shadow:0 12px 30px -16px rgba(28,25,23,.25);
+        box-shadow:0 12px 32px rgba(28,25,23,.10),inset 0 1px 0 rgba(255,255,255,.6);
         will-change:transform,opacity;
       }
-      .chip.square{border-radius:8px;font-family:"Playfair Display",serif;font-style:italic;font-size:12px;font-weight:400;}
-      .chip[data-act="1"]:nth-of-type(1){--cx:-220px;--cy:-180px;--rot:-6;}
-      .chip[data-act="1"]:nth-of-type(2){--cx:200px;--cy:-90px;--rot:4;}
-      .chip[data-act="1"]:nth-of-type(3){--cx:-260px;--cy:80px;--rot:-3;}
-      .chip[data-act="1"]:nth-of-type(4){--cx:230px;--cy:170px;--rot:5;}
-      .chip[data-act="2"]:nth-of-type(1){--cx:-240px;--cy:-100px;--rot:-4;}
-      .chip[data-act="2"]:nth-of-type(2){--cx:210px;--cy:-180px;--rot:5;}
-      .chip[data-act="2"]:nth-of-type(3){--cx:-200px;--cy:140px;--rot:-5;}
-      .chip[data-act="2"]:nth-of-type(4){--cx:240px;--cy:90px;--rot:3;}
-      .chip[data-act="3"]:nth-of-type(1){--cx:-220px;--cy:-160px;--rot:-3;}
-      .chip[data-act="3"]:nth-of-type(2){--cx:230px;--cy:-90px;--rot:6;}
-      .chip[data-act="3"]:nth-of-type(3){--cx:-260px;--cy:90px;--rot:-5;}
-      .chip[data-act="3"]:nth-of-type(4){--cx:200px;--cy:180px;--rot:4;}
-      .chip[data-act="4"]:nth-of-type(1){--cx:-200px;--cy:-180px;--rot:-5;}
-      .chip[data-act="4"]:nth-of-type(2){--cx:230px;--cy:-90px;--rot:4;}
-      .chip[data-act="4"]:nth-of-type(3){--cx:-260px;--cy:80px;--rot:-3;}
-      .chip[data-act="4"]:nth-of-type(4){--cx:210px;--cy:160px;--rot:5;}
-      .chip[data-act="5"]:nth-of-type(1){--cx:-240px;--cy:-100px;--rot:-4;}
-      .chip[data-act="5"]:nth-of-type(2){--cx:210px;--cy:-180px;--rot:5;}
-      .chip[data-act="5"]:nth-of-type(3){--cx:-200px;--cy:140px;--rot:-5;}
-      .chip[data-act="5"]:nth-of-type(4){--cx:240px;--cy:90px;--rot:3;}
+      .chip.square{border-radius:12px;padding:14px 20px;font-family:"Playfair Display",serif;font-style:italic;font-size:13px;letter-spacing:0;text-transform:none;font-weight:400;}
+      .chip[data-act="1"]{--rot:-2;}
+      .chip[data-act="2"]{--rot:1.5;}
+      .chip[data-act="3"]{--rot:-1.5;}
+      .chip[data-act="4"]{--rot:2;}
+      .chip[data-act="5"]{--rot:-1;}
+      /* Globally indexed positions — strictly OUTSIDE 336×728 silhouette.
+         Half-width=168 → |cx|≥240. Half-height=364 → |cy|≤260 (so chips
+         live alongside the phone, not past its top/bottom). */
+      .chip-layer>.chip:nth-child(1){--cx:-260px;--cy:-220px;}
+      .chip-layer>.chip:nth-child(2){--cx:240px;--cy:-130px;}
+      .chip-layer>.chip:nth-child(3){--cx:-245px;--cy:140px;}
+      .chip-layer>.chip:nth-child(4){--cx:235px;--cy:230px;}
+      .chip-layer>.chip:nth-child(5){--cx:-265px;--cy:-200px;}
+      .chip-layer>.chip:nth-child(6){--cx:250px;--cy:-80px;}
+      .chip-layer>.chip:nth-child(7){--cx:-255px;--cy:180px;}
+      .chip-layer>.chip:nth-child(8){--cx:245px;--cy:240px;}
+      .chip-layer>.chip:nth-child(9){--cx:-275px;--cy:-180px;}
+      .chip-layer>.chip:nth-child(10){--cx:250px;--cy:-100px;}
+      .chip-layer>.chip:nth-child(11){--cx:-260px;--cy:160px;}
+      .chip-layer>.chip:nth-child(12){--cx:235px;--cy:220px;}
+      .chip-layer>.chip:nth-child(13){--cx:-260px;--cy:-220px;}
+      .chip-layer>.chip:nth-child(14){--cx:235px;--cy:-110px;}
+      .chip-layer>.chip:nth-child(15){--cx:-250px;--cy:150px;}
+      .chip-layer>.chip:nth-child(16){--cx:240px;--cy:220px;}
+      .chip-layer>.chip:nth-child(17){--cx:-265px;--cy:-200px;}
+      .chip-layer>.chip:nth-child(18){--cx:240px;--cy:-220px;}
+      .chip-layer>.chip:nth-child(19){--cx:-255px;--cy:190px;}
+      .chip-layer>.chip:nth-child(20){--cx:245px;--cy:90px;}
 
       /* =====================================================================
          HORIZONTAL OUTFIT GALLERY — pinned, scroll-jacked
