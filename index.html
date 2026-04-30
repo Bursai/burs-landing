@@ -613,11 +613,11 @@
       .screen-stack{position:absolute;inset:6px;border-radius:54px;overflow:hidden;transform-style:preserve-3d;background:#040303;z-index:2;}
       .screen-stack .screen{
         position:absolute;inset:0;width:100%;height:100%;
-        opacity:0;transform:scale(1.05);filter:blur(8px);
-        will-change:opacity,transform,filter;
+        opacity:0;transform:scale(1.05);
+        will-change:opacity,transform;
         background:#F5F0E8;
       }
-      .screen-stack .screen.active{opacity:1;transform:scale(1);filter:blur(0);}
+      .screen-stack .screen.active{opacity:1;transform:scale(1);}
       .screen-stack .screen-img{
         position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
         display:block;user-select:none;-webkit-user-drag:none;pointer-events:none;
@@ -1136,7 +1136,48 @@
       .magazine-content .attrib::before{content:"";display:block;width:36px;height:1px;background:rgba(245,240,232,.85);}
 
       /* =====================================================================
-         PRICING — single premium plan, dramatic
+         JOURNAL
+         ===================================================================== */
+      .journal{
+        padding:120px 56px 140px;
+        background:var(--bg);
+        border-bottom:1px solid var(--border);
+      }
+      .journal-head{
+        max-width:1280px;margin:0 auto 64px;
+        display:grid;grid-template-columns:1.1fr .9fr;gap:56px;align-items:end;
+      }
+      .journal-head .eye{font-size:11px;letter-spacing:4.5px;text-transform:uppercase;color:var(--faint);margin-bottom:24px;}
+      .journal-head .eye::before{content:"";display:block;width:36px;height:1px;background:var(--ink);margin-bottom:18px;}
+      .journal-head h2{font-family:"Playfair Display",serif;font-weight:900;font-size:clamp(48px,5vw,92px);line-height:.95;letter-spacing:0;}
+      .journal-head h2 em{font-style:italic;font-weight:400;color:var(--gold-deep);}
+      .journal-head p{font-size:17px;line-height:1.7;color:var(--muted);max-width:42ch;}
+      .journal-link{display:inline-flex;align-items:center;gap:10px;margin-top:28px;font-size:11px;letter-spacing:2.6px;text-transform:uppercase;color:var(--ink);text-decoration:none;font-weight:700;}
+      .journal-link::after{content:"->";transition:transform .25s var(--easing);}
+      .journal-link:hover::after{transform:translateX(4px);}
+      .journal-grid{
+        max-width:1280px;margin:0 auto;
+        display:grid;grid-template-columns:1.2fr repeat(2,minmax(0,1fr));gap:24px;
+      }
+      .journal-card{
+        min-height:340px;position:relative;overflow:hidden;border-radius:8px;
+        color:#F5F0E8;text-decoration:none;background:var(--noir);
+        box-shadow:0 40px 100px -44px rgba(28,25,23,.35);
+        transition:transform .45s var(--easing),box-shadow .45s var(--easing);
+      }
+      .journal-card.featured{grid-row:span 2;min-height:704px;}
+      .journal-card:hover{transform:translateY(-6px);box-shadow:0 60px 130px -50px rgba(28,25,23,.45);}
+      .journal-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .7s var(--easing);}
+      .journal-card:hover img{transform:scale(1.04);}
+      .journal-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,11,8,.05) 0%,rgba(14,11,8,.34) 44%,rgba(14,11,8,.86) 100%);}
+      .journal-body{position:absolute;left:24px;right:24px;bottom:24px;z-index:1;}
+      .journal-kicker{display:inline-flex;margin-bottom:16px;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(245,240,232,.75);font-weight:700;}
+      .journal-card h3{font-family:"Playfair Display",serif;font-weight:900;font-style:italic;font-size:clamp(25px,2.4vw,42px);line-height:1.06;letter-spacing:0;margin-bottom:14px;}
+      .journal-card p{font-size:14.5px;line-height:1.6;color:rgba(245,240,232,.72);max-width:42ch;}
+      .journal-meta{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px;font-size:10px;letter-spacing:1.8px;text-transform:uppercase;color:rgba(245,240,232,.58);}
+
+      /* =====================================================================
+         PRICING - single premium plan
          ===================================================================== */
       #pricing{
         padding:160px 56px 180px;
@@ -1299,6 +1340,7 @@
          REVEAL UTILITY (GSAP-driven)
          ===================================================================== */
       .reveal{opacity:0;transform:translateY(40px);}
+      .motion-lite .reveal{opacity:1 !important;transform:none !important;}
       .reveal.d1{transition-delay:.05s;}
       .reveal.d2{transition-delay:.1s;}
       .reveal.d3{transition-delay:.15s;}
@@ -1342,6 +1384,10 @@
         .voices{padding:100px 28px 120px;}
         .voices-grid{grid-template-columns:1fr;}
         .magazine-content{padding:60px 28px;}
+        .journal{padding:100px 28px 120px;}
+        .journal-head{grid-template-columns:1fr;gap:24px;margin-bottom:48px;}
+        .journal-grid{grid-template-columns:1fr;}
+        .journal-card,.journal-card.featured{min-height:380px;grid-row:auto;}
         #pricing{padding:100px 28px 120px;}
         .price-card{padding:48px 32px;}
         .price-amount [data-price="year"]{font-size:64px;}
@@ -1371,7 +1417,7 @@
     </style>
   </head>
   <body>
-    <a href="#main-content" class="skip-link">Skip to main content</a>
+    <a href="#main-content" class="skip-link" data-native-skip>Skip to main content</a>
 
     <div id="_prog" aria-hidden="true"></div>
     <div id="_cur" aria-hidden="true"></div>
@@ -1385,7 +1431,7 @@
       <ul class="nav-links">
         <li><a href="#story">Story</a></li>
         <li><a href="#pricing">Pricing</a></li>
-        <li><a href="/blog">Blog</a></li>
+        <li><a href="#journal">Journal</a></li>
         <li><a href="#download">Download</a></li>
       </ul>
       <a href="/auth" class="nav-cta" data-price="cta"><span>Get BURS — 899 kr/year</span></a>
@@ -1398,13 +1444,13 @@
       <ul>
         <li><a href="#story">Story</a></li>
         <li><a href="#pricing">Pricing</a></li>
-        <li><a href="/blog">Blog</a></li>
+        <li><a href="#journal">Journal</a></li>
         <li><a href="#download">Download</a></li>
         <li><a href="/auth" class="mobile-cta" data-price="cta">Get BURS — 899 kr/year</a></li>
       </ul>
     </div>
 
-    <main id="main-content">
+    <main id="main-content" tabindex="-1">
       <!-- ============================================================
            HERO — cinematic open
            ============================================================ -->
@@ -1885,7 +1931,79 @@
       </section>
 
       <!-- ============================================================
-           PRICING — single Premium plan, dramatic
+           JOURNAL - blog entry points
+           ============================================================ -->
+      <section id="journal" class="journal" aria-labelledby="journal-title">
+        <div class="journal-head">
+          <div>
+            <div class="eye">- The BURS journal</div>
+            <h2 id="journal-title">Style, <em>decoded.</em></h2>
+          </div>
+          <div>
+            <p>Six field notes on building a wardrobe that works harder: AI styling, capsule planning, outfit feedback, and buying less without dressing less.</p>
+            <a class="journal-link" href="/blog">Read the full journal</a>
+          </div>
+        </div>
+        <div class="journal-grid">
+          <a class="journal-card featured reveal" href="/blog/smarter-wardrobe">
+            <img src="/assets/blog/smarter-wardrobe-card.webp" alt="Edited wardrobe pieces and a notebook arranged as a smarter wardrobe guide" width="720" height="420" loading="lazy" decoding="async" />
+            <div class="journal-body">
+              <span class="journal-kicker">Wardrobe guides</span>
+              <h3>How to build a smarter wardrobe</h3>
+              <p>A practical system for scanning, editing, and using the clothes you already own.</p>
+              <div class="journal-meta"><span>Jan 5, 2026</span><span>6 min read</span></div>
+            </div>
+          </a>
+          <a class="journal-card reveal d1" href="/blog/ai-styling">
+            <img src="/assets/blog/ai-styling-card.webp" alt="Wardrobe pairings and printed styling references laid out with analytical precision" width="720" height="420" loading="lazy" decoding="async" />
+            <div class="journal-body">
+              <span class="journal-kicker">AI research</span>
+              <h3>What AI styling gets right</h3>
+              <p>Why AI styling works best when it starts with constraints.</p>
+              <div class="journal-meta"><span>Jan 12</span><span>6 min</span></div>
+            </div>
+          </a>
+          <a class="journal-card reveal d2" href="/blog/capsule-wardrobe">
+            <img src="/assets/blog/capsule-wardrobe-card.webp" alt="Packed capsule wardrobe pieces arranged beside a structured travel case" width="720" height="420" loading="lazy" decoding="async" />
+            <div class="journal-body">
+              <span class="journal-kicker">Style tips</span>
+              <h3>The modern capsule wardrobe</h3>
+              <p>A capsule should be a flexible outfit engine, not a strict item count.</p>
+              <div class="journal-meta"><span>Jan 19</span><span>6 min</span></div>
+            </div>
+          </a>
+          <a class="journal-card reveal d1" href="/blog/wear-more-buy-less">
+            <img src="/assets/blog/wear-more-buy-less-card.webp" alt="Repair tools and worn garments arranged to suggest longer clothing use" width="720" height="420" loading="lazy" decoding="async" />
+            <div class="journal-body">
+              <span class="journal-kicker">Research</span>
+              <h3>Wear more. Buy less.</h3>
+              <p>A research brief on textile waste, clothing utilization, and better buying.</p>
+              <div class="journal-meta"><span>Jan 26</span><span>7 min</span></div>
+            </div>
+          </a>
+          <a class="journal-card reveal d2" href="/blog/outfit-planning">
+            <img src="/assets/blog/outfit-planning-card.webp" alt="A planned outfit grouping arranged beside a weekly planning cue" width="720" height="420" loading="lazy" decoding="async" />
+            <div class="journal-body">
+              <span class="journal-kicker">Wardrobe guides</span>
+              <h3>Outfit planning without overthinking</h3>
+              <p>A calm weekly routine for real meetings, weather, travel, and energy.</p>
+              <div class="journal-meta"><span>Feb 2</span><span>4 min</span></div>
+            </div>
+          </a>
+          <a class="journal-card reveal d3" href="/blog/style-feedback">
+            <img src="/assets/blog/style-feedback-card.webp" alt="A styling comparison crop showing one refined outfit decision" width="720" height="420" loading="lazy" decoding="async" />
+            <div class="journal-body">
+              <span class="journal-kicker">AI and tech</span>
+              <h3>Teaching your stylist what you like</h3>
+              <p>Small feedback loops turn an outfit generator into personal style memory.</p>
+              <div class="journal-meta"><span>Feb 9</span><span>5 min</span></div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- ============================================================
+           PRICING - single Premium plan, dramatic
            ============================================================ -->
       <section id="pricing">
         <div class="sec">
@@ -2045,7 +2163,7 @@
             else{el.textContent=bundle.hero;}
           });
         }
-        applyPrices(PRICES.SE);
+        applyPrices(PRICES.SEK);
         const ctrl=("AbortController" in window)?new AbortController():null;
         const timer=ctrl&&setTimeout(()=>ctrl.abort(),3000);
         fetch("https://ipapi.co/json/",{signal:ctrl&&ctrl.signal})
@@ -2063,31 +2181,32 @@
       (function(){
         const _c=document.getElementById("_cur"),_r=document.getElementById("_ring");
         if(!_c||!_r)return;
+        if(window.matchMedia("(hover:none),(pointer:coarse),(max-width:900px)").matches)return;
         let mx=0,my=0,rx=0,ry=0;
-        document.addEventListener("mousemove",e=>{mx=e.clientX;my=e.clientY;});
-        (function tick(){
-          _c.style.left=mx+"px";_c.style.top=my+"px";
-          rx+=(mx-rx)*.14;ry+=(my-ry)*.14;
-          _r.style.left=rx+"px";_r.style.top=ry+"px";
-          requestAnimationFrame(tick);
-        })();
-        document.querySelectorAll("a,button,.price-card,.stage-act,.faq-item,.gallery-card,.craft-card,.voice,.trip-frame").forEach(el=>{
-          el.addEventListener("mouseenter",()=>_r.classList.add("big"));
-          el.addEventListener("mouseleave",()=>_r.classList.remove("big"));
-        });
-        // Dark-section detection — invert cursor when over dark backgrounds
-        const darkSections=document.querySelectorAll(".stats-banner,.gallery,.craft,.magazine,#download,.price-card");
-        function checkDark(){
+        let needsDarkCheck=false;
+        const darkSectionsFast=document.querySelectorAll(".stats-banner,.gallery,.craft,.magazine,#download,.price-card");
+        function checkDarkFast(){
           const px=mx,py=my;
           let dark=false;
-          darkSections.forEach(s=>{
+          darkSectionsFast.forEach(s=>{
             const r=s.getBoundingClientRect();
             if(px>=r.left&&px<=r.right&&py>=r.top&&py<=r.bottom)dark=true;
           });
           _c.classList.toggle("dark",dark);
           _r.classList.toggle("dark",dark);
         }
-        window.addEventListener("mousemove",checkDark);
+        document.addEventListener("mousemove",e=>{mx=e.clientX;my=e.clientY;needsDarkCheck=true;},{passive:true});
+        (function tick(){
+          _c.style.left=mx+"px";_c.style.top=my+"px";
+          rx+=(mx-rx)*.14;ry+=(my-ry)*.14;
+          _r.style.left=rx+"px";_r.style.top=ry+"px";
+          if(needsDarkCheck){checkDarkFast();needsDarkCheck=false;}
+          requestAnimationFrame(tick);
+        })();
+        document.querySelectorAll("a,button,.price-card,.stage-act,.faq-item,.gallery-card,.craft-card,.voice,.trip-frame").forEach(el=>{
+          el.addEventListener("mouseenter",()=>_r.classList.add("big"));
+          el.addEventListener("mouseleave",()=>_r.classList.remove("big"));
+        });
       })();
 
       // PROGRESS + SCROLL RAIL + ACTIVE NAV
@@ -2098,6 +2217,7 @@
       const nav=document.querySelector("nav");
       const sections=[...document.querySelectorAll("section[id]")];
       let navCompact=false;
+      let scrollRaf=false;
       function onScroll(){
         const sh=document.body.scrollHeight-window.innerHeight;
         prog.style.width=(window.scrollY/sh*100)+"%";
@@ -2113,26 +2233,33 @@
         const nav=document.querySelector("nav");
         if(nav)nav.classList.toggle("scrolled",window.scrollY>40);
       }
-      window.addEventListener("scroll",onScroll,{passive:true});onScroll();
+      function scheduleScroll(){
+        if(scrollRaf)return;
+        scrollRaf=requestAnimationFrame(()=>{scrollRaf=false;onScroll();});
+      }
+      window.addEventListener("scroll",scheduleScroll,{passive:true});onScroll();
 
       // MAGNETIC BUTTONS
-      document.querySelectorAll(".btn-primary,.btn-pric-fill,.nav-cta,.store-btn").forEach(btn=>{
-        let raf;
-        btn.addEventListener("mousemove",e=>{
-          cancelAnimationFrame(raf);
-          raf=requestAnimationFrame(()=>{
-            const r=btn.getBoundingClientRect();
-            const dx=(e.clientX-r.left-r.width/2)*.18;
-            const dy=(e.clientY-r.top-r.height/2)*.18;
-            btn.style.transform=`translate(${dx}px,${dy}px) translateY(-3px) scale(1.02)`;
+      if(window.matchMedia("(hover:hover) and (pointer:fine)").matches){
+        document.querySelectorAll(".btn-primary,.btn-pric-fill,.nav-cta,.store-btn").forEach(btn=>{
+          let raf;
+          btn.addEventListener("mousemove",e=>{
+            cancelAnimationFrame(raf);
+            raf=requestAnimationFrame(()=>{
+              const r=btn.getBoundingClientRect();
+              const dx=(e.clientX-r.left-r.width/2)*.18;
+              const dy=(e.clientY-r.top-r.height/2)*.18;
+              btn.style.transform=`translate(${dx}px,${dy}px) translateY(-3px) scale(1.02)`;
+            });
           });
+          btn.addEventListener("mouseleave",()=>{btn.style.transform="";});
         });
-        btn.addEventListener("mouseleave",()=>{btn.style.transform="";});
-      });
+      }
 
       // SMOOTH ANCHOR SCROLL
       document.querySelectorAll('a[href^="#"]').forEach(a=>{
         a.addEventListener("click",e=>{
+          if(a.hasAttribute("data-native-skip"))return;
           const id=a.getAttribute("href").slice(1);
           if(!id)return;
           const t=document.getElementById(id);
@@ -2166,15 +2293,31 @@
       function initCinema(){
         if(!window.gsap||!window.ScrollTrigger){return;}
         const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const motionOK=!reduced&&!window.matchMedia("(hover:none),(pointer:coarse),(max-width:900px)").matches;
         gsap.registerPlugin(ScrollTrigger);
+        ScrollTrigger.config({ignoreMobileResize:true});
+
+        function showStaticMotionState(){
+          document.documentElement.classList.add("motion-lite");
+          gsap.set(".reveal",{opacity:1,y:0,clearProps:"transform"});
+          gsap.set(".hero-headline .line-inner",{yPercent:0});
+          gsap.set(".screen-stack .screen",{opacity:0,scale:1,clearProps:"filter"});
+          gsap.set(".screen-stack .screen:first-child",{opacity:1});
+          gsap.set(".chip",{opacity:0});
+        }
+
+        if(!motionOK){
+          showStaticMotionState();
+          ScrollTrigger.refresh();
+          return;
+        }
 
         // ---- Lenis smooth scroll ----
-        if(window.Lenis&&!reduced){
+        if(window.Lenis){
           const lenis=new Lenis({duration:1.1,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)),smoothWheel:true});
           window.lenisInstance=lenis;
           lenis.on('scroll',ScrollTrigger.update);
           gsap.ticker.add((time)=>{lenis.raf(time*1000);});
-          gsap.ticker.lagSmoothing(0);
         }
 
         // ---- Hero headline split-line entry ----
@@ -2221,8 +2364,8 @@
         if(words.length){
           gsap.set(".manifesto",{visibility:"visible",opacity:1,transform:"none"});
           gsap.fromTo(words,
-            {opacity:0,y:25,filter:"blur(6px)"},
-            {opacity:1,y:0,filter:"blur(0px)",stagger:.06,ease:"power1.out",
+            {opacity:0,y:25},
+            {opacity:1,y:0,stagger:.06,ease:"power1.out",
               scrollTrigger:{trigger:".manifesto",start:"top 70%",end:"center 35%",scrub:1}
             });
         }
@@ -2234,8 +2377,8 @@
         gsap.utils.toArray(".reveal").forEach(el=>{
           if(el.closest(".manifesto"))return; // manifesto handled above
           gsap.fromTo(el,
-            {opacity:0,y:40,filter:"blur(8px)"},
-            {opacity:1,y:0,filter:"blur(0px)",duration:1.3,ease:"power3.out",
+            {opacity:0,y:40},
+            {opacity:1,y:0,duration:1.3,ease:"power3.out",
               scrollTrigger:{trigger:el,start:"top 88%",toggleActions:"play none none reverse"}
             });
         });
@@ -2245,20 +2388,18 @@
         const acts=gsap.utils.toArray(".stage-act");
         const beam=document.querySelector(".beam");
         const N=screens.length;
-        if(reduced){
-          screens.forEach((s,i)=>{s.style.opacity=i===0?1:0;s.style.filter="none";s.style.transform="none";});
-        }else if(screens.length){
-          gsap.set(screens,{opacity:0,scale:1.04,filter:"blur(8px)"});
-          gsap.set(screens[0],{opacity:1,scale:1,filter:"blur(0px)"});
+        if(screens.length){
+          gsap.set(screens,{opacity:0,scale:1.04});
+          gsap.set(screens[0],{opacity:1,scale:1});
           gsap.set(".chip",{opacity:0});
           gsap.set(".stage-phone-wrap",{rotateX:10,rotateY:-15,rotateZ:0});
           const tl=gsap.timeline({scrollTrigger:{trigger:".phone-stage",start:"top top",end:"bottom bottom",scrub:.6,invalidateOnRefresh:true}});
           for(let i=0;i<N-1;i++){
-            tl.to(screens[i],{opacity:0,scale:.96,filter:"blur(8px)",ease:"power2.inOut",duration:1},i);
+            tl.to(screens[i],{opacity:0,scale:.96,ease:"power2.inOut",duration:1},i);
             tl.fromTo(screens[i+1],
-              {opacity:0,scale:1.06,filter:"blur(10px)"},
-              {opacity:1,scale:1,filter:"blur(0px)",ease:"power2.inOut",duration:1},i);
-            if(beam)tl.to(beam,{filter:`blur(34px) hue-rotate(${(i+1)*22}deg)`,scale:1+(i+1)*.04,ease:"power1.inOut",duration:1},i);
+              {opacity:0,scale:1.06},
+              {opacity:1,scale:1,ease:"power2.inOut",duration:1},i);
+            if(beam)tl.to(beam,{opacity:.58+(i+1)*.05,scale:1+(i+1)*.04,ease:"power1.inOut",duration:1},i);
             tl.to(".stage-phone-wrap",{
               rotateX:10-Math.sin((i+1)*Math.PI/2)*10,
               rotateY:-15+((i+1)%2===1?30:0),
@@ -2343,8 +2484,8 @@
         // ---- Pricing 3D entry ----
         gsap.set(".pricing-solo",{perspective:1400});
         gsap.fromTo(".price-card",
-          {opacity:0,y:80,z:-100,rotateX:18,rotateY:-6,filter:"blur(8px)"},
-          {opacity:1,y:0,z:0,rotateX:0,rotateY:0,filter:"blur(0px)",duration:1.5,ease:"back.out(1.2)",
+          {opacity:0,y:80,z:-100,rotateX:18,rotateY:-6},
+          {opacity:1,y:0,z:0,rotateX:0,rotateY:0,duration:1.5,ease:"back.out(1.2)",
             scrollTrigger:{trigger:".pricing-solo",start:"top 85%",toggleActions:"play none none reverse"}
           });
 
@@ -2358,8 +2499,8 @@
 
         // ---- Final CTA scale-in ----
         gsap.fromTo(".dl-headline",
-          {scale:.9,opacity:0,filter:"blur(12px)"},
-          {scale:1,opacity:1,filter:"blur(0px)",duration:1.4,ease:"expo.out",
+          {scale:.9,opacity:0},
+          {scale:1,opacity:1,duration:1.4,ease:"expo.out",
             scrollTrigger:{trigger:"#download",start:"top 75%"}
           });
 
