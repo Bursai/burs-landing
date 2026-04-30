@@ -76,11 +76,11 @@ if (/filter:\s*["']blur\(/.test(homepage)) {
 if (/will-change:\s*opacity,transform,filter/.test(homepage)) {
   fail("CSS still promotes filter animation with will-change.");
 }
-if (!/const\s+motionOK\s*=/.test(homepage)) {
-  fail("Animation code is missing a motionOK guard for reduced-motion/mobile performance.");
+if (/gsap@|ScrollTrigger|lenis@|new Lenis|pin:true|scrub:/.test(homepage)) {
+  fail("Landing page must not load or run scroll-jacking animation libraries.");
 }
-if (!/ignoreMobileResize/.test(homepage)) {
-  fail("ScrollTrigger mobile resize guard is missing.");
+if (/requestAnimationFrame\(tick\)/.test(homepage)) {
+  fail("Landing page still runs the custom cursor animation loop.");
 }
 if (!/class=["']skip-link["'][^>]*data-native-skip/.test(homepage)) {
   fail("Skip link must bypass the offset smooth-scroll handler.");
@@ -88,7 +88,45 @@ if (!/class=["']skip-link["'][^>]*data-native-skip/.test(homepage)) {
 if (/applyPrices\(PRICES\.SE\)/.test(homepage)) {
   fail("Homepage initializes pricing with missing PRICES.SE instead of PRICES.SEK.");
 }
+if (/PRICES\.INTL/.test(homepage)) {
+  fail("Homepage pricing fallback references missing PRICES.INTL.");
+}
 
+const weekGalleryImages = homepage.match(/<img[^>]+src=["']\/assets\/gallery\/week-[^"']+\.webp["'][^>]*class=["']gallery-img["'][^>]*>/g) || [];
+if (weekGalleryImages.length !== 7) {
+  fail("A week in BURS gallery must render seven generated image assets.");
+}
+if (/class=["']silhouette["']/.test(homepage)) {
+  fail("A week in BURS gallery still uses placeholder silhouettes instead of generated photos.");
+}
+if (!/nav\.scrolled\{[^}]*width:min\(/s.test(homepage) || !/nav\.scrolled\{[^}]*border-radius:999px/s.test(homepage)) {
+  fail("Scrolled nav must become a minimized floating pill.");
+}
+if (!/\.edit-split\s+\.reveal\{opacity:1[^}]*transform:none/s.test(homepage)) {
+  fail("Intro story section reveals must be static and immediately visible.");
+}
+if (/gsap\.to\("\.edit-img \.img"/.test(homepage)) {
+  fail("Intro story image parallax should be disabled.");
+}
+if (!/id=["']week["'][^>]*class=["']gallery["']/.test(homepage)) {
+  fail("A week in BURS section needs a stable #week anchor.");
+}
+if (!existsFile(path.join(root, "og-image-stylish.png"))) {
+  fail("Stylish OG image asset is missing.");
+}
+if (!/og:image["'] content=["']https:\/\/burs\.me\/og-image-stylish\.png/.test(homepage) || !/twitter:image["'] content=["']https:\/\/burs\.me\/og-image-stylish\.png/.test(homepage)) {
+  fail("Homepage social metadata must use the stylish OG image.");
+}
+
+for (const file of htmlFiles.filter((item) => item.includes(`${path.sep}blog${path.sep}`))) {
+  const blogHtml = fs.readFileSync(file, "utf8");
+  if (!/class=["']nav-logo["'][\s\S]*nl-mark[\s\S]*a quieter way to dress/.test(blogHtml)) {
+    fail(`${path.relative(root, file)} blog header does not match the rebuilt landing nav brand lockup.`);
+  }
+  if (/How It Works|Get the App|https:\/\/www\.burs\.me\/auth/.test(blogHtml)) {
+    fail(`${path.relative(root, file)} still contains old blog header copy or external auth CTA.`);
+  }
+}
 const localRefPattern = /\b(?:href|src)=["'](\/[^"']+)["']/g;
 for (const file of htmlFiles) {
   const html = fs.readFileSync(file, "utf8");

@@ -27,19 +27,19 @@
     <meta property="og:title" content="BURS — AI Wardrobe Stylist | Digital Wardrobe &amp; Personal Stylist App" />
     <meta property="og:description" content="BURS uses AI to scan your wardrobe, read your calendar and weather, and style you in 5 seconds. Your personal AI stylist. Available on iOS and Android." />
     <meta property="og:url" content="https://burs.me" />
-    <meta property="og:image" content="https://burs.me/burs-logo-256-2.png" />
+    <meta property="og:image" content="https://burs.me/og-image-stylish.png" />
     <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:alt" content="BURS logo for the AI wardrobe stylist app" />
-    <meta property="og:image:width" content="256" />
-    <meta property="og:image:height" content="256" />
+    <meta property="og:image:alt" content="BURS AI wardrobe stylist social preview with a mixed wardrobe, accessories, shoes, and phone planning context" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="BURS — AI Wardrobe Stylist | Digital Wardrobe &amp; Personal Stylist App" />
     <meta name="twitter:description" content="BURS uses AI to scan your wardrobe, read your calendar and weather, and style you in 5 seconds. Your personal AI stylist. Available on iOS and Android." />
-    <meta name="twitter:image" content="https://burs.me/burs-logo-256-2.png" />
-    <meta name="twitter:image:alt" content="BURS logo for the AI wardrobe stylist app" />
+    <meta name="twitter:image" content="https://burs.me/og-image-stylish.png" />
+    <meta name="twitter:image:alt" content="BURS AI wardrobe stylist social preview with a mixed wardrobe, accessories, shoes, and phone planning context" />
 
     <!-- Icons + manifest -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -77,7 +77,7 @@
           "operatingSystem": "iOS, Android",
           "applicationCategory": "LifestyleApplication",
           "url": "https://burs.me/",
-          "image": "https://burs.me/og-image.png",
+          "image": "https://burs.me/og-image-stylish.png",
           "description": "AI wardrobe stylist that scans your closet, reads the weather and calendar, and surfaces the perfect outfit in five seconds. Plan your week and pack for travel from your own wardrobe.",
           "publisher": {"@id": "https://burs.me/#org"},
           "offers": {
@@ -141,17 +141,13 @@
     <link rel="preconnect" href="https://unpkg.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js" defer crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/gsap@3.12.5/dist/ScrollTrigger.min.js" defer crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer crossorigin="anonymous"></script>
-
     <style>
       /* =====================================================================
          BURS — World-class landing
          ──────────────────────────────────────────────────────────────────
          Design system: cream paper + warm taupe + ink charcoal.
          Typography: Playfair Display (display, italics) + DM Sans (UI).
-         Motion: GSAP ScrollTrigger + Lenis smooth scroll. Reduced-motion friendly.
+         Motion: native scroll, lightweight state changes, reduced-motion friendly.
          ===================================================================== */
 
       :root{
@@ -179,10 +175,6 @@
 
       *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
       html{scroll-behavior:auto;}
-      html.lenis,html.lenis body{height:auto;}
-      .lenis.lenis-smooth{scroll-behavior:auto !important;}
-      .lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain;}
-      .lenis.lenis-stopped{overflow:hidden;}
       body{
         background:var(--bg);
         color:var(--ink);
@@ -210,14 +202,6 @@
         background:radial-gradient(140% 100% at 50% 50%,transparent 50%,rgba(28,25,23,.06) 100%);
       }
 
-      /* CURSOR — kept minimal, hidden on touch */
-      #_cur{position:fixed;width:6px;height:6px;background:var(--ink);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:left,top;}
-      #_ring{position:fixed;width:30px;height:30px;border:1px solid rgba(28,25,23,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .25s var(--easing),height .25s var(--easing),border-color .25s var(--easing),background .25s var(--easing);}
-      #_ring.big{width:64px;height:64px;border-color:var(--ink);background:rgba(28,25,23,.04);}
-      #_ring.dark{border-color:rgba(245,240,232,.7);}
-      #_cur.dark{background:#F5F0E8;}
-      @media(hover:none),(max-width:900px){#_cur,#_ring{display:none;}}
-
       /* PROGRESS BAR */
       #_prog{position:fixed;top:0;left:0;height:2px;background:var(--ink);z-index:9997;width:0%;transition:width .12s linear;}
 
@@ -230,18 +214,20 @@
          ===================================================================== */
       nav{
         display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-        padding:0 56px;height:72px;
-        position:sticky;top:0;z-index:100;
+        padding:0 56px;height:72px;width:100%;margin:0 auto;
+        position:sticky;top:0;left:0;right:0;z-index:100;
         background:rgba(245,240,232,.4);
         backdrop-filter:blur(20px) saturate(1.6);
         -webkit-backdrop-filter:blur(20px) saturate(1.6);
-        transition:all .45s var(--easing);
+        transition:width .36s var(--easing),height .36s var(--easing),padding .36s var(--easing),background .36s var(--easing),border-color .36s var(--easing),box-shadow .36s var(--easing),border-radius .36s var(--easing),transform .36s var(--easing);
         border-bottom:1px solid transparent;
       }
       nav.scrolled{
-        background:rgba(245,240,232,.85);
-        border-bottom:1px solid var(--line);
-        box-shadow:0 12px 40px -24px rgba(28,25,23,.18);
+        width:min(860px,calc(100% - 32px));height:58px;padding:0 18px 0 20px;
+        border:1px solid rgba(28,25,23,.12);border-radius:999px;
+        background:rgba(245,240,232,.84);
+        box-shadow:0 18px 58px -30px rgba(28,25,23,.48),0 1px 0 rgba(255,255,255,.55) inset;
+        grid-template-columns:auto 1fr auto;transform:translateY(12px);
       }
       nav>.nav-logo{justify-self:start;display:flex;align-items:center;gap:14px;}
       nav>.nav-links{justify-self:center;}
@@ -251,6 +237,11 @@
       .nav-logo:hover img{transform:rotate(-4deg) scale(1.06);}
       .nav-logo .nl-mark{font-family:"Playfair Display",serif;font-style:italic;font-size:14px;color:var(--faint);letter-spacing:.5px;display:none;}
       @media(min-width:1100px){.nav-logo .nl-mark{display:block;}}
+      nav.scrolled .nav-logo img{height:30px;}
+      nav.scrolled .nav-logo .nl-mark{display:none;}
+      nav.scrolled .nav-links{gap:22px;}
+      nav.scrolled .nav-links a{font-size:10px;letter-spacing:1.7px;}
+      nav.scrolled .nav-cta{padding:8px 14px;letter-spacing:1.8px;}
       .nav-links{display:flex;gap:42px;list-style:none;}
       .nav-links a{font-size:11px;letter-spacing:2.4px;text-transform:uppercase;text-decoration:none;color:var(--muted);position:relative;transition:color .3s ease;font-weight:500;}
       .nav-links a::after{content:"";position:absolute;bottom:-6px;left:0;width:0;height:1px;background:var(--ink);transition:width .45s var(--easing);}
@@ -495,6 +486,7 @@
         display:flex;justify-content:space-between;align-items:flex-end;
         font-size:10px;letter-spacing:2.6px;text-transform:uppercase;color:rgba(245,240,232,.85);
       }
+      .edit-split .reveal{opacity:1;transform:none;}
       .edit-copy{
         padding:120px 80px;display:flex;flex-direction:column;justify-content:center;
         position:relative;
@@ -613,9 +605,9 @@
       .screen-stack{position:absolute;inset:6px;border-radius:54px;overflow:hidden;transform-style:preserve-3d;background:#040303;z-index:2;}
       .screen-stack .screen{
         position:absolute;inset:0;width:100%;height:100%;
-        opacity:0;transform:scale(1.05);
-        will-change:opacity,transform;
+        opacity:0;transform:scale(1.02);
         background:#F5F0E8;
+        transition:opacity .28s ease,transform .28s ease;
       }
       .screen-stack .screen.active{opacity:1;transform:scale(1);}
       .screen-stack .screen-img{
@@ -744,8 +736,10 @@
         border:1px solid rgba(28,25,23,.08);
         white-space:nowrap;font-weight:500;
         box-shadow:0 12px 32px rgba(28,25,23,.10),inset 0 1px 0 rgba(255,255,255,.6);
-        will-change:transform,opacity;
+        opacity:0;transform:translate(-50%,-50%) translate3d(var(--cx),var(--cy),0) rotateZ(var(--rot)) scale(.96);
+        transition:opacity .24s ease,transform .24s ease;
       }
+      .chip.is-active{opacity:1;transform:translate(-50%,-50%) translate3d(var(--cx),var(--cy),0) rotateZ(var(--rot)) scale(1);}
       .chip.square{border-radius:12px;padding:14px 20px;font-family:"Playfair Display",serif;font-style:italic;font-size:13px;letter-spacing:0;text-transform:none;font-weight:400;}
       .chip[data-act="1"]{--rot:-2;}
       .chip[data-act="2"]{--rot:1.5;}
@@ -790,11 +784,13 @@
           radial-gradient(40% 50% at 80% 80%,rgba(120,100,80,.1),transparent 65%);
         pointer-events:none;
       }
-      .gallery-pin{height:100vh;display:flex;align-items:center;position:relative;}
+      .gallery-pin{min-height:100vh;display:flex;align-items:center;position:relative;padding:110px 0;}
       .gallery-track{
-        display:flex;gap:32px;padding:0 56px;will-change:transform;
+        display:flex;gap:32px;padding:0 56px;
         align-items:center;
+        overflow-x:auto;overscroll-behavior-inline:contain;scroll-snap-type:x proximity;scrollbar-width:none;
       }
+      .gallery-track::-webkit-scrollbar{display:none;}
       .gallery-intro{
         flex-shrink:0;width:46vw;max-width:560px;padding-right:48px;
       }
@@ -807,9 +803,20 @@
         flex-shrink:0;width:340px;height:520px;border-radius:18px;overflow:hidden;
         position:relative;background:#1a140d;
         box-shadow:0 60px 120px -40px rgba(0,0,0,.5),0 0 0 1px rgba(245,240,232,.06);
-        will-change:transform;
+        scroll-snap-align:center;
       }
-      .gallery-card .pic{position:absolute;inset:0;background-position:center;background-size:cover;}
+      .gallery-card .pic{position:absolute;inset:0;background-position:center;background-size:cover;overflow:hidden;}
+      .gallery-card .gallery-img{
+        width:100%;height:100%;display:block;object-fit:cover;
+        filter:saturate(.94) contrast(1.04);
+      }
+      .gallery-card .pic.g1 .gallery-img{object-position:50% 50%;}
+      .gallery-card .pic.g2 .gallery-img{object-position:50% 48%;}
+      .gallery-card .pic.g3 .gallery-img{object-position:50% 50%;}
+      .gallery-card .pic.g4 .gallery-img{object-position:50% 52%;}
+      .gallery-card .pic.g5 .gallery-img{object-position:50% 50%;}
+      .gallery-card .pic.g6 .gallery-img{object-position:50% 50%;}
+      .gallery-card .pic.g7 .gallery-img{object-position:50% 50%;}
       .gallery-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,transparent 50%,rgba(0,0,0,.7) 100%);}
       .gallery-card .meta{position:absolute;left:24px;right:24px;bottom:24px;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:14px;}
       .gallery-card .meta .t{font-family:"Playfair Display",serif;font-style:italic;font-size:24px;line-height:1.1;color:#F5F0E8;}
@@ -823,26 +830,6 @@
       .gallery-card .pic.g5{background-image:linear-gradient(165deg,#5a2b2b 0%,#2a1212 70%);}
       .gallery-card .pic.g6{background-image:linear-gradient(165deg,#3d3a52 0%,#1a1828 70%);}
       .gallery-card .pic.g7{background-image:linear-gradient(165deg,#5c5043 0%,#0a0907 70%);}
-      .gallery-card .silhouette{
-        position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);
-        width:62%;aspect-ratio:1/1.4;
-      }
-      .gallery-card .silhouette::before,.gallery-card .silhouette::after{content:"";position:absolute;}
-      /* Stylized garment silhouette - top */
-      .gallery-card .silhouette::before{
-        top:0;left:50%;transform:translateX(-50%);
-        width:78%;height:55%;
-        background:linear-gradient(180deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.04) 100%);
-        border-radius:36% 36% 12% 12%/45% 45% 8% 8%;
-        box-shadow:inset 0 -2px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.18);
-      }
-      /* bottom */
-      .gallery-card .silhouette::after{
-        bottom:0;left:50%;transform:translateX(-50%);
-        width:62%;height:54%;
-        background:linear-gradient(180deg,rgba(0,0,0,.28) 0%,rgba(0,0,0,.5) 100%);
-        border-radius:8% 8% 16% 16%;
-      }
       .gallery-end{flex-shrink:0;width:46vw;max-width:540px;padding-left:48px;}
       .gallery-end h3{font-family:"Playfair Display",serif;font-weight:400;font-style:italic;font-size:clamp(28px,2.6vw,42px);line-height:1.25;color:#F5F0E8;}
       .gallery-end h3 b{font-style:normal;font-weight:900;color:#F5F0E8;}
@@ -1337,9 +1324,9 @@
       .bottom-rule{height:4px;background:var(--ink);}
 
       /* =====================================================================
-         REVEAL UTILITY (GSAP-driven)
+         REVEAL UTILITY
          ===================================================================== */
-      .reveal{opacity:0;transform:translateY(40px);}
+      .reveal{opacity:1;transform:none;}
       .motion-lite .reveal{opacity:1 !important;transform:none !important;}
       .reveal.d1{transition-delay:.05s;}
       .reveal.d2{transition-delay:.1s;}
@@ -1350,6 +1337,7 @@
          ===================================================================== */
       @media(max-width:1100px){
         nav{padding:0 32px;}
+        nav.scrolled{width:calc(100% - 24px);height:56px;padding:0 12px 0 16px;transform:translateY(8px);}
         .nav-links{display:none;}
         .nav-cta{display:none;}
         .nav-hamburger{display:flex;}
@@ -1420,8 +1408,6 @@
     <a href="#main-content" class="skip-link" data-native-skip>Skip to main content</a>
 
     <div id="_prog" aria-hidden="true"></div>
-    <div id="_cur" aria-hidden="true"></div>
-    <div id="_ring" aria-hidden="true"></div>
 
     <nav>
       <div class="nav-logo">
@@ -1660,7 +1646,7 @@
       <!-- ============================================================
            HORIZONTAL OUTFIT GALLERY — pinned, scroll-jacked
            ============================================================ -->
-      <section class="gallery" aria-label="Outfits, every day">
+      <section id="week" class="gallery" aria-label="Outfits, every day">
         <div class="gallery-pin">
           <div class="gallery-track">
             <div class="gallery-intro">
@@ -1669,37 +1655,37 @@
               <p>Each morning BURS opens with one decision already made — the outfit that fits the weather, the calendar, the mood. Drift the rail to flip through a week as it actually unfolded.</p>
             </div>
             <article class="gallery-card">
-              <div class="pic g1"><div class="silhouette"></div></div>
+              <div class="pic g1"><img src="/assets/gallery/week-monday-pitch.webp" alt="Navy blazer and tailored trousers styled for a Monday pitch" class="gallery-img" width="756" height="1600" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Mon · Pitch</span>
               <div class="meta"><div class="t">Quietly sharp.</div><span class="pill">Confidence +12%</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g2"><div class="silhouette"></div></div>
+              <div class="pic g2"><img src="/assets/gallery/week-tuesday-studio.webp" alt="Camel and linen studio outfit in warm morning light" class="gallery-img" width="1023" height="1537" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Tue · Studio</span>
               <div class="meta"><div class="t">Working warmth.</div><span class="pill">Linen / Camel</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g3"><div class="silhouette"></div></div>
+              <div class="pic g3"><img src="/assets/gallery/week-wednesday-calls.webp" alt="Charcoal knit and wool trousers styled for a day of calls" class="gallery-img" width="738" height="1600" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Wed · Calls</span>
               <div class="meta"><div class="t">Soft authority.</div><span class="pill">Knit + Wool</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g4"><div class="silhouette"></div></div>
+              <div class="pic g4"><img src="/assets/gallery/week-thursday-dinner.webp" alt="Dark forest green evening outfit in a refined dinner setting" class="gallery-img" width="759" height="1600" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Thu · Dinner</span>
               <div class="meta"><div class="t">Forest after dark.</div><span class="pill">Nobu · 19:00</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g5"><div class="silhouette"></div></div>
+              <div class="pic g5"><img src="/assets/gallery/week-friday-offsite.webp" alt="Oxblood knit and travel coat beside a leather weekender bag" class="gallery-img" width="1023" height="1537" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Fri · Off-site</span>
               <div class="meta"><div class="t">Cotswolds capsule.</div><span class="pill">3 days · 1 bag</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g6"><div class="silhouette"></div></div>
+              <div class="pic g6"><img src="/assets/gallery/week-saturday-slow.webp" alt="Oatmeal cashmere weekend outfit in a calm apartment" class="gallery-img" width="1023" height="1537" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Sat · Slow</span>
               <div class="meta"><div class="t">Easy on the senses.</div><span class="pill">Cashmere</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g7"><div class="silhouette"></div></div>
+              <div class="pic g7"><img src="/assets/gallery/week-sunday-reset.webp" alt="White and indigo Sunday outfit in a bright wardrobe corner" class="gallery-img" width="1024" height="1536" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Sun · Reset</span>
               <div class="meta"><div class="t">A clean page.</div><span class="pill">White + Indigo</span></div>
             </article>
@@ -2125,7 +2111,7 @@
          SCRIPTS
          ============================================================ -->
     <script>
-      // Hash navigation fix — start from top so ScrollTrigger measures cleanly.
+      // Hash navigation fix - start from top so measurements stay clean.
       (function(){
         if('scrollRestoration' in history){history.scrollRestoration='manual';}
         window.__burshash=window.location.hash||"";
@@ -2172,41 +2158,12 @@
             if(timer)clearTimeout(timer);
             if(!d)return;
             const country=(d.country_code||d.country||"").toUpperCase();
-            if(country&&country!=="SE"){applyPrices(PRICES.INTL);}
+            const byCountry={SE:"SEK",GB:"GBP",AE:"AED",US:"USD",CA:"USD",AU:"USD"};
+            const euCountries=["AT","BE","CY","DE","EE","ES","FI","FR","GR","HR","IE","IT","LT","LU","LV","MT","NL","PT","SI","SK"];
+            const currency=byCountry[country]||(euCountries.includes(country)?"EUR":detectCurrency());
+            applyPrices(PRICES[currency]||PRICES.USD);
           })
           .catch(()=>{/* silent */});
-      })();
-
-      // CURSOR — refined two-layer follower
-      (function(){
-        const _c=document.getElementById("_cur"),_r=document.getElementById("_ring");
-        if(!_c||!_r)return;
-        if(window.matchMedia("(hover:none),(pointer:coarse),(max-width:900px)").matches)return;
-        let mx=0,my=0,rx=0,ry=0;
-        let needsDarkCheck=false;
-        const darkSectionsFast=document.querySelectorAll(".stats-banner,.gallery,.craft,.magazine,#download,.price-card");
-        function checkDarkFast(){
-          const px=mx,py=my;
-          let dark=false;
-          darkSectionsFast.forEach(s=>{
-            const r=s.getBoundingClientRect();
-            if(px>=r.left&&px<=r.right&&py>=r.top&&py<=r.bottom)dark=true;
-          });
-          _c.classList.toggle("dark",dark);
-          _r.classList.toggle("dark",dark);
-        }
-        document.addEventListener("mousemove",e=>{mx=e.clientX;my=e.clientY;needsDarkCheck=true;},{passive:true});
-        (function tick(){
-          _c.style.left=mx+"px";_c.style.top=my+"px";
-          rx+=(mx-rx)*.14;ry+=(my-ry)*.14;
-          _r.style.left=rx+"px";_r.style.top=ry+"px";
-          if(needsDarkCheck){checkDarkFast();needsDarkCheck=false;}
-          requestAnimationFrame(tick);
-        })();
-        document.querySelectorAll("a,button,.price-card,.stage-act,.faq-item,.gallery-card,.craft-card,.voice,.trip-frame").forEach(el=>{
-          el.addEventListener("mouseenter",()=>_r.classList.add("big"));
-          el.addEventListener("mouseleave",()=>_r.classList.remove("big"));
-        });
       })();
 
       // PROGRESS + SCROLL RAIL + ACTIVE NAV
@@ -2264,8 +2221,7 @@
           if(!id)return;
           const t=document.getElementById(id);
           if(t){e.preventDefault();
-            if(window.lenisInstance){window.lenisInstance.scrollTo(t,{offset:-72,duration:1.4});}
-            else{window.scrollTo({top:t.offsetTop-72,behavior:"smooth"});}
+            window.scrollTo({top:t.offsetTop-72,behavior:"smooth"});
           }
         });
       });
@@ -2288,231 +2244,38 @@
       })();
 
       // ============================================================
-      // CINEMATIC ANIMATIONS — Lenis + GSAP ScrollTrigger
+      // LIGHTWEIGHT INTERACTIONS
       // ============================================================
       function initCinema(){
-        if(!window.gsap||!window.ScrollTrigger){return;}
-        const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const motionOK=!reduced&&!window.matchMedia("(hover:none),(pointer:coarse),(max-width:900px)").matches;
-        gsap.registerPlugin(ScrollTrigger);
-        ScrollTrigger.config({ignoreMobileResize:true});
+        document.documentElement.classList.add("motion-lite");
+        document.querySelectorAll(".reveal").forEach(el=>el.classList.add("is-visible"));
 
-        function showStaticMotionState(){
-          document.documentElement.classList.add("motion-lite");
-          gsap.set(".reveal",{opacity:1,y:0,clearProps:"transform"});
-          gsap.set(".hero-headline .line-inner",{yPercent:0});
-          gsap.set(".screen-stack .screen",{opacity:0,scale:1,clearProps:"filter"});
-          gsap.set(".screen-stack .screen:first-child",{opacity:1});
-          gsap.set(".chip",{opacity:0});
+        const screens=[...document.querySelectorAll(".screen-stack .screen")];
+        const acts=[...document.querySelectorAll(".stage-act")];
+        const chips=[...document.querySelectorAll(".chip")];
+        function setAct(act){
+          const index=Math.max(0,Math.min(screens.length-1,act-1));
+          screens.forEach((screen,i)=>screen.classList.toggle("active",i===index));
+          chips.forEach(chip=>chip.classList.toggle("is-active",Number(chip.dataset.act)===act));
         }
-
-        if(!motionOK){
-          showStaticMotionState();
-          ScrollTrigger.refresh();
-          return;
-        }
-
-        // ---- Lenis smooth scroll ----
-        if(window.Lenis){
-          const lenis=new Lenis({duration:1.1,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)),smoothWheel:true});
-          window.lenisInstance=lenis;
-          lenis.on('scroll',ScrollTrigger.update);
-          gsap.ticker.add((time)=>{lenis.raf(time*1000);});
-        }
-
-        // ---- Hero headline split-line entry ----
-        const heroLines=gsap.utils.toArray(".hero-headline .line-inner");
-        gsap.set(heroLines,{yPercent:110});
-        gsap.to(heroLines,{yPercent:0,duration:1.2,ease:"expo.out",stagger:.12,delay:.25});
-        gsap.from(".hero-eyebrow",{y:20,opacity:0,duration:1,ease:"expo.out",delay:.15});
-        gsap.from(".hero-row .hero-sub",{y:30,opacity:0,duration:1.1,ease:"expo.out",delay:.7});
-        gsap.from(".hero-side > *",{y:20,opacity:0,duration:1,ease:"expo.out",stagger:.12,delay:.85});
-        gsap.from(".hero-actions > *",{y:20,opacity:0,duration:1,ease:"expo.out",stagger:.12,delay:.95});
-        gsap.from(".hero-scroll, .hero-readout",{opacity:0,duration:1,ease:"expo.out",delay:1.3});
-
-        // ---- Hero parallax ----
-        if(!reduced){
-          gsap.to(".hero-bg",{yPercent:18,ease:"none",scrollTrigger:{trigger:".hero",start:"top top",end:"bottom top",scrub:true}});
-          gsap.to(".hero-inner",{yPercent:14,ease:"none",scrollTrigger:{trigger:".hero",start:"top top",end:"bottom top",scrub:true}});
-        }
-
-        // ---- Stats banner — animate in + count up ----
-        gsap.from(".stats-grid .stat",{
-          y:60,opacity:0,duration:1.1,ease:"expo.out",stagger:.12,
-          scrollTrigger:{trigger:".stats-banner",start:"top 80%"}
-        });
-        gsap.utils.toArray(".stats-grid .stat-n").forEach(nEl=>{
-          ScrollTrigger.create({
-            trigger:nEl,start:"top 85%",once:true,
-            onEnter:()=>{
-              const text=nEl.textContent.trim();
-              const m=text.match(/^([<>$]*)([\d.]+)([a-zA-Z%]*)$/);
-              if(m){
-                const prefix=m[1],end=parseFloat(m[2]),suffix=m[3];
-                let obj={val:0};
-                gsap.to(obj,{val:end,duration:1.8,ease:"power2.out",
-                  onUpdate:()=>{const display=Number.isInteger(end)?Math.round(obj.val):obj.val.toFixed(1);nEl.textContent=prefix+display+suffix;},
-                  onComplete:()=>{nEl.textContent=prefix+m[2]+suffix;}
-                });
-              }
-            }
-          });
-        });
-
-        // ---- Manifesto — word-by-word reveal ----
-        const words=gsap.utils.toArray(".manifesto .word");
-        if(words.length){
-          gsap.set(".manifesto",{visibility:"visible",opacity:1,transform:"none"});
-          gsap.fromTo(words,
-            {opacity:0,y:25},
-            {opacity:1,y:0,stagger:.06,ease:"power1.out",
-              scrollTrigger:{trigger:".manifesto",start:"top 70%",end:"center 35%",scrub:1}
+        setAct(1);
+        if("IntersectionObserver" in window&&acts.length){
+          const observer=new IntersectionObserver(entries=>{
+            let current=null;
+            entries.forEach(entry=>{
+              if(!entry.isIntersecting)return;
+              if(!current||entry.intersectionRatio>current.intersectionRatio)current=entry;
             });
+            if(current)setAct(Number(current.target.dataset.act)||1);
+          },{threshold:[.35,.55,.75],rootMargin:"-18% 0px -28% 0px"});
+          acts.forEach(act=>observer.observe(act));
         }
-
-        // ---- Editorial split — image parallax ----
-        gsap.to(".edit-img .img",{yPercent:-12,ease:"none",scrollTrigger:{trigger:".edit-split",start:"top bottom",end:"bottom top",scrub:true}});
-
-        // ---- Generic .reveal (everything else) ----
-        gsap.utils.toArray(".reveal").forEach(el=>{
-          if(el.closest(".manifesto"))return; // manifesto handled above
-          gsap.fromTo(el,
-            {opacity:0,y:40},
-            {opacity:1,y:0,duration:1.3,ease:"power3.out",
-              scrollTrigger:{trigger:el,start:"top 88%",toggleActions:"play none none reverse"}
-            });
-        });
-
-        // ---- Phone-stage screen morph (sticky CSS handles pinning) ----
-        const screens=gsap.utils.toArray(".screen-stack .screen");
-        const acts=gsap.utils.toArray(".stage-act");
-        const beam=document.querySelector(".beam");
-        const N=screens.length;
-        if(screens.length){
-          gsap.set(screens,{opacity:0,scale:1.04});
-          gsap.set(screens[0],{opacity:1,scale:1});
-          gsap.set(".chip",{opacity:0});
-          gsap.set(".stage-phone-wrap",{rotateX:10,rotateY:-15,rotateZ:0});
-          const tl=gsap.timeline({scrollTrigger:{trigger:".phone-stage",start:"top top",end:"bottom bottom",scrub:.6,invalidateOnRefresh:true}});
-          for(let i=0;i<N-1;i++){
-            tl.to(screens[i],{opacity:0,scale:.96,ease:"power2.inOut",duration:1},i);
-            tl.fromTo(screens[i+1],
-              {opacity:0,scale:1.06},
-              {opacity:1,scale:1,ease:"power2.inOut",duration:1},i);
-            if(beam)tl.to(beam,{opacity:.58+(i+1)*.05,scale:1+(i+1)*.04,ease:"power1.inOut",duration:1},i);
-            tl.to(".stage-phone-wrap",{
-              rotateX:10-Math.sin((i+1)*Math.PI/2)*10,
-              rotateY:-15+((i+1)%2===1?30:0),
-              rotateZ:((i+1)%2===1?3:-3),
-              ease:"power1.inOut",duration:1
-            },i);
-          }
-          // Chips
-          const allChips=gsap.utils.toArray(".chip");
-          ScrollTrigger.create({
-            trigger:".phone-stage",start:"top top",end:"bottom bottom",scrub:.6,
-            onUpdate:(self)=>{
-              const p=self.progress*(N-1);
-              allChips.forEach(c=>{
-                const act=parseInt(c.dataset.act,10)-1;
-                const local=p-act;
-                const op=Math.max(0,1-Math.abs(local)*2);
-                const cs=getComputedStyle(c);
-                const cx=parseFloat(cs.getPropertyValue("--cx"))||0;
-                const cy=parseFloat(cs.getPropertyValue("--cy"))||0;
-                const rot=parseFloat(cs.getPropertyValue("--rot"))||0;
-                const depth=(act%2===0?1:-1);
-                const driftY=cy+local*36*depth;
-                const driftX=cx+local*12*depth;
-                const scale=.88+op*.14;
-                const zPop=op*200+40;
-                c.style.opacity=op;
-                c.style.transform=`translate(-50%,-50%) translate3d(${driftX}px,${driftY}px,${zPop}px) rotateX(${rot*4}deg) rotateY(${rot*2}deg) rotateZ(${rot}deg) scale(${scale})`;
-                c.style.left="50%";c.style.top="50%";
-              });
-            }
-          });
-          // Act copy reveal
-          acts.forEach(act=>{
-            ScrollTrigger.create({trigger:act,start:"top 78%",once:true,
-              onEnter:()=>gsap.from(act.querySelectorAll(".act-num,.act-eyebrow,.act-headline,.act-desc,.act-meta"),{y:40,opacity:0,stagger:.09,duration:.9,ease:"power3.out"})
-            });
-          });
-        }
-
-        // ---- Horizontal pinned gallery ----
-        if(!reduced){
-          const track=document.querySelector(".gallery-track");
-          const pin=document.querySelector(".gallery-pin");
-          if(track&&pin){
-            const move=()=>track.scrollWidth-window.innerWidth+56;
-            gsap.to(track,{
-              x:()=>-move(),ease:"none",
-              scrollTrigger:{
-                trigger:pin,start:"top top",end:()=>"+="+move(),
-                scrub:1,pin:true,invalidateOnRefresh:true,anticipatePin:1
-              }
-            });
-            // Card subtle lift on enter viewport
-            gsap.utils.toArray(".gallery-card").forEach((c,i)=>{
-              gsap.from(c,{y:60,opacity:.5,duration:1,ease:"power2.out",
-                scrollTrigger:{trigger:pin,start:"top top",end:"+="+move(),
-                  scrub:.5,
-                  toggleActions:"play none none reverse"}
-              });
-            });
-          }
-        }
-
-        // ---- Triptych mini-phone parallax ----
-        gsap.utils.toArray(".trip-frame").forEach((tf,i)=>{
-          const bg=tf.querySelector(".trip-bg");
-          const phone=tf.querySelector(".mini-phone");
-          if(bg)gsap.to(bg,{yPercent:-15,ease:"none",scrollTrigger:{trigger:tf,start:"top bottom",end:"bottom top",scrub:true}});
-          if(phone)gsap.to(phone,{y:i%2===0?-40:40,ease:"none",scrollTrigger:{trigger:tf,start:"top bottom",end:"bottom top",scrub:true}});
-        });
-        gsap.from(".trip-frame",{y:80,opacity:0,duration:1.1,ease:"expo.out",stagger:.14,
-          scrollTrigger:{trigger:".triptych-grid",start:"top 80%"}
-        });
-
-        // ---- Magazine background parallax ----
-        gsap.to(".magazine-bg",{yPercent:18,ease:"none",scrollTrigger:{trigger:".magazine",start:"top bottom",end:"bottom top",scrub:true}});
-        gsap.from(".magazine-content q",{y:60,opacity:0,duration:1.4,ease:"expo.out",
-          scrollTrigger:{trigger:".magazine",start:"top 70%"}
-        });
-
-        // ---- Pricing 3D entry ----
-        gsap.set(".pricing-solo",{perspective:1400});
-        gsap.fromTo(".price-card",
-          {opacity:0,y:80,z:-100,rotateX:18,rotateY:-6},
-          {opacity:1,y:0,z:0,rotateX:0,rotateY:0,duration:1.5,ease:"back.out(1.2)",
-            scrollTrigger:{trigger:".pricing-solo",start:"top 85%",toggleActions:"play none none reverse"}
-          });
-
-        // ---- Footer 3D entry ----
-        gsap.set("footer",{perspective:1200});
-        gsap.fromTo(".footer-top",
-          {opacity:0,y:80,z:-150,rotateX:-30},
-          {opacity:1,y:0,z:0,rotateX:0,duration:1.4,ease:"power2.out",
-            scrollTrigger:{trigger:"footer",start:"top 95%",toggleActions:"play none none reverse"}
-          });
-
-        // ---- Final CTA scale-in ----
-        gsap.fromTo(".dl-headline",
-          {scale:.9,opacity:0},
-          {scale:1,opacity:1,duration:1.4,ease:"expo.out",
-            scrollTrigger:{trigger:"#download",start:"top 75%"}
-          });
-
-        ScrollTrigger.refresh();
       }
-
       function resolveHash(){
         if(!window.__burshash)return;
         const id=window.__burshash.slice(1);
         const t=id&&document.getElementById(id);
         if(t){window.scrollTo({top:t.offsetTop-72,behavior:'auto'});}
-        if(window.ScrollTrigger){ScrollTrigger.update();}
         window.__burshash="";
       }
 
