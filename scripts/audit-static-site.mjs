@@ -99,6 +99,12 @@ if (weekGalleryImages.length !== 7) {
 if (/class=["']silhouette["']/.test(homepage)) {
   fail("A week in BURS gallery still uses placeholder silhouettes instead of generated photos.");
 }
+if (!/--gallery-x/.test(homepage) || !/galleryTrack\.style\.setProperty\("--gallery-x"/.test(homepage)) {
+  fail("A week in BURS must keep its vertical-scroll-driven sideways gallery motion.");
+}
+if (!/position:sticky;top:0/.test(homepage) || !/--gallery-travel/.test(homepage)) {
+  fail("A week in BURS gallery must use the lightweight sticky native scroll driver.");
+}
 if (!/nav\.scrolled\{[^}]*width:min\(/s.test(homepage) || !/nav\.scrolled\{[^}]*border-radius:999px/s.test(homepage)) {
   fail("Scrolled nav must become a minimized floating pill.");
 }
