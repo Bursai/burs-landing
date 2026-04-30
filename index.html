@@ -778,6 +778,7 @@
         min-height:calc(100vh + var(--gallery-travel,2200px));
         background:var(--noir);color:#F5F0E8;
         overflow:visible;
+        touch-action:pan-y;
       }
       .gallery::before{
         content:"";position:absolute;inset:0;
@@ -785,13 +786,13 @@
           radial-gradient(40% 50% at 80% 80%,rgba(120,100,80,.1),transparent 65%);
         pointer-events:none;
       }
-      .gallery-pin{height:100vh;display:flex;align-items:center;position:sticky;top:0;padding:0;overflow:hidden;}
+      .gallery-pin{height:100vh;display:flex;align-items:center;position:sticky;top:0;padding:0;overflow:hidden;touch-action:pan-y;}
       .gallery-track{
         display:flex;gap:32px;padding:0 56px;width:max-content;
         align-items:center;
         transform:translate3d(var(--gallery-x,0px),0,0);
         will-change:transform;
-        overflow:visible;scroll-snap-type:none;scrollbar-width:none;
+        overflow:visible;scroll-snap-type:none;scrollbar-width:none;touch-action:pan-y;
       }
       .gallery-track::-webkit-scrollbar{display:none;}
       .gallery-intro{
@@ -1660,7 +1661,7 @@
         <div class="gallery-pin">
           <div class="gallery-track">
             <div class="gallery-intro">
-              <div class="eye">— A week in BURS</div>
+              <div class="eye">A week in BURS</div>
               <h2>Outfits, <em>every day.</em></h2>
               <p>Each morning BURS opens with one decision already made — the outfit that fits the weather, the calendar, the mood. Drift the rail to flip through a week as it actually unfolded.</p>
             </div>
@@ -2121,11 +2122,9 @@
          SCRIPTS
          ============================================================ -->
     <script>
-      // Hash navigation fix - start from top so measurements stay clean.
+      // Keep browser hash and text-fragment navigation intact.
       (function(){
-        if('scrollRestoration' in history){history.scrollRestoration='manual';}
-        window.__burshash=window.location.hash||"";
-        if(window.__burshash){window.scrollTo(0,0);}
+        if('scrollRestoration' in history){history.scrollRestoration='auto';}
       })();
 
       // IP-BASED CURRENCY DETECTION — silent SE/INTL swap.
@@ -2187,6 +2186,8 @@
       const sections=[...document.querySelectorAll("section[id]")];
       let navCompact=false;
       let scrollRaf=false;
+      let galleryWheelRaf=false;
+      let galleryWheelDelta=0;
       function onScroll(){
         const sh=document.body.scrollHeight-window.innerHeight;
         prog.style.width=(window.scrollY/sh*100)+"%";
@@ -2223,6 +2224,36 @@
       window.addEventListener("resize",scheduleScroll,{passive:true});
       window.addEventListener("load",scheduleScroll,{once:true});
       onScroll();
+      function handleGalleryWheel(e){
+        if(!gallery||window.innerWidth<=760||e.ctrlKey)return;
+        const r=gallery.getBoundingClientRect();
+        const pinned=r.top<=0&&r.bottom>=window.innerHeight;
+        if(!pinned)return;
+        const delta=Math.abs(e.deltaY)>=Math.abs(e.deltaX)?e.deltaY:e.deltaX;
+        if(!delta)return;
+        e.preventDefault();
+        galleryWheelDelta+=delta;
+        if(galleryWheelRaf)return;
+        galleryWheelRaf=true;
+        requestAnimationFrame(()=>{
+          galleryWheelRaf=false;
+          window.scrollBy({top:galleryWheelDelta,left:0,behavior:"auto"});
+          galleryWheelDelta=0;
+        });
+      }
+      window.addEventListener("wheel",handleGalleryWheel,{passive:false});
+      function normalizeWeekHash(){
+        if(!gallery)return;
+        if(location.hash==="#week"){
+          requestAnimationFrame(()=>{
+            gallery.scrollIntoView({block:"start"});
+            scheduleScroll();
+          });
+        }
+      }
+      window.addEventListener("load",normalizeWeekHash,{once:true});
+      window.addEventListener("hashchange",normalizeWeekHash);
+      normalizeWeekHash();
 
       // MAGNETIC BUTTONS
       if(window.matchMedia("(hover:hover) and (pointer:fine)").matches){
@@ -2299,17 +2330,8 @@
           acts.forEach(act=>observer.observe(act));
         }
       }
-      function resolveHash(){
-        if(!window.__burshash)return;
-        const id=window.__burshash.slice(1);
-        const t=id&&document.getElementById(id);
-        if(t){window.scrollTo({top:t.offsetTop-72,behavior:'auto'});}
-        window.__burshash="";
-      }
-
       function onLoadReady(){
         initCinema();
-        requestAnimationFrame(resolveHash);
       }
 
       if(document.readyState==="complete"){onLoadReady();}

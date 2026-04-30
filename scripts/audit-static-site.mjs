@@ -82,6 +82,12 @@ if (/gsap@|ScrollTrigger|lenis@|new Lenis|pin:true|scrub:/.test(homepage)) {
 if (/requestAnimationFrame\(tick\)/.test(homepage)) {
   fail("Landing page still runs the custom cursor animation loop.");
 }
+if (/window\.__burshash[\s\S]*window\.scrollTo\(0,0\)/.test(homepage)) {
+  fail("Hash navigation must not be forced back to the top of the page.");
+}
+if (/__burshash/.test(homepage)) {
+  fail("Landing page must not keep stale hash-scroll override state.");
+}
 if (!/class=["']skip-link["'][^>]*data-native-skip/.test(homepage)) {
   fail("Skip link must bypass the offset smooth-scroll handler.");
 }
@@ -104,6 +110,18 @@ if (!/--gallery-x/.test(homepage) || !/galleryTrack\.style\.setProperty\("--gall
 }
 if (!/position:sticky;top:0/.test(homepage) || !/--gallery-travel/.test(homepage)) {
   fail("A week in BURS gallery must use the lightweight sticky native scroll driver.");
+}
+if (!/\.gallery\{[^}]*touch-action:pan-y/s.test(homepage) || !/\.gallery-pin\{[^}]*touch-action:pan-y/s.test(homepage)) {
+  fail("A week in BURS must preserve vertical touch scrolling while pinned.");
+}
+if (!/window\.addEventListener\("wheel",handleGalleryWheel/.test(homepage) || !/window\.scrollBy\(\{top:galleryWheelDelta/.test(homepage)) {
+  fail("A week in BURS must normalize wheel input to vertical page scroll while pinned.");
+}
+if (!/<div class=["']eye["']>A week in BURS<\/div>/.test(homepage)) {
+  fail("A week in BURS text-fragment target must be exact text without a leading dash.");
+}
+if (!/location\.hash==="#week"/.test(homepage) || !/gallery\.scrollIntoView\(\{block:"start"\}\)/.test(homepage)) {
+  fail("A week in BURS #week links must land on the gallery section.");
 }
 if (!/nav\.scrolled\{[^}]*width:min\(/s.test(homepage) || !/nav\.scrolled\{[^}]*border-radius:999px/s.test(homepage)) {
   fail("Scrolled nav must become a minimized floating pill.");
