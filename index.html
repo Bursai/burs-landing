@@ -456,9 +456,9 @@
       }
       .manifesto::before{
         content:"";position:absolute;left:50%;top:50%;width:min(980px,86vw);height:56%;
-        transform:translate(-50%,-50%) scale(var(--manifesto-shade-scale,.94));
-        background:radial-gradient(ellipse at center,rgba(28,25,23,.13) 0%,rgba(28,25,23,.075) 36%,transparent 72%);
-        opacity:var(--manifesto-shade-opacity,.46);pointer-events:none;
+        transform:translate(-50%,-50%) scale(var(--manifesto-shade-scale,.98));
+        background:radial-gradient(ellipse at center,rgba(28,25,23,.09) 0%,rgba(28,25,23,.045) 38%,transparent 74%);
+        opacity:var(--manifesto-shade-opacity,.16);pointer-events:none;
         transition:opacity .12s linear,transform .12s linear;
       }
       .manifesto-eye{font-size:11px;letter-spacing:4.5px;text-transform:uppercase;color:var(--faint);margin-bottom:60px;display:flex;align-items:center;justify-content:center;gap:18px;}
@@ -476,17 +476,17 @@
       .manifesto-text .word{
         display:inline-block;padding:0 .04em;
         --word-p:0;
-        --word-y:44px;
-        --word-scale:1.025;
-        --ink-a:.12;
-        --gold-a:.18;
-        --shadow-a:.34;
-        --shadow-gold-a:.18;
-        --shadow-glow-a:.16;
+        --word-y:32px;
+        --word-scale:1.012;
+        --ink-a:.08;
+        --gold-a:.12;
+        --shadow-a:.26;
+        --shadow-gold-a:.12;
+        --shadow-glow-a:.08;
         color:rgba(28,25,23,var(--ink-a));
-        opacity:calc(.34 + (var(--word-p) * .66));
+        opacity:var(--word-p);
         transform:translate3d(0,var(--word-y),0) scale(var(--word-scale));
-        text-shadow:0 34px 28px rgba(28,25,23,var(--shadow-a)),0 14px 8px rgba(142,122,85,var(--shadow-gold-a)),0 0 34px rgba(28,25,23,var(--shadow-glow-a));
+        text-shadow:0 24px 24px rgba(28,25,23,var(--shadow-a)),0 10px 10px rgba(142,122,85,var(--shadow-gold-a)),0 0 24px rgba(28,25,23,var(--shadow-glow-a));
         transition:opacity .12s linear,transform .12s linear,color .12s linear,text-shadow .12s linear;
       }
       .manifesto-text em{font-style:italic;font-weight:400;color:rgba(142,122,85,var(--gold-a));transition:color .12s linear;}
@@ -496,7 +496,7 @@
         display:inline-flex;align-items:center;gap:12px;
         --sig-p:0;
         --sig-y:18px;
-        opacity:calc(.34 + (var(--sig-p) * .66));transform:translate3d(0,var(--sig-y),0);
+        opacity:var(--sig-p);transform:translate3d(0,var(--sig-y),0);
         transition:opacity .12s linear,transform .12s linear;
       }
       .manifesto-sig::before{content:"";display:block;width:24px;height:1px;background:var(--ink);}
@@ -2392,39 +2392,40 @@
       function updateManifestoGhost(y,vh){
         if(!parallaxMetrics.manifesto||!manifestoWords.length)return;
         const item=parallaxMetrics.manifesto;
-        const start=item.top-vh*.72;
-        const end=item.top+item.height*.42;
+        const start=item.top-vh*.7;
+        let end=item.top+item.height*.5-vh*.35;
+        if(end<=start)end=start+vh*.58;
         const raw=clamp01((y-start)/Math.max(1,end-start));
         const shade=1-easeSmooth(raw);
-        item.el.style.setProperty("--manifesto-shade-opacity",(.08 + shade*.38).toFixed(3));
-        item.el.style.setProperty("--manifesto-shade-scale",(1.06 - shade*.12).toFixed(3));
+        item.el.style.setProperty("--manifesto-shade-opacity",(.035 + shade*.125).toFixed(3));
+        item.el.style.setProperty("--manifesto-shade-scale",(1.025 - shade*.045).toFixed(3));
         const count=Math.max(1,manifestoWords.length-1);
         manifestoWords.forEach((word,index)=>{
-          const delay=(index/count)*.38;
-          const p=easeSmooth(clamp01((raw-delay)/.48));
-          const shadowA=((1-p)*.34).toFixed(3);
-          const shadowGoldA=((1-p)*.18).toFixed(3);
-          const shadowGlowA=((1-p)*.16).toFixed(3);
+          const delay=(index/count)*.58;
+          const p=easeSmooth(clamp01((raw-delay)/.32));
+          const shadowA=((1-p)*.26).toFixed(3);
+          const shadowGoldA=((1-p)*.12).toFixed(3);
+          const shadowGlowA=((1-p)*.08).toFixed(3);
           word.style.setProperty("--word-p",p.toFixed(3));
-          word.style.setProperty("--word-y",((1-p)*44).toFixed(1)+"px");
-          word.style.setProperty("--word-scale",(1.025 - p*.025).toFixed(3));
-          word.style.setProperty("--ink-a",(.12 + p*.88).toFixed(3));
-          word.style.setProperty("--gold-a",(.18 + p*.82).toFixed(3));
+          word.style.setProperty("--word-y",((1-p)*32).toFixed(1)+"px");
+          word.style.setProperty("--word-scale",(1.012 - p*.012).toFixed(3));
+          word.style.setProperty("--ink-a",(.08 + p*.92).toFixed(3));
+          word.style.setProperty("--gold-a",(.12 + p*.88).toFixed(3));
           word.style.setProperty("--shadow-a",shadowA);
           word.style.setProperty("--shadow-gold-a",shadowGoldA);
           word.style.setProperty("--shadow-glow-a",shadowGlowA);
-          word.style.opacity=(.34 + p*.66).toFixed(3);
-          word.style.transform=`translate3d(0,${((1-p)*44).toFixed(1)}px,0) scale(${(1.025 - p*.025).toFixed(3)})`;
-          word.style.color=`rgba(28,25,23,${(.12 + p*.88).toFixed(3)})`;
-          word.style.textShadow=`0 34px 28px rgba(28,25,23,${shadowA}),0 14px 8px rgba(142,122,85,${shadowGoldA}),0 0 34px rgba(28,25,23,${shadowGlowA})`;
+          word.style.opacity=p.toFixed(3);
+          word.style.transform=`translate3d(0,${((1-p)*32).toFixed(1)}px,0) scale(${(1.012 - p*.012).toFixed(3)})`;
+          word.style.color=`rgba(28,25,23,${(.08 + p*.92).toFixed(3)})`;
+          word.style.textShadow=`0 24px 24px rgba(28,25,23,${shadowA}),0 10px 10px rgba(142,122,85,${shadowGoldA}),0 0 24px rgba(28,25,23,${shadowGlowA})`;
           const em=word.querySelector("em");
-          if(em)em.style.color=`rgba(142,122,85,${(.18 + p*.82).toFixed(3)})`;
+          if(em)em.style.color=`rgba(142,122,85,${(.12 + p*.88).toFixed(3)})`;
         });
         if(manifestoSig){
           const sigP=easeSmooth(clamp01((raw-.58)/.3));
           manifestoSig.style.setProperty("--sig-p",sigP.toFixed(3));
           manifestoSig.style.setProperty("--sig-y",((1-sigP)*18).toFixed(1)+"px");
-          manifestoSig.style.opacity=(.34 + sigP*.66).toFixed(3);
+          manifestoSig.style.opacity=sigP.toFixed(3);
           manifestoSig.style.transform=`translate3d(0,${((1-sigP)*18).toFixed(1)}px,0)`;
         }
       }
