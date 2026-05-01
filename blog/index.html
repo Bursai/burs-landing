@@ -19,12 +19,12 @@
     <meta property="og:title" content="BURS Blog - Style Tips, AI Fashion &amp; Wardrobe Advice" />
     <meta property="og:description" content="The BURS blog: expert advice on building a smarter wardrobe, AI styling tips, capsule wardrobes, sustainable fashion and more." />
     <meta property="og:url" content="https://burs.me/blog" />
-    <meta property="og:image" content="https://burs.me/burs-logo-256-2.png" />
-    <meta property="og:image:alt" content="BURS logo for the AI wardrobe stylist app" />
+    <meta property="og:image" content="https://burs.me/og-image-stylish.png" />
+    <meta property="og:image:alt" content="BURS AI wardrobe stylist social preview with a mixed wardrobe, accessories, shoes, and phone planning context" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="BURS Blog - Style Tips, AI Fashion &amp; Wardrobe Advice" />
     <meta name="twitter:description" content="The BURS blog: expert advice on building a smarter wardrobe, AI styling tips, capsule wardrobes, sustainable fashion and more." />
-    <meta name="twitter:image" content="https://burs.me/burs-logo-256-2.png" />
+    <meta name="twitter:image" content="https://burs.me/og-image-stylish.png" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
@@ -56,9 +56,11 @@
       .skip-link:focus{top:16px;}
       nav{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:0 72px;height:72px;width:100%;margin:0 auto;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(245,240,232,.72);backdrop-filter:blur(24px) saturate(1.8);z-index:100;transform:translateY(0) translateZ(0);will-change:transform,background,box-shadow,border-color;contain:paint;transition:transform .36s cubic-bezier(.22,1,.36,1),box-shadow .36s cubic-bezier(.22,1,.36,1),background .36s cubic-bezier(.22,1,.36,1),border-color .36s cubic-bezier(.22,1,.36,1);}
       nav.scrolled{top:0;width:min(860px,calc(100% - 28px));height:56px;padding:0 16px 0 20px;border:1px solid rgba(28,25,23,.12);border-radius:999px;background:rgba(245,240,232,.78);box-shadow:0 18px 58px -30px rgba(28,25,23,.48),0 1px 0 rgba(255,255,255,.55) inset;grid-template-columns:auto 1fr auto;transform:translateY(10px) translateZ(0);}
-      .nav-logo{justify-self:start;}
+      .nav-logo{justify-self:start;display:flex;align-items:center;gap:14px;}
       .nav-logo img{height:48px;width:auto;display:block;transition:transform .4s cubic-bezier(.22,1,.36,1);}
       .nav-logo:hover img{transform:rotate(-3deg) scale(1.05);}
+      .nav-logo .nl-mark{font-family:"Playfair Display",serif;font-style:italic;font-size:14px;color:var(--faint);letter-spacing:.5px;display:none;}
+      @media(min-width:1100px){.nav-logo .nl-mark{display:block;}}
       .nav-links{justify-self:center;display:flex;gap:30px;list-style:none;}
       .nav-links a{font-size:11px;letter-spacing:2.2px;text-transform:uppercase;text-decoration:none;color:var(--muted);position:relative;transition:color .3s ease;font-weight:500;}
       .nav-links a::after{content:"";position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--ink);transition:width .4s cubic-bezier(.22,1,.36,1);}
@@ -66,6 +68,7 @@
       .nav-links a:hover::after,.nav-links a.active::after{width:100%;}
       .nav-cta{justify-self:end;font-size:11px;letter-spacing:2.5px;text-transform:uppercase;border:1px solid var(--ink);border-radius:4px;padding:11px 24px;text-decoration:none;color:var(--ink);transition:all .35s cubic-bezier(.22,1,.36,1);position:relative;overflow:hidden;font-weight:500;}
       nav.scrolled .nav-logo img{height:34px;}
+      nav.scrolled .nav-logo .nl-mark{display:none;}
       nav.scrolled .nav-links{gap:18px;}
       nav.scrolled .nav-links a{font-size:10px;letter-spacing:1.7px;}
       nav.scrolled .nav-cta{padding:8px 14px;border-radius:999px;letter-spacing:1.8px;}
@@ -159,28 +162,16 @@
   </head>
   <body>
     <a class="skip-link" href="#main-content">Skip to content</a>
-    <nav aria-label="Primary">
-      <a href="/" class="nav-logo" aria-label="BURS home"><img src="/burs-logo-256-2.png" alt="BURS" width="256" height="256" /></a>
-      <ul class="nav-links">
-        <li><a href="/#story">How It Works</a></li>
-        <li><a href="/features">Features</a></li>
-        <li><a href="/#pricing">Pricing</a></li>
-        <li><a class="active" href="/blog">Blog</a></li>
-        <li><a href="/#download">Download</a></li>
-      </ul>
-      <a href="https://www.burs.me/auth" class="nav-cta"><span>Get the App</span></a>
+    <nav class="primary" aria-label="Primary">
+      <div class="nav-logo">
+        <a href="/" aria-label="BURS"><img src="/burs-logo-256-2.png" alt="BURS" width="256" height="256" /></a>
+        <span class="nl-mark">- a quieter way to dress</span>
+      </div>
+      <ul class="nav-links"><li><a href="/#story">Story</a></li><li><a href="/#pricing">Pricing</a></li><li><a class="active" href="/blog">Journal</a></li><li><a href="/#download">Download</a></li></ul>
+      <a href="/auth" class="nav-cta"><span>Get BURS</span></a>
       <button class="nav-hamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-drawer"><span></span><span></span><span></span></button>
     </nav>
-    <div id="mobile-drawer" class="mobile-drawer" aria-hidden="true">
-      <ul>
-        <li><a href="/#story">How It Works</a></li>
-        <li><a href="/features">Features</a></li>
-        <li><a href="/#pricing">Pricing</a></li>
-        <li><a href="/blog">Blog</a></li>
-        <li><a href="/#download">Download</a></li>
-        <li><a href="https://www.burs.me/auth" class="mobile-cta">Get BURS</a></li>
-      </ul>
-    </div>
+    <div id="mobile-drawer" class="mobile-drawer" aria-hidden="true" inert><ul><li><a href="/#story">Story</a></li><li><a href="/#pricing">Pricing</a></li><li><a href="/blog">Journal</a></li><li><a href="/#download">Download</a></li><li><a href="/auth" class="mobile-cta">Get BURS</a></li></ul></div>
     <main id="main-content">
       <section class="hero">
         <div class="hero-inner">
@@ -237,7 +228,7 @@
           drawer.classList.toggle('open',isOpen);
           hamb.setAttribute('aria-expanded',isOpen?'true':'false');
           drawer.setAttribute('aria-hidden',isOpen?'false':'true');
-          hamb.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
+          hamb.setAttribute('aria-label',isOpen?'Close menu':'Open menu');drawer.toggleAttribute('inert',!isOpen);
         }
         hamb.addEventListener('click',()=>setOpen(!hamb.classList.contains('open')));
         drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));

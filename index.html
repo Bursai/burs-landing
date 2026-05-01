@@ -27,19 +27,19 @@
     <meta property="og:title" content="BURS — AI Wardrobe Stylist | Digital Wardrobe &amp; Personal Stylist App" />
     <meta property="og:description" content="BURS uses AI to scan your wardrobe, read your calendar and weather, and style you in 5 seconds. Your personal AI stylist. Available on iOS and Android." />
     <meta property="og:url" content="https://burs.me" />
-    <meta property="og:image" content="https://burs.me/burs-logo-256-2.png" />
+    <meta property="og:image" content="https://burs.me/og-image-stylish.png" />
     <meta property="og:image:type" content="image/png" />
-    <meta property="og:image:alt" content="BURS logo for the AI wardrobe stylist app" />
-    <meta property="og:image:width" content="256" />
-    <meta property="og:image:height" content="256" />
+    <meta property="og:image:alt" content="BURS AI wardrobe stylist social preview with a mixed wardrobe, accessories, shoes, and phone planning context" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter / X card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="BURS — AI Wardrobe Stylist | Digital Wardrobe &amp; Personal Stylist App" />
     <meta name="twitter:description" content="BURS uses AI to scan your wardrobe, read your calendar and weather, and style you in 5 seconds. Your personal AI stylist. Available on iOS and Android." />
-    <meta name="twitter:image" content="https://burs.me/burs-logo-256-2.png" />
-    <meta name="twitter:image:alt" content="BURS logo for the AI wardrobe stylist app" />
+    <meta name="twitter:image" content="https://burs.me/og-image-stylish.png" />
+    <meta name="twitter:image:alt" content="BURS AI wardrobe stylist social preview with a mixed wardrobe, accessories, shoes, and phone planning context" />
 
     <!-- Icons + manifest -->
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
@@ -77,7 +77,7 @@
           "operatingSystem": "iOS, Android",
           "applicationCategory": "LifestyleApplication",
           "url": "https://burs.me/",
-          "image": "https://burs.me/og-image.png",
+          "image": "https://burs.me/og-image-stylish.png",
           "description": "AI wardrobe stylist that scans your closet, reads the weather and calendar, and surfaces the perfect outfit in five seconds. Plan your week and pack for travel from your own wardrobe.",
           "publisher": {"@id": "https://burs.me/#org"},
           "offers": {
@@ -138,20 +138,16 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://unpkg.com" crossorigin />
     <link rel="preconnect" href="https://images.unsplash.com" crossorigin />
+    <link rel="preload" as="image" fetchpriority="high" href="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1800&q=75&auto=format&fit=crop" />
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet" />
-    <script src="https://unpkg.com/gsap@3.12.5/dist/gsap.min.js" defer crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/gsap@3.12.5/dist/ScrollTrigger.min.js" defer crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer crossorigin="anonymous"></script>
-
     <style>
       /* =====================================================================
          BURS — World-class landing
          ──────────────────────────────────────────────────────────────────
          Design system: cream paper + warm taupe + ink charcoal.
          Typography: Playfair Display (display, italics) + DM Sans (UI).
-         Motion: GSAP ScrollTrigger + Lenis smooth scroll. Reduced-motion friendly.
+         Motion: native scroll, lightweight state changes, reduced-motion friendly.
          ===================================================================== */
 
       :root{
@@ -179,10 +175,6 @@
 
       *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
       html{scroll-behavior:auto;}
-      html.lenis,html.lenis body{height:auto;}
-      .lenis.lenis-smooth{scroll-behavior:auto !important;}
-      .lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain;}
-      .lenis.lenis-stopped{overflow:hidden;}
       body{
         background:var(--bg);
         color:var(--ink);
@@ -198,6 +190,10 @@
       }
       img{display:block;max-width:100%;height:auto;}
       ::selection{background:var(--ink);color:var(--bg);}
+      .manifesto,.edit-split,.triptych,.craft,.voices,.magazine,.journal,#pricing,#faq,#download,footer{
+        content-visibility:auto;
+        contain-intrinsic-size:900px;
+      }
 
       /* Paper grain */
       body::before{
@@ -209,14 +205,6 @@
         content:"";position:fixed;inset:0;pointer-events:none;z-index:9989;
         background:radial-gradient(140% 100% at 50% 50%,transparent 50%,rgba(28,25,23,.06) 100%);
       }
-
-      /* CURSOR — kept minimal, hidden on touch */
-      #_cur{position:fixed;width:6px;height:6px;background:var(--ink);border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);will-change:left,top;}
-      #_ring{position:fixed;width:30px;height:30px;border:1px solid rgba(28,25,23,.4);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .25s var(--easing),height .25s var(--easing),border-color .25s var(--easing),background .25s var(--easing);}
-      #_ring.big{width:64px;height:64px;border-color:var(--ink);background:rgba(28,25,23,.04);}
-      #_ring.dark{border-color:rgba(245,240,232,.7);}
-      #_cur.dark{background:#F5F0E8;}
-      @media(hover:none),(max-width:900px){#_cur,#_ring{display:none;}}
 
       /* PROGRESS BAR */
       #_prog{position:fixed;top:0;left:0;height:2px;background:var(--ink);z-index:9997;width:0%;transition:width .12s linear;}
@@ -230,18 +218,20 @@
          ===================================================================== */
       nav{
         display:grid;grid-template-columns:1fr auto 1fr;align-items:center;
-        padding:0 56px;height:72px;
-        position:sticky;top:0;z-index:100;
-        background:rgba(245,240,232,.4);
-        backdrop-filter:blur(20px) saturate(1.6);
-        -webkit-backdrop-filter:blur(20px) saturate(1.6);
-        transition:all .45s var(--easing);
+        padding:0 56px;height:72px;width:100%;margin:0 auto;
+        position:sticky;top:0;left:0;right:0;z-index:100;
+        background:rgba(245,240,232,.76);
+        backdrop-filter:blur(10px);
+        -webkit-backdrop-filter:blur(10px);
+        transition:transform .28s var(--easing),background .28s var(--easing),border-color .28s var(--easing),box-shadow .28s var(--easing),border-radius .28s var(--easing);
         border-bottom:1px solid transparent;
       }
       nav.scrolled{
-        background:rgba(245,240,232,.85);
-        border-bottom:1px solid var(--line);
-        box-shadow:0 12px 40px -24px rgba(28,25,23,.18);
+        width:min(860px,calc(100% - 32px));height:58px;padding:0 18px 0 20px;
+        border:1px solid rgba(28,25,23,.12);border-radius:999px;
+        background:rgba(245,240,232,.9);
+        box-shadow:0 18px 58px -30px rgba(28,25,23,.48),0 1px 0 rgba(255,255,255,.55) inset;
+        grid-template-columns:auto 1fr auto;transform:translateY(12px);
       }
       nav>.nav-logo{justify-self:start;display:flex;align-items:center;gap:14px;}
       nav>.nav-links{justify-self:center;}
@@ -251,6 +241,11 @@
       .nav-logo:hover img{transform:rotate(-4deg) scale(1.06);}
       .nav-logo .nl-mark{font-family:"Playfair Display",serif;font-style:italic;font-size:14px;color:var(--faint);letter-spacing:.5px;display:none;}
       @media(min-width:1100px){.nav-logo .nl-mark{display:block;}}
+      nav.scrolled .nav-logo img{height:30px;}
+      nav.scrolled .nav-logo .nl-mark{display:none;}
+      nav.scrolled .nav-links{gap:22px;}
+      nav.scrolled .nav-links a{font-size:10px;letter-spacing:1.7px;}
+      nav.scrolled .nav-cta{padding:8px 14px;letter-spacing:1.8px;}
       .nav-links{display:flex;gap:42px;list-style:none;}
       .nav-links a{font-size:11px;letter-spacing:2.4px;text-transform:uppercase;text-decoration:none;color:var(--muted);position:relative;transition:color .3s ease;font-weight:500;}
       .nav-links a::after{content:"";position:absolute;bottom:-6px;left:0;width:0;height:1px;background:var(--ink);transition:width .45s var(--easing);}
@@ -294,7 +289,7 @@
       }
       .hero-bg::before{
         content:"";position:absolute;inset:0;
-        background:url("https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=2200&q=85&auto=format&fit=crop") center/cover no-repeat;
+        background:url("https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1800&q=75&auto=format&fit=crop") center/cover no-repeat;
         opacity:.32;filter:contrast(.95) saturate(.85) sepia(.06);
         mix-blend-mode:multiply;
         mask-image:linear-gradient(120deg,transparent 0%,#000 40%,#000 70%,transparent 100%);
@@ -332,7 +327,7 @@
         font-feature-settings:"liga" 0,"clig" 0,"dlig" 0,"hlig" 0,"rlig" 0,"calt" 0 !important;
       }
       .hero-headline .line{display:block;overflow:hidden;padding:.04em 0;}
-      .hero-headline .line-inner{display:block;will-change:transform,opacity;}
+      .hero-headline .line-inner{display:block;}
       .hero-headline em{font-style:italic;font-weight:400;color:var(--ink);opacity:.62;letter-spacing:-.015em;}
       .hero-headline .acc{
         font-style:italic;font-weight:400;
@@ -361,12 +356,20 @@
       .hero-side .qte::before{content:"“";font-style:italic;color:var(--gold-deep);margin-right:4px;}
 
       .hero-actions{display:flex;align-items:center;gap:32px;flex-wrap:wrap;margin-top:56px;}
+      .hero-eyebrow,.hero-headline .line-inner,.hero-sub,.hero-side,.hero-actions{
+        animation:_heroRise .86s var(--easing) both;
+      }
+      .hero-headline .line:nth-child(1) .line-inner{animation-delay:.08s;}
+      .hero-headline .line:nth-child(2) .line-inner{animation-delay:.18s;}
+      .hero-sub{animation-delay:.28s;}
+      .hero-side{animation-delay:.34s;}
+      .hero-actions{animation-delay:.42s;}
+      @keyframes _heroRise{from{opacity:0;transform:translate3d(0,34px,0);}to{opacity:1;transform:none;}}
       .btn-primary{
         font-size:11px;letter-spacing:2.6px;text-transform:uppercase;background:var(--ink);color:var(--bg);
         padding:22px 38px;text-decoration:none;transition:all .35s var(--easing);
         position:relative;overflow:hidden;display:inline-flex;align-items:center;gap:12px;
         border:1px solid var(--ink);border-radius:99px;font-weight:500;
-        will-change:transform;
       }
       .btn-primary::after{content:"";position:absolute;inset:0;background:linear-gradient(120deg,transparent 30%,rgba(245,240,232,.22) 50%,transparent 70%);transform:translateX(-100%);transition:transform .9s var(--easing);}
       .btn-primary:hover::after{transform:translateX(100%);}
@@ -478,8 +481,7 @@
       }
       .edit-img .img{
         position:absolute;inset:0;
-        background:url("https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1800&q=85&auto=format&fit=crop") center/cover no-repeat;
-        will-change:transform;
+        background:url("https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1400&q=75&auto=format&fit=crop") center/cover no-repeat;
         transform:scale(1.12);
       }
       .edit-img::after{
@@ -495,6 +497,7 @@
         display:flex;justify-content:space-between;align-items:flex-end;
         font-size:10px;letter-spacing:2.6px;text-transform:uppercase;color:rgba(245,240,232,.85);
       }
+      .edit-split .reveal{opacity:1;transform:none;}
       .edit-copy{
         padding:120px 80px;display:flex;flex-direction:column;justify-content:center;
         position:relative;
@@ -523,10 +526,14 @@
         min-height:100vh;padding:120px 72px;
         display:flex;flex-direction:column;justify-content:center;
         border-bottom:1px solid var(--border);position:relative;
+        opacity:.5;transform:translate3d(0,28px,0);
+        transition:opacity .56s var(--easing),transform .56s var(--easing);
       }
+      .stage-act.is-active{opacity:1;transform:none;}
       .stage-act:last-child{border-bottom:none;}
       .stage-act .act-num{font-family:"Playfair Display",serif;font-size:14px;font-weight:400;font-style:italic;color:var(--faint);margin-bottom:24px;letter-spacing:2px;display:inline-flex;align-items:center;}
-      .stage-act .act-num::before{content:"";display:inline-block;width:32px;height:1px;background:var(--faint);margin-right:16px;}
+      .stage-act .act-num::before{content:"";display:inline-block;width:32px;height:1px;background:var(--faint);margin-right:16px;transition:width .5s var(--easing),background .5s var(--easing);}
+      .stage-act.is-active .act-num::before{width:56px;background:var(--gold-deep);}
       .stage-act .act-eyebrow{font-size:11px;letter-spacing:4.4px;text-transform:uppercase;color:var(--faint);margin-bottom:28px;}
       .stage-act .act-headline{font-family:"Playfair Display",serif;font-size:clamp(48px,5.2vw,92px);font-weight:900;line-height:1.05;margin-bottom:28px;letter-spacing:-.014em;font-variant-ligatures:none;}
       .stage-act .act-headline em{font-style:italic;font-weight:400;color:var(--gold-deep);}
@@ -556,14 +563,15 @@
         width:560px;height:560px;border-radius:50%;border:1px solid rgba(28,25,23,.05);pointer-events:none;
       }
       .stage-phone-wrap{
+        --phone-scale:1;
         position:relative;width:336px;height:728px;z-index:3;
         animation:_phonefloat 6.5s ease-in-out infinite;
-        transform-style:preserve-3d;will-change:transform;
+        transform-style:preserve-3d;
       }
-      @keyframes _phonefloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+      @keyframes _phonefloat{0%,100%{transform:translateY(0) scale(var(--phone-scale));}50%{transform:translateY(-10px) scale(var(--phone-scale));}}
 
-      .beam{position:absolute;top:50%;left:50%;width:860px;height:860px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(28,25,23,.12) 0%,rgba(28,25,23,.05) 30%,rgba(28,25,23,.02) 55%,transparent 75%);filter:blur(36px);z-index:1;will-change:filter,transform;pointer-events:none;}
-      .beam-2{position:absolute;top:50%;left:50%;width:400px;height:400px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(184,160,120,.22) 0%,transparent 65%);filter:blur(40px);z-index:1;pointer-events:none;animation:_pulse 4s ease-in-out infinite;}
+      .beam{position:absolute;top:50%;left:50%;width:940px;height:940px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(28,25,23,.1) 0%,rgba(28,25,23,.045) 36%,rgba(28,25,23,.018) 62%,transparent 78%);z-index:1;pointer-events:none;}
+      .beam-2{position:absolute;top:50%;left:50%;width:520px;height:520px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(184,160,120,.18) 0%,rgba(184,160,120,.08) 34%,transparent 68%);z-index:1;pointer-events:none;animation:_pulse 4s ease-in-out infinite;opacity:calc(.58 + (var(--story-progress,0) * .32));}
       @keyframes _pulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}}
 
       /* Titanium iPhone frame — realistic Pro */
@@ -584,7 +592,10 @@
           inset 0 0 0 1px rgba(255,255,255,.08),
           inset 0 2px 0 0 rgba(255,255,255,.18),
           inset 0 -2px 0 0 rgba(0,0,0,.4);
+        transition:box-shadow .55s var(--easing),transform .55s var(--easing);
       }
+      .phone-stage[data-active-act="3"] .stage-phone{transform:rotateX(1.5deg) rotateY(-2deg);}
+      .phone-stage[data-active-act="5"] .stage-phone{transform:rotateX(-1deg) rotateY(2deg);}
       /* Inner chassis bezel — thin black band between titanium and screen */
       .stage-phone::before{
         content:"";position:absolute;inset:6px;
@@ -613,9 +624,9 @@
       .screen-stack{position:absolute;inset:6px;border-radius:54px;overflow:hidden;transform-style:preserve-3d;background:#040303;z-index:2;}
       .screen-stack .screen{
         position:absolute;inset:0;width:100%;height:100%;
-        opacity:0;transform:scale(1.05);
-        will-change:opacity,transform;
+        opacity:0;transform:scale(1.02);
         background:#F5F0E8;
+        transition:opacity .28s ease,transform .28s ease;
       }
       .screen-stack .screen.active{opacity:1;transform:scale(1);}
       .screen-stack .screen-img{
@@ -744,8 +755,10 @@
         border:1px solid rgba(28,25,23,.08);
         white-space:nowrap;font-weight:500;
         box-shadow:0 12px 32px rgba(28,25,23,.10),inset 0 1px 0 rgba(255,255,255,.6);
-        will-change:transform,opacity;
+        opacity:0;transform:translate(-50%,-50%) translate3d(var(--cx),var(--cy),0) rotateZ(var(--rot)) scale(.96);
+        transition:opacity .24s ease,transform .24s ease;
       }
+      .chip.is-active{opacity:1;transform:translate(-50%,-50%) translate3d(var(--cx),var(--cy),0) rotateZ(var(--rot)) scale(1);}
       .chip.square{border-radius:12px;padding:14px 20px;font-family:"Playfair Display",serif;font-style:italic;font-size:13px;letter-spacing:0;text-transform:none;font-weight:400;}
       .chip[data-act="1"]{--rot:-2;}
       .chip[data-act="2"]{--rot:1.5;}
@@ -781,8 +794,10 @@
          ===================================================================== */
       .gallery{
         position:relative;
+        min-height:calc(100vh + var(--gallery-travel,2200px));
         background:var(--noir);color:#F5F0E8;
-        overflow:hidden;
+        overflow:visible;
+        touch-action:pan-y;
       }
       .gallery::before{
         content:"";position:absolute;inset:0;
@@ -790,11 +805,15 @@
           radial-gradient(40% 50% at 80% 80%,rgba(120,100,80,.1),transparent 65%);
         pointer-events:none;
       }
-      .gallery-pin{height:100vh;display:flex;align-items:center;position:relative;}
+      .gallery-pin{height:100vh;display:flex;align-items:center;position:sticky;top:0;padding:0;overflow:hidden;touch-action:pan-y;}
       .gallery-track{
-        display:flex;gap:32px;padding:0 56px;will-change:transform;
+        display:flex;gap:32px;padding:0 56px;width:max-content;
         align-items:center;
+        transform:translate3d(var(--gallery-x,0px),0,0);
+        will-change:transform;
+        overflow:visible;scroll-snap-type:none;scrollbar-width:none;touch-action:pan-y;
       }
+      .gallery-track::-webkit-scrollbar{display:none;}
       .gallery-intro{
         flex-shrink:0;width:46vw;max-width:560px;padding-right:48px;
       }
@@ -807,9 +826,20 @@
         flex-shrink:0;width:340px;height:520px;border-radius:18px;overflow:hidden;
         position:relative;background:#1a140d;
         box-shadow:0 60px 120px -40px rgba(0,0,0,.5),0 0 0 1px rgba(245,240,232,.06);
-        will-change:transform;
+        scroll-snap-align:center;
       }
-      .gallery-card .pic{position:absolute;inset:0;background-position:center;background-size:cover;}
+      .gallery-card .pic{position:absolute;inset:0;background-position:center;background-size:cover;overflow:hidden;}
+      .gallery-card .gallery-img{
+        width:100%;height:100%;display:block;object-fit:cover;
+        filter:saturate(.94) contrast(1.04);
+      }
+      .gallery-card .pic.g1 .gallery-img{object-position:50% 50%;}
+      .gallery-card .pic.g2 .gallery-img{object-position:50% 48%;}
+      .gallery-card .pic.g3 .gallery-img{object-position:50% 50%;}
+      .gallery-card .pic.g4 .gallery-img{object-position:50% 52%;}
+      .gallery-card .pic.g5 .gallery-img{object-position:50% 50%;}
+      .gallery-card .pic.g6 .gallery-img{object-position:50% 50%;}
+      .gallery-card .pic.g7 .gallery-img{object-position:50% 50%;}
       .gallery-card::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 0%,transparent 50%,rgba(0,0,0,.7) 100%);}
       .gallery-card .meta{position:absolute;left:24px;right:24px;bottom:24px;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;gap:14px;}
       .gallery-card .meta .t{font-family:"Playfair Display",serif;font-style:italic;font-size:24px;line-height:1.1;color:#F5F0E8;}
@@ -823,26 +853,6 @@
       .gallery-card .pic.g5{background-image:linear-gradient(165deg,#5a2b2b 0%,#2a1212 70%);}
       .gallery-card .pic.g6{background-image:linear-gradient(165deg,#3d3a52 0%,#1a1828 70%);}
       .gallery-card .pic.g7{background-image:linear-gradient(165deg,#5c5043 0%,#0a0907 70%);}
-      .gallery-card .silhouette{
-        position:absolute;left:50%;top:50%;transform:translate(-50%,-46%);
-        width:62%;aspect-ratio:1/1.4;
-      }
-      .gallery-card .silhouette::before,.gallery-card .silhouette::after{content:"";position:absolute;}
-      /* Stylized garment silhouette - top */
-      .gallery-card .silhouette::before{
-        top:0;left:50%;transform:translateX(-50%);
-        width:78%;height:55%;
-        background:linear-gradient(180deg,rgba(255,255,255,.16) 0%,rgba(255,255,255,.04) 100%);
-        border-radius:36% 36% 12% 12%/45% 45% 8% 8%;
-        box-shadow:inset 0 -2px 8px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.18);
-      }
-      /* bottom */
-      .gallery-card .silhouette::after{
-        bottom:0;left:50%;transform:translateX(-50%);
-        width:62%;height:54%;
-        background:linear-gradient(180deg,rgba(0,0,0,.28) 0%,rgba(0,0,0,.5) 100%);
-        border-radius:8% 8% 16% 16%;
-      }
       .gallery-end{flex-shrink:0;width:46vw;max-width:540px;padding-left:48px;}
       .gallery-end h3{font-family:"Playfair Display",serif;font-weight:400;font-style:italic;font-size:clamp(28px,2.6vw,42px);line-height:1.25;color:#F5F0E8;}
       .gallery-end h3 b{font-style:normal;font-weight:900;color:#F5F0E8;}
@@ -900,7 +910,7 @@
         box-shadow:0 60px 120px -40px rgba(28,25,23,.35),0 0 0 1px rgba(28,25,23,.04);
         isolation:isolate;
       }
-      .trip-frame .trip-bg{position:absolute;inset:0;background-position:center;background-size:cover;will-change:transform;}
+      .trip-frame .trip-bg{position:absolute;inset:0;background-position:center;background-size:cover;}
       .trip-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.05) 0%,rgba(0,0,0,.45) 100%);}
       .trip-frame .trip-tag{
         position:absolute;top:24px;left:24px;z-index:3;
@@ -928,7 +938,7 @@
           0 0 0 4px rgba(210,196,170,.16),
           inset 0 0 0 1px rgba(255,255,255,.06),
           inset 0 1px 0 rgba(255,255,255,.18);
-        transform:rotate(-6deg);will-change:transform;
+        transform:rotate(-6deg);
       }
       .mini-phone::before{
         /* Dynamic Island */
@@ -956,7 +966,7 @@
          garments inside the AI Stylist screenshot. */
       .trip-frame.t-morning{background:linear-gradient(180deg,#5d4d36 0%,#1a140d 100%);}
       .trip-frame.t-morning .trip-bg{
-        background-image:url("https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=1400&q=85&auto=format&fit=crop");
+        background-image:url("https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?w=1200&q=75&auto=format&fit=crop");
         opacity:.62;
         filter:saturate(.7) sepia(.18) contrast(.95);
       }
@@ -971,7 +981,7 @@
          Wardrobe screenshot's grid of floral / navy / taupe shirts. */
       .trip-frame.t-day{background:linear-gradient(180deg,#7a6a52 0%,#1c1612 100%);}
       .trip-frame.t-day .trip-bg{
-        background-image:url("https://images.unsplash.com/photo-1542060748-10c28b62716f?w=1400&q=85&auto=format&fit=crop");
+        background-image:url("https://images.unsplash.com/photo-1542060748-10c28b62716f?w=1200&q=75&auto=format&fit=crop");
         opacity:.62;
         filter:saturate(.7) sepia(.18) contrast(.95);
       }
@@ -987,7 +997,7 @@
       .trip-frame.t-day .mini-phone .scrn .grid div:nth-child(6){background:linear-gradient(135deg,#5a2b2b,#2a1212);}
 
       .trip-frame.t-night{background:linear-gradient(180deg,#22182d 0%,#06030c 100%);}
-      .trip-frame.t-night .trip-bg{background-image:url("https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=1400&q=85&auto=format&fit=crop");opacity:.42;mix-blend-mode:luminosity;}
+      .trip-frame.t-night .trip-bg{background-image:url("https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=1200&q=75&auto=format&fit=crop");opacity:.42;mix-blend-mode:luminosity;}
       .trip-frame.t-night .mini-phone{right:-20px;top:120px;transform:rotate(-4deg);}
       .trip-frame.t-night .mini-phone .scrn{background:linear-gradient(180deg,#22182d 0%,#06030c 100%);}
       .trip-frame.t-night .mini-phone .scrn .week{display:flex;flex-direction:column;gap:3px;flex:1;}
@@ -1105,9 +1115,8 @@
       }
       .magazine-bg{
         position:absolute;inset:-5%;
-        background:url("https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=2200&q=85&auto=format&fit=crop") center/cover no-repeat;
+        background:url("https://images.unsplash.com/photo-1492707892479-7bc8d5a4ee93?w=1800&q=75&auto=format&fit=crop") center/cover no-repeat;
         background-color:#3a2e22;
-        will-change:transform;
         filter:saturate(.85) contrast(.95);
       }
       .magazine::after{
@@ -1197,7 +1206,6 @@
         max-width:540px;width:100%;text-align:left;
         position:relative;overflow:hidden;
         box-shadow:0 80px 160px -40px rgba(28,25,23,.4),0 0 0 1px rgba(28,25,23,.1);
-        will-change:transform;
       }
       .price-card::before{
         content:"";position:absolute;inset:0;pointer-events:none;
@@ -1210,8 +1218,25 @@
         color:rgba(245,240,232,.85);margin-bottom:36px;
       }
       .price-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);}
+      .billing-toggle{
+        display:grid;grid-template-columns:1fr 1fr;gap:4px;
+        padding:5px;margin-bottom:34px;border-radius:999px;
+        background:rgba(245,240,232,.07);border:1px solid rgba(245,240,232,.13);
+      }
+      .billing-option{
+        min-height:48px;border:0;border-radius:999px;background:transparent;color:rgba(245,240,232,.62);
+        font:inherit;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;gap:8px;
+        transition:background .28s var(--easing),color .28s var(--easing),transform .28s var(--easing);
+      }
+      .billing-option span{font-size:9px;letter-spacing:1.6px;color:rgba(245,240,232,.42);}
+      .billing-option.active{background:#F5F0E8;color:var(--ink);box-shadow:0 12px 28px -18px rgba(0,0,0,.65);}
+      .billing-option.active span{color:var(--gold-deep);}
+      .billing-option:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
       .price-amount{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;font-family:"Playfair Display",serif;}
-      .price-amount [data-price="year"]{font-size:96px;font-weight:900;line-height:1;letter-spacing:-.02em;color:#F5F0E8;}
+      .price-amount [data-price="active"]{font-size:96px;font-weight:900;line-height:1;letter-spacing:-.02em;color:#F5F0E8;}
+      .price-card.is-switching .price-amount{animation:_priceFlip .28s var(--easing) both;}
+      @keyframes _priceFlip{0%{opacity:.45;transform:translate3d(0,10px,0);}100%{opacity:1;transform:none;}}
       .price-per{font-size:18px;color:rgba(245,240,232,.55);font-style:italic;}
       .price-savings{font-size:13px;color:var(--gold);margin-bottom:8px;letter-spacing:.2px;}
       .price-alt{font-size:13px;color:rgba(245,240,232,.65);margin-bottom:36px;}
@@ -1288,7 +1313,7 @@
       }
       #download::after{
         content:"";position:absolute;inset:0;
-        background:url("https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=2200&q=85&auto=format&fit=crop") center/cover no-repeat;
+        background:url("https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=1600&q=70&auto=format&fit=crop") center/cover no-repeat;
         opacity:.07;mix-blend-mode:screen;pointer-events:none;
         filter:contrast(.9) saturate(.5);
       }
@@ -1337,19 +1362,23 @@
       .bottom-rule{height:4px;background:var(--ink);}
 
       /* =====================================================================
-         REVEAL UTILITY (GSAP-driven)
+         REVEAL UTILITY
          ===================================================================== */
-      .reveal{opacity:0;transform:translateY(40px);}
-      .motion-lite .reveal{opacity:1 !important;transform:none !important;}
-      .reveal.d1{transition-delay:.05s;}
-      .reveal.d2{transition-delay:.1s;}
-      .reveal.d3{transition-delay:.15s;}
+      .reveal{
+        opacity:0;transform:translate3d(0,34px,0);
+        transition:opacity .72s var(--easing),transform .72s var(--easing);
+      }
+      .reveal.is-visible{opacity:1;transform:none;}
+      .reveal.d1{transition-delay:.08s;}
+      .reveal.d2{transition-delay:.14s;}
+      .reveal.d3{transition-delay:.2s;}
 
       /* =====================================================================
          RESPONSIVE
          ===================================================================== */
       @media(max-width:1100px){
         nav{padding:0 32px;}
+        nav.scrolled{width:calc(100% - 24px);height:56px;padding:0 12px 0 16px;transform:translateY(8px);}
         .nav-links{display:none;}
         .nav-cta{display:none;}
         .nav-hamburger{display:flex;}
@@ -1370,11 +1399,10 @@
         .stage-copy{border-right:none;}
         .stage-act{padding:80px 32px;min-height:auto;}
         .stage-phone-col{position:relative;height:auto;padding:60px 0 80px;border-bottom:1px solid var(--border);}
-        .stage-phone-wrap{transform:scale(.9);}
-        .gallery-pin{height:auto;padding:80px 0;}
-        .gallery-track{flex-direction:column;padding:0 28px;gap:24px;}
-        .gallery-intro,.gallery-end{width:auto;max-width:none;padding:0;}
-        .gallery-card{width:100%;max-width:380px;margin:0 auto;}
+        .stage-phone-wrap{--phone-scale:.9;}
+        .gallery-intro{width:58vw;max-width:520px;padding-right:32px;}
+        .gallery-end{width:54vw;padding-left:32px;}
+        .gallery-card{width:300px;height:460px;}
         .triptych{padding:80px 28px 100px;}
         .triptych-head{grid-template-columns:1fr;gap:24px;margin-bottom:60px;}
         .triptych-grid{grid-template-columns:1fr;}
@@ -1390,7 +1418,7 @@
         .journal-card,.journal-card.featured{min-height:380px;grid-row:auto;}
         #pricing{padding:100px 28px 120px;}
         .price-card{padding:48px 32px;}
-        .price-amount [data-price="year"]{font-size:64px;}
+        .price-amount [data-price="active"]{font-size:64px;}
         #faq{padding:100px 28px;}
         #download{padding:100px 28px 120px;}
         footer{padding:60px 28px 40px;}
@@ -1398,11 +1426,20 @@
         .footer-links{flex-wrap:wrap;justify-content:center;}
       }
 
+      @media(max-width:760px){
+        .gallery{min-height:auto;overflow:hidden;}
+        .gallery-pin{height:auto;position:relative;top:auto;padding:80px 0;overflow:visible;}
+        .gallery-track{width:auto;transform:none !important;will-change:auto;flex-direction:column;padding:0 28px;gap:24px;overflow:visible;}
+        .gallery-intro,.gallery-end{width:auto;max-width:none;padding:0;}
+        .gallery-card{width:100%;max-width:380px;height:520px;margin:0 auto;}
+      }
+
       /* Reduced motion */
       @media(prefers-reduced-motion:reduce){
         *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
         .marquee-track{animation:none;}
         .reveal{opacity:1;transform:none;}
+        .stage-act{opacity:1;transform:none;}
       }
 
       /* Cookie banner */
@@ -1420,8 +1457,6 @@
     <a href="#main-content" class="skip-link" data-native-skip>Skip to main content</a>
 
     <div id="_prog" aria-hidden="true"></div>
-    <div id="_cur" aria-hidden="true"></div>
-    <div id="_ring" aria-hidden="true"></div>
 
     <nav>
       <div class="nav-logo">
@@ -1440,7 +1475,7 @@
       </button>
     </nav>
 
-    <div id="mobile-drawer" class="mobile-drawer" aria-hidden="true">
+    <div id="mobile-drawer" class="mobile-drawer" aria-hidden="true" inert>
       <ul>
         <li><a href="#story">Story</a></li>
         <li><a href="#pricing">Pricing</a></li>
@@ -1660,46 +1695,46 @@
       <!-- ============================================================
            HORIZONTAL OUTFIT GALLERY — pinned, scroll-jacked
            ============================================================ -->
-      <section class="gallery" aria-label="Outfits, every day">
+      <section id="week" class="gallery" aria-label="Outfits, every day">
         <div class="gallery-pin">
           <div class="gallery-track">
             <div class="gallery-intro">
-              <div class="eye">— A week in BURS</div>
+              <div class="eye">A week in BURS</div>
               <h2>Outfits, <em>every day.</em></h2>
               <p>Each morning BURS opens with one decision already made — the outfit that fits the weather, the calendar, the mood. Drift the rail to flip through a week as it actually unfolded.</p>
             </div>
             <article class="gallery-card">
-              <div class="pic g1"><div class="silhouette"></div></div>
+              <div class="pic g1"><img src="/assets/gallery/week-monday-pitch.webp" alt="Navy blazer and tailored trousers styled for a Monday pitch" class="gallery-img" width="756" height="1600" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Mon · Pitch</span>
               <div class="meta"><div class="t">Quietly sharp.</div><span class="pill">Confidence +12%</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g2"><div class="silhouette"></div></div>
+              <div class="pic g2"><img src="/assets/gallery/week-tuesday-studio.webp" alt="Camel and linen studio outfit in warm morning light" class="gallery-img" width="1023" height="1537" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Tue · Studio</span>
               <div class="meta"><div class="t">Working warmth.</div><span class="pill">Linen / Camel</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g3"><div class="silhouette"></div></div>
+              <div class="pic g3"><img src="/assets/gallery/week-wednesday-calls.webp" alt="Charcoal knit and wool trousers styled for a day of calls" class="gallery-img" width="738" height="1600" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Wed · Calls</span>
               <div class="meta"><div class="t">Soft authority.</div><span class="pill">Knit + Wool</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g4"><div class="silhouette"></div></div>
+              <div class="pic g4"><img src="/assets/gallery/week-thursday-dinner.webp" alt="Dark forest green evening outfit in a refined dinner setting" class="gallery-img" width="759" height="1600" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Thu · Dinner</span>
               <div class="meta"><div class="t">Forest after dark.</div><span class="pill">Nobu · 19:00</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g5"><div class="silhouette"></div></div>
+              <div class="pic g5"><img src="/assets/gallery/week-friday-offsite.webp" alt="Oxblood knit and travel coat beside a leather weekender bag" class="gallery-img" width="1023" height="1537" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Fri · Off-site</span>
               <div class="meta"><div class="t">Cotswolds capsule.</div><span class="pill">3 days · 1 bag</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g6"><div class="silhouette"></div></div>
+              <div class="pic g6"><img src="/assets/gallery/week-saturday-slow.webp" alt="Oatmeal cashmere weekend outfit in a calm apartment" class="gallery-img" width="1023" height="1537" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Sat · Slow</span>
               <div class="meta"><div class="t">Easy on the senses.</div><span class="pill">Cashmere</span></div>
             </article>
             <article class="gallery-card">
-              <div class="pic g7"><div class="silhouette"></div></div>
+              <div class="pic g7"><img src="/assets/gallery/week-sunday-reset.webp" alt="White and indigo Sunday outfit in a bright wardrobe corner" class="gallery-img" width="1024" height="1536" loading="lazy" decoding="async" /></div>
               <span class="top-tag">Sun · Reset</span>
               <div class="meta"><div class="t">A clean page.</div><span class="pill">White + Indigo</span></div>
             </article>
@@ -2012,9 +2047,13 @@
           <div class="pricing-solo">
             <div class="price-card premium reveal d1">
               <div class="price-tag">BURS Premium</div>
-              <div class="price-amount"><span data-price="year">899 kr</span><span class="price-per">/year</span></div>
+              <div class="billing-toggle" role="group" aria-label="Billing period">
+                <button type="button" class="billing-option active" data-billing="year" aria-pressed="true">Yearly <span>Best value</span></button>
+                <button type="button" class="billing-option" data-billing="month" aria-pressed="false">Monthly <span>Flexible</span></button>
+              </div>
+              <div class="price-amount"><span data-price="active">899 kr</span><span class="price-per" data-price-period>/year</span></div>
               <div class="price-savings" data-price="savings">Save 37% — less than 2 cups of coffee a month</div>
-              <div class="price-alt">or <span data-price="month">119 kr</span>/month · cancel anytime</div>
+              <div class="price-alt" data-price="compare">or 119 kr/month - cancel anytime</div>
               <ul class="price-features">
                 <li>Unlimited wardrobe scanning</li>
                 <li>Context-aware outfit of the day</li>
@@ -2125,22 +2164,22 @@
          SCRIPTS
          ============================================================ -->
     <script>
-      // Hash navigation fix — start from top so ScrollTrigger measures cleanly.
+      // Keep browser hash and text-fragment navigation intact.
       (function(){
-        if('scrollRestoration' in history){history.scrollRestoration='manual';}
-        window.__burshash=window.location.hash||"";
-        if(window.__burshash){window.scrollTo(0,0);}
+        if('scrollRestoration' in history){history.scrollRestoration='auto';}
       })();
 
       // IP-BASED CURRENCY DETECTION — silent SE/INTL swap.
       (function(){
         const PRICES={
-          SEK:{month:"119 kr",year:"899 kr",hero:"Get BURS — 899 kr/year",faq:"BURS is 119 kr/month or 899 kr/year. No free tier, no ads. Cancel anytime from your account settings."},
-          GBP:{month:"£9.99",year:"£74.99",hero:"Get BURS — £74.99/year",faq:"BURS is £9.99/month or £74.99/year. No free tier, no ads. Cancel anytime from your account settings."},
-          AED:{month:"39 AED",year:"289 AED",hero:"Get BURS — 289 AED/year",faq:"BURS is 39 AED/month or 289 AED/year. No free tier, no ads. Cancel anytime from your account settings."},
-          USD:{month:"$10.99",year:"$79.99",hero:"Get BURS — $79.99/year",faq:"BURS is $10.99/month or $79.99/year. No free tier, no ads. Cancel anytime from your account settings."},
-          EUR:{month:"€9.99",year:"€74.99",hero:"Get BURS — €74.99/year",faq:"BURS is €9.99/month or €74.99/year. No free tier, no ads. Cancel anytime from your account settings."}
+          SEK:{month:"119 kr",year:"899 kr",heroMonth:"Get BURS - 119 kr/month",heroYear:"Get BURS - 899 kr/year",compareMonth:"Switch to yearly and save 37%. Cancel anytime.",compareYear:"or 119 kr/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 37% - less than 2 cups of coffee a month.",faq:"BURS is 119 kr/month or 899 kr/year. No free tier, no ads. Cancel anytime from your account settings."},
+          GBP:{month:"£9.99",year:"£74.99",heroMonth:"Get BURS - £9.99/month",heroYear:"Get BURS - £74.99/year",compareMonth:"Switch to yearly and save 37%. Cancel anytime.",compareYear:"or £9.99/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 37% - less than 2 cups of coffee a month.",faq:"BURS is £9.99/month or £74.99/year. No free tier, no ads. Cancel anytime from your account settings."},
+          AED:{month:"39 AED",year:"289 AED",heroMonth:"Get BURS - 39 AED/month",heroYear:"Get BURS - 289 AED/year",compareMonth:"Switch to yearly and save 38%. Cancel anytime.",compareYear:"or 39 AED/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 38% - less than 2 cups of coffee a month.",faq:"BURS is 39 AED/month or 289 AED/year. No free tier, no ads. Cancel anytime from your account settings."},
+          USD:{month:"$10.99",year:"$79.99",heroMonth:"Get BURS - $10.99/month",heroYear:"Get BURS - $79.99/year",compareMonth:"Switch to yearly and save 39%. Cancel anytime.",compareYear:"or $10.99/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 39% - less than 2 cups of coffee a month.",faq:"BURS is $10.99/month or $79.99/year. No free tier, no ads. Cancel anytime from your account settings."},
+          EUR:{month:"€9.99",year:"€74.99",heroMonth:"Get BURS - €9.99/month",heroYear:"Get BURS - €74.99/year",compareMonth:"Switch to yearly and save 37%. Cancel anytime.",compareYear:"or €9.99/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 37% - less than 2 cups of coffee a month.",faq:"BURS is €9.99/month or €74.99/year. No free tier, no ads. Cancel anytime from your account settings."}
         };
+        let currentPrices=PRICES.SEK;
+        let billingMode="year";
         function detectCurrency(){
           const language=(navigator.language||navigator.userLanguage||"").trim();
           const lang=language.toLowerCase();
@@ -2153,16 +2192,43 @@
           if(timeZone.startsWith("Europe/"))return "EUR";
           return "USD";
         }
-        function applyPrices(bundle){
-          document.querySelectorAll('[data-price="month"]').forEach(el=>{el.textContent=bundle.month;});
-          document.querySelectorAll('[data-price="year"]').forEach(el=>{el.textContent=bundle.year;});
-          document.querySelectorAll('[data-price="faq"]').forEach(el=>{el.textContent=bundle.faq;});
+        function setText(selector,value){
+          document.querySelectorAll(selector).forEach(el=>{el.textContent=value;});
+        }
+        function applyBilling(mode){
+          billingMode=mode==="month"?"month":"year";
+          const yearly=billingMode==="year";
+          setText('[data-price="active"]',yearly?currentPrices.year:currentPrices.month);
+          setText("[data-price-period]",yearly?"/year":"/month");
+          setText('[data-price="savings"]',yearly?currentPrices.savingsYear:currentPrices.savingsMonth);
+          setText('[data-price="compare"]',yearly?currentPrices.compareYear:currentPrices.compareMonth);
           document.querySelectorAll('[data-price="cta"]').forEach(el=>{
             const label=el.querySelector("span:first-child");
-            if(label){label.textContent=bundle.hero;}
-            else{el.textContent=bundle.hero;}
+            const text=yearly?currentPrices.heroYear:currentPrices.heroMonth;
+            if(label){label.textContent=text;}
+            else{el.textContent=text;}
           });
+          document.querySelectorAll("[data-billing]").forEach(button=>{
+            const active=button.dataset.billing===billingMode;
+            button.classList.toggle("active",active);
+            button.setAttribute("aria-pressed",active?"true":"false");
+          });
+          document.querySelectorAll(".price-card").forEach(card=>{
+            card.classList.remove("is-switching");
+            void card.offsetWidth;
+            card.classList.add("is-switching");
+            setTimeout(()=>card.classList.remove("is-switching"),320);
+          });
+          if(typeof window.__bursScheduleMetrics==="function")window.__bursScheduleMetrics();
         }
+        function applyPrices(bundle){
+          currentPrices=bundle;
+          setText('[data-price="faq"]',bundle.faq);
+          applyBilling(billingMode);
+        }
+        document.querySelectorAll("[data-billing]").forEach(button=>{
+          button.addEventListener("click",()=>applyBilling(button.dataset.billing));
+        });
         applyPrices(PRICES.SEK);
         const ctrl=("AbortController" in window)?new AbortController():null;
         const timer=ctrl&&setTimeout(()=>ctrl.abort(),3000);
@@ -2172,41 +2238,12 @@
             if(timer)clearTimeout(timer);
             if(!d)return;
             const country=(d.country_code||d.country||"").toUpperCase();
-            if(country&&country!=="SE"){applyPrices(PRICES.INTL);}
+            const byCountry={SE:"SEK",GB:"GBP",AE:"AED",US:"USD",CA:"USD",AU:"USD"};
+            const euCountries=["AT","BE","CY","DE","EE","ES","FI","FR","GR","HR","IE","IT","LT","LU","LV","MT","NL","PT","SI","SK"];
+            const currency=byCountry[country]||(euCountries.includes(country)?"EUR":detectCurrency());
+            applyPrices(PRICES[currency]||PRICES.USD);
           })
           .catch(()=>{/* silent */});
-      })();
-
-      // CURSOR — refined two-layer follower
-      (function(){
-        const _c=document.getElementById("_cur"),_r=document.getElementById("_ring");
-        if(!_c||!_r)return;
-        if(window.matchMedia("(hover:none),(pointer:coarse),(max-width:900px)").matches)return;
-        let mx=0,my=0,rx=0,ry=0;
-        let needsDarkCheck=false;
-        const darkSectionsFast=document.querySelectorAll(".stats-banner,.gallery,.craft,.magazine,#download,.price-card");
-        function checkDarkFast(){
-          const px=mx,py=my;
-          let dark=false;
-          darkSectionsFast.forEach(s=>{
-            const r=s.getBoundingClientRect();
-            if(px>=r.left&&px<=r.right&&py>=r.top&&py<=r.bottom)dark=true;
-          });
-          _c.classList.toggle("dark",dark);
-          _r.classList.toggle("dark",dark);
-        }
-        document.addEventListener("mousemove",e=>{mx=e.clientX;my=e.clientY;needsDarkCheck=true;},{passive:true});
-        (function tick(){
-          _c.style.left=mx+"px";_c.style.top=my+"px";
-          rx+=(mx-rx)*.14;ry+=(my-ry)*.14;
-          _r.style.left=rx+"px";_r.style.top=ry+"px";
-          if(needsDarkCheck){checkDarkFast();needsDarkCheck=false;}
-          requestAnimationFrame(tick);
-        })();
-        document.querySelectorAll("a,button,.price-card,.stage-act,.faq-item,.gallery-card,.craft-card,.voice,.trip-frame").forEach(el=>{
-          el.addEventListener("mouseenter",()=>_r.classList.add("big"));
-          el.addEventListener("mouseleave",()=>_r.classList.remove("big"));
-        });
       })();
 
       // PROGRESS + SCROLL RAIL + ACTIVE NAV
@@ -2215,29 +2252,82 @@
       const stage=document.querySelector(".phone-stage");
       const navLinks=document.querySelectorAll(".nav-links a");
       const nav=document.querySelector("nav");
+      const gallery=document.querySelector(".gallery");
+      const galleryTrack=document.querySelector(".gallery-track");
       const sections=[...document.querySelectorAll("section[id]")];
-      let navCompact=false;
+      let sectionBounds=[];
+      let galleryMax=0;
+      let galleryStart=0;
+      let galleryEnd=1;
       let scrollRaf=false;
+      let metricsRaf=false;
+      function refreshScrollMetrics(){
+        sectionBounds=sections.map(s=>({id:s.id,top:s.offsetTop}));
+        if(gallery&&galleryTrack&&window.innerWidth>760){
+          galleryMax=Math.max(0,galleryTrack.scrollWidth-window.innerWidth+112);
+          gallery.style.setProperty("--gallery-travel",galleryMax+"px");
+          galleryStart=gallery.offsetTop;
+          galleryEnd=galleryStart+Math.max(1,gallery.offsetHeight-window.innerHeight);
+        }else{
+          galleryMax=0;
+          galleryStart=0;
+          galleryEnd=1;
+          if(gallery)gallery.style.setProperty("--gallery-travel","0px");
+          if(galleryTrack)galleryTrack.style.setProperty("--gallery-x","0px");
+        }
+      }
       function onScroll(){
-        const sh=document.body.scrollHeight-window.innerHeight;
+        const sh=Math.max(1,document.documentElement.scrollHeight-window.innerHeight);
         prog.style.width=(window.scrollY/sh*100)+"%";
         if(rail&&stage){
           const r=stage.getBoundingClientRect();
-          const p=Math.min(1,Math.max(0,(-r.top)/(r.height-window.innerHeight)));
+          const p=Math.min(1,Math.max(0,(-r.top)/Math.max(1,r.height-window.innerHeight)));
           rail.style.setProperty("--rail",(p*100)+"%");
+        }
+        if(gallery&&galleryTrack){
+          if(window.innerWidth>760&&galleryMax>0){
+            const p=Math.min(1,Math.max(0,(window.scrollY-galleryStart)/(galleryEnd-galleryStart)));
+            galleryTrack.style.setProperty("--gallery-x",(-galleryMax*p)+"px");
+          }else{
+            galleryTrack.style.setProperty("--gallery-x","0px");
+          }
         }
         const mid=window.scrollY+window.innerHeight*.35;
         let active=null;
-        for(const s of sections){if(s.offsetTop<=mid)active=s.id;}
+        for(const s of sectionBounds){if(s.top<=mid)active=s.id;}
         navLinks.forEach(l=>{l.classList.toggle("active",l.getAttribute("href")==="#"+active);});
-        const nav=document.querySelector("nav");
         if(nav)nav.classList.toggle("scrolled",window.scrollY>40);
       }
       function scheduleScroll(){
         if(scrollRaf)return;
         scrollRaf=requestAnimationFrame(()=>{scrollRaf=false;onScroll();});
       }
-      window.addEventListener("scroll",scheduleScroll,{passive:true});onScroll();
+      function scheduleMetrics(){
+        if(metricsRaf)return;
+        metricsRaf=requestAnimationFrame(()=>{
+          metricsRaf=false;
+          refreshScrollMetrics();
+          onScroll();
+        });
+      }
+      window.__bursScheduleMetrics=scheduleMetrics;
+      window.addEventListener("scroll",scheduleScroll,{passive:true});
+      window.addEventListener("resize",scheduleMetrics,{passive:true});
+      window.addEventListener("load",scheduleMetrics,{once:true});
+      refreshScrollMetrics();
+      onScroll();
+      function normalizeWeekHash(){
+        if(!gallery)return;
+        if(location.hash==="#week"||location.hash.includes("A%20week%20in%20BURS")){
+          requestAnimationFrame(()=>{
+            gallery.scrollIntoView({block:"start"});
+            scheduleScroll();
+          });
+        }
+      }
+      window.addEventListener("load",normalizeWeekHash,{once:true});
+      window.addEventListener("hashchange",normalizeWeekHash);
+      normalizeWeekHash();
 
       // MAGNETIC BUTTONS
       if(window.matchMedia("(hover:hover) and (pointer:fine)").matches){
@@ -2264,8 +2354,7 @@
           if(!id)return;
           const t=document.getElementById(id);
           if(t){e.preventDefault();
-            if(window.lenisInstance){window.lenisInstance.scrollTo(t,{offset:-72,duration:1.4});}
-            else{window.scrollTo({top:t.offsetTop-72,behavior:"smooth"});}
+            window.scrollTo({top:t.offsetTop-72,behavior:"smooth"});
           }
         });
       });
@@ -2281,6 +2370,7 @@
           hamb.setAttribute('aria-expanded',isOpen?'true':'false');
           drawer.setAttribute('aria-hidden',isOpen?'false':'true');
           hamb.setAttribute('aria-label',isOpen?'Close menu':'Open menu');
+          drawer.toggleAttribute('inert',!isOpen);
         }
         hamb.addEventListener('click',()=>setOpen(!hamb.classList.contains('open')));
         drawer.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>setOpen(false)));
@@ -2288,237 +2378,53 @@
       })();
 
       // ============================================================
-      // CINEMATIC ANIMATIONS — Lenis + GSAP ScrollTrigger
+      // LIGHTWEIGHT INTERACTIONS
       // ============================================================
       function initCinema(){
-        if(!window.gsap||!window.ScrollTrigger){return;}
-        const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        const motionOK=!reduced&&!window.matchMedia("(hover:none),(pointer:coarse),(max-width:900px)").matches;
-        gsap.registerPlugin(ScrollTrigger);
-        ScrollTrigger.config({ignoreMobileResize:true});
-
-        function showStaticMotionState(){
-          document.documentElement.classList.add("motion-lite");
-          gsap.set(".reveal",{opacity:1,y:0,clearProps:"transform"});
-          gsap.set(".hero-headline .line-inner",{yPercent:0});
-          gsap.set(".screen-stack .screen",{opacity:0,scale:1,clearProps:"filter"});
-          gsap.set(".screen-stack .screen:first-child",{opacity:1});
-          gsap.set(".chip",{opacity:0});
-        }
-
-        if(!motionOK){
-          showStaticMotionState();
-          ScrollTrigger.refresh();
-          return;
-        }
-
-        // ---- Lenis smooth scroll ----
-        if(window.Lenis){
-          const lenis=new Lenis({duration:1.1,easing:t=>Math.min(1,1.001-Math.pow(2,-10*t)),smoothWheel:true});
-          window.lenisInstance=lenis;
-          lenis.on('scroll',ScrollTrigger.update);
-          gsap.ticker.add((time)=>{lenis.raf(time*1000);});
-        }
-
-        // ---- Hero headline split-line entry ----
-        const heroLines=gsap.utils.toArray(".hero-headline .line-inner");
-        gsap.set(heroLines,{yPercent:110});
-        gsap.to(heroLines,{yPercent:0,duration:1.2,ease:"expo.out",stagger:.12,delay:.25});
-        gsap.from(".hero-eyebrow",{y:20,opacity:0,duration:1,ease:"expo.out",delay:.15});
-        gsap.from(".hero-row .hero-sub",{y:30,opacity:0,duration:1.1,ease:"expo.out",delay:.7});
-        gsap.from(".hero-side > *",{y:20,opacity:0,duration:1,ease:"expo.out",stagger:.12,delay:.85});
-        gsap.from(".hero-actions > *",{y:20,opacity:0,duration:1,ease:"expo.out",stagger:.12,delay:.95});
-        gsap.from(".hero-scroll, .hero-readout",{opacity:0,duration:1,ease:"expo.out",delay:1.3});
-
-        // ---- Hero parallax ----
-        if(!reduced){
-          gsap.to(".hero-bg",{yPercent:18,ease:"none",scrollTrigger:{trigger:".hero",start:"top top",end:"bottom top",scrub:true}});
-          gsap.to(".hero-inner",{yPercent:14,ease:"none",scrollTrigger:{trigger:".hero",start:"top top",end:"bottom top",scrub:true}});
-        }
-
-        // ---- Stats banner — animate in + count up ----
-        gsap.from(".stats-grid .stat",{
-          y:60,opacity:0,duration:1.1,ease:"expo.out",stagger:.12,
-          scrollTrigger:{trigger:".stats-banner",start:"top 80%"}
-        });
-        gsap.utils.toArray(".stats-grid .stat-n").forEach(nEl=>{
-          ScrollTrigger.create({
-            trigger:nEl,start:"top 85%",once:true,
-            onEnter:()=>{
-              const text=nEl.textContent.trim();
-              const m=text.match(/^([<>$]*)([\d.]+)([a-zA-Z%]*)$/);
-              if(m){
-                const prefix=m[1],end=parseFloat(m[2]),suffix=m[3];
-                let obj={val:0};
-                gsap.to(obj,{val:end,duration:1.8,ease:"power2.out",
-                  onUpdate:()=>{const display=Number.isInteger(end)?Math.round(obj.val):obj.val.toFixed(1);nEl.textContent=prefix+display+suffix;},
-                  onComplete:()=>{nEl.textContent=prefix+m[2]+suffix;}
-                });
-              }
-            }
-          });
-        });
-
-        // ---- Manifesto — word-by-word reveal ----
-        const words=gsap.utils.toArray(".manifesto .word");
-        if(words.length){
-          gsap.set(".manifesto",{visibility:"visible",opacity:1,transform:"none"});
-          gsap.fromTo(words,
-            {opacity:0,y:25},
-            {opacity:1,y:0,stagger:.06,ease:"power1.out",
-              scrollTrigger:{trigger:".manifesto",start:"top 70%",end:"center 35%",scrub:1}
+        const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const revealEls=[...document.querySelectorAll(".reveal")];
+        if("IntersectionObserver" in window&&!reduceMotion){
+          const revealObserver=new IntersectionObserver(entries=>{
+            entries.forEach(entry=>{
+              if(!entry.isIntersecting)return;
+              entry.target.classList.add("is-visible");
+              revealObserver.unobserve(entry.target);
             });
+          },{threshold:.18,rootMargin:"0px 0px -10% 0px"});
+          revealEls.forEach(el=>revealObserver.observe(el));
+        }else{
+          revealEls.forEach(el=>el.classList.add("is-visible"));
         }
 
-        // ---- Editorial split — image parallax ----
-        gsap.to(".edit-img .img",{yPercent:-12,ease:"none",scrollTrigger:{trigger:".edit-split",start:"top bottom",end:"bottom top",scrub:true}});
-
-        // ---- Generic .reveal (everything else) ----
-        gsap.utils.toArray(".reveal").forEach(el=>{
-          if(el.closest(".manifesto"))return; // manifesto handled above
-          gsap.fromTo(el,
-            {opacity:0,y:40},
-            {opacity:1,y:0,duration:1.3,ease:"power3.out",
-              scrollTrigger:{trigger:el,start:"top 88%",toggleActions:"play none none reverse"}
-            });
-        });
-
-        // ---- Phone-stage screen morph (sticky CSS handles pinning) ----
-        const screens=gsap.utils.toArray(".screen-stack .screen");
-        const acts=gsap.utils.toArray(".stage-act");
-        const beam=document.querySelector(".beam");
-        const N=screens.length;
-        if(screens.length){
-          gsap.set(screens,{opacity:0,scale:1.04});
-          gsap.set(screens[0],{opacity:1,scale:1});
-          gsap.set(".chip",{opacity:0});
-          gsap.set(".stage-phone-wrap",{rotateX:10,rotateY:-15,rotateZ:0});
-          const tl=gsap.timeline({scrollTrigger:{trigger:".phone-stage",start:"top top",end:"bottom bottom",scrub:.6,invalidateOnRefresh:true}});
-          for(let i=0;i<N-1;i++){
-            tl.to(screens[i],{opacity:0,scale:.96,ease:"power2.inOut",duration:1},i);
-            tl.fromTo(screens[i+1],
-              {opacity:0,scale:1.06},
-              {opacity:1,scale:1,ease:"power2.inOut",duration:1},i);
-            if(beam)tl.to(beam,{opacity:.58+(i+1)*.05,scale:1+(i+1)*.04,ease:"power1.inOut",duration:1},i);
-            tl.to(".stage-phone-wrap",{
-              rotateX:10-Math.sin((i+1)*Math.PI/2)*10,
-              rotateY:-15+((i+1)%2===1?30:0),
-              rotateZ:((i+1)%2===1?3:-3),
-              ease:"power1.inOut",duration:1
-            },i);
-          }
-          // Chips
-          const allChips=gsap.utils.toArray(".chip");
-          ScrollTrigger.create({
-            trigger:".phone-stage",start:"top top",end:"bottom bottom",scrub:.6,
-            onUpdate:(self)=>{
-              const p=self.progress*(N-1);
-              allChips.forEach(c=>{
-                const act=parseInt(c.dataset.act,10)-1;
-                const local=p-act;
-                const op=Math.max(0,1-Math.abs(local)*2);
-                const cs=getComputedStyle(c);
-                const cx=parseFloat(cs.getPropertyValue("--cx"))||0;
-                const cy=parseFloat(cs.getPropertyValue("--cy"))||0;
-                const rot=parseFloat(cs.getPropertyValue("--rot"))||0;
-                const depth=(act%2===0?1:-1);
-                const driftY=cy+local*36*depth;
-                const driftX=cx+local*12*depth;
-                const scale=.88+op*.14;
-                const zPop=op*200+40;
-                c.style.opacity=op;
-                c.style.transform=`translate(-50%,-50%) translate3d(${driftX}px,${driftY}px,${zPop}px) rotateX(${rot*4}deg) rotateY(${rot*2}deg) rotateZ(${rot}deg) scale(${scale})`;
-                c.style.left="50%";c.style.top="50%";
-              });
-            }
-          });
-          // Act copy reveal
-          acts.forEach(act=>{
-            ScrollTrigger.create({trigger:act,start:"top 78%",once:true,
-              onEnter:()=>gsap.from(act.querySelectorAll(".act-num,.act-eyebrow,.act-headline,.act-desc,.act-meta"),{y:40,opacity:0,stagger:.09,duration:.9,ease:"power3.out"})
-            });
-          });
-        }
-
-        // ---- Horizontal pinned gallery ----
-        if(!reduced){
-          const track=document.querySelector(".gallery-track");
-          const pin=document.querySelector(".gallery-pin");
-          if(track&&pin){
-            const move=()=>track.scrollWidth-window.innerWidth+56;
-            gsap.to(track,{
-              x:()=>-move(),ease:"none",
-              scrollTrigger:{
-                trigger:pin,start:"top top",end:()=>"+="+move(),
-                scrub:1,pin:true,invalidateOnRefresh:true,anticipatePin:1
-              }
-            });
-            // Card subtle lift on enter viewport
-            gsap.utils.toArray(".gallery-card").forEach((c,i)=>{
-              gsap.from(c,{y:60,opacity:.5,duration:1,ease:"power2.out",
-                scrollTrigger:{trigger:pin,start:"top top",end:"+="+move(),
-                  scrub:.5,
-                  toggleActions:"play none none reverse"}
-              });
-            });
+        const screens=[...document.querySelectorAll(".screen-stack .screen")];
+        const acts=[...document.querySelectorAll(".stage-act")];
+        const chips=[...document.querySelectorAll(".chip")];
+        const story=document.querySelector(".phone-stage");
+        function setAct(act){
+          const index=Math.max(0,Math.min(screens.length-1,act-1));
+          screens.forEach((screen,i)=>screen.classList.toggle("active",i===index));
+          acts.forEach(item=>item.classList.toggle("is-active",Number(item.dataset.act)===act));
+          chips.forEach(chip=>chip.classList.toggle("is-active",Number(chip.dataset.act)===act));
+          if(story){
+            story.dataset.activeAct=String(act);
+            story.style.setProperty("--story-progress",(screens.length>1?index/(screens.length-1):0).toFixed(3));
           }
         }
-
-        // ---- Triptych mini-phone parallax ----
-        gsap.utils.toArray(".trip-frame").forEach((tf,i)=>{
-          const bg=tf.querySelector(".trip-bg");
-          const phone=tf.querySelector(".mini-phone");
-          if(bg)gsap.to(bg,{yPercent:-15,ease:"none",scrollTrigger:{trigger:tf,start:"top bottom",end:"bottom top",scrub:true}});
-          if(phone)gsap.to(phone,{y:i%2===0?-40:40,ease:"none",scrollTrigger:{trigger:tf,start:"top bottom",end:"bottom top",scrub:true}});
-        });
-        gsap.from(".trip-frame",{y:80,opacity:0,duration:1.1,ease:"expo.out",stagger:.14,
-          scrollTrigger:{trigger:".triptych-grid",start:"top 80%"}
-        });
-
-        // ---- Magazine background parallax ----
-        gsap.to(".magazine-bg",{yPercent:18,ease:"none",scrollTrigger:{trigger:".magazine",start:"top bottom",end:"bottom top",scrub:true}});
-        gsap.from(".magazine-content q",{y:60,opacity:0,duration:1.4,ease:"expo.out",
-          scrollTrigger:{trigger:".magazine",start:"top 70%"}
-        });
-
-        // ---- Pricing 3D entry ----
-        gsap.set(".pricing-solo",{perspective:1400});
-        gsap.fromTo(".price-card",
-          {opacity:0,y:80,z:-100,rotateX:18,rotateY:-6},
-          {opacity:1,y:0,z:0,rotateX:0,rotateY:0,duration:1.5,ease:"back.out(1.2)",
-            scrollTrigger:{trigger:".pricing-solo",start:"top 85%",toggleActions:"play none none reverse"}
-          });
-
-        // ---- Footer 3D entry ----
-        gsap.set("footer",{perspective:1200});
-        gsap.fromTo(".footer-top",
-          {opacity:0,y:80,z:-150,rotateX:-30},
-          {opacity:1,y:0,z:0,rotateX:0,duration:1.4,ease:"power2.out",
-            scrollTrigger:{trigger:"footer",start:"top 95%",toggleActions:"play none none reverse"}
-          });
-
-        // ---- Final CTA scale-in ----
-        gsap.fromTo(".dl-headline",
-          {scale:.9,opacity:0},
-          {scale:1,opacity:1,duration:1.4,ease:"expo.out",
-            scrollTrigger:{trigger:"#download",start:"top 75%"}
-          });
-
-        ScrollTrigger.refresh();
+        setAct(1);
+        if("IntersectionObserver" in window&&acts.length){
+          const observer=new IntersectionObserver(entries=>{
+            let current=null;
+            entries.forEach(entry=>{
+              if(!entry.isIntersecting)return;
+              if(!current||entry.intersectionRatio>current.intersectionRatio)current=entry;
+            });
+            if(current)setAct(Number(current.target.dataset.act)||1);
+          },{threshold:[.35,.55,.75],rootMargin:"-18% 0px -28% 0px"});
+          acts.forEach(act=>observer.observe(act));
+        }
       }
-
-      function resolveHash(){
-        if(!window.__burshash)return;
-        const id=window.__burshash.slice(1);
-        const t=id&&document.getElementById(id);
-        if(t){window.scrollTo({top:t.offsetTop-72,behavior:'auto'});}
-        if(window.ScrollTrigger){ScrollTrigger.update();}
-        window.__burshash="";
-      }
-
       function onLoadReady(){
         initCinema();
-        requestAnimationFrame(resolveHash);
       }
 
       if(document.readyState==="complete"){onLoadReady();}
