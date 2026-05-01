@@ -356,6 +356,15 @@
       .hero-side .qte::before{content:"“";font-style:italic;color:var(--gold-deep);margin-right:4px;}
 
       .hero-actions{display:flex;align-items:center;gap:32px;flex-wrap:wrap;margin-top:56px;}
+      .hero-eyebrow,.hero-headline .line-inner,.hero-sub,.hero-side,.hero-actions{
+        animation:_heroRise .86s var(--easing) both;
+      }
+      .hero-headline .line:nth-child(1) .line-inner{animation-delay:.08s;}
+      .hero-headline .line:nth-child(2) .line-inner{animation-delay:.18s;}
+      .hero-sub{animation-delay:.28s;}
+      .hero-side{animation-delay:.34s;}
+      .hero-actions{animation-delay:.42s;}
+      @keyframes _heroRise{from{opacity:0;transform:translate3d(0,34px,0);}to{opacity:1;transform:none;}}
       .btn-primary{
         font-size:11px;letter-spacing:2.6px;text-transform:uppercase;background:var(--ink);color:var(--bg);
         padding:22px 38px;text-decoration:none;transition:all .35s var(--easing);
@@ -517,10 +526,14 @@
         min-height:100vh;padding:120px 72px;
         display:flex;flex-direction:column;justify-content:center;
         border-bottom:1px solid var(--border);position:relative;
+        opacity:.5;transform:translate3d(0,28px,0);
+        transition:opacity .56s var(--easing),transform .56s var(--easing);
       }
+      .stage-act.is-active{opacity:1;transform:none;}
       .stage-act:last-child{border-bottom:none;}
       .stage-act .act-num{font-family:"Playfair Display",serif;font-size:14px;font-weight:400;font-style:italic;color:var(--faint);margin-bottom:24px;letter-spacing:2px;display:inline-flex;align-items:center;}
-      .stage-act .act-num::before{content:"";display:inline-block;width:32px;height:1px;background:var(--faint);margin-right:16px;}
+      .stage-act .act-num::before{content:"";display:inline-block;width:32px;height:1px;background:var(--faint);margin-right:16px;transition:width .5s var(--easing),background .5s var(--easing);}
+      .stage-act.is-active .act-num::before{width:56px;background:var(--gold-deep);}
       .stage-act .act-eyebrow{font-size:11px;letter-spacing:4.4px;text-transform:uppercase;color:var(--faint);margin-bottom:28px;}
       .stage-act .act-headline{font-family:"Playfair Display",serif;font-size:clamp(48px,5.2vw,92px);font-weight:900;line-height:1.05;margin-bottom:28px;letter-spacing:-.014em;font-variant-ligatures:none;}
       .stage-act .act-headline em{font-style:italic;font-weight:400;color:var(--gold-deep);}
@@ -550,14 +563,15 @@
         width:560px;height:560px;border-radius:50%;border:1px solid rgba(28,25,23,.05);pointer-events:none;
       }
       .stage-phone-wrap{
+        --phone-scale:1;
         position:relative;width:336px;height:728px;z-index:3;
         animation:_phonefloat 6.5s ease-in-out infinite;
         transform-style:preserve-3d;
       }
-      @keyframes _phonefloat{0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);}}
+      @keyframes _phonefloat{0%,100%{transform:translateY(0) scale(var(--phone-scale));}50%{transform:translateY(-10px) scale(var(--phone-scale));}}
 
       .beam{position:absolute;top:50%;left:50%;width:940px;height:940px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(28,25,23,.1) 0%,rgba(28,25,23,.045) 36%,rgba(28,25,23,.018) 62%,transparent 78%);z-index:1;pointer-events:none;}
-      .beam-2{position:absolute;top:50%;left:50%;width:520px;height:520px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(184,160,120,.18) 0%,rgba(184,160,120,.08) 34%,transparent 68%);z-index:1;pointer-events:none;animation:_pulse 4s ease-in-out infinite;}
+      .beam-2{position:absolute;top:50%;left:50%;width:520px;height:520px;transform:translate(-50%,-50%);border-radius:50%;background:radial-gradient(circle at center,rgba(184,160,120,.18) 0%,rgba(184,160,120,.08) 34%,transparent 68%);z-index:1;pointer-events:none;animation:_pulse 4s ease-in-out infinite;opacity:calc(.58 + (var(--story-progress,0) * .32));}
       @keyframes _pulse{0%,100%{opacity:.7;transform:translate(-50%,-50%) scale(1);}50%{opacity:1;transform:translate(-50%,-50%) scale(1.08);}}
 
       /* Titanium iPhone frame — realistic Pro */
@@ -578,7 +592,10 @@
           inset 0 0 0 1px rgba(255,255,255,.08),
           inset 0 2px 0 0 rgba(255,255,255,.18),
           inset 0 -2px 0 0 rgba(0,0,0,.4);
+        transition:box-shadow .55s var(--easing),transform .55s var(--easing);
       }
+      .phone-stage[data-active-act="3"] .stage-phone{transform:rotateX(1.5deg) rotateY(-2deg);}
+      .phone-stage[data-active-act="5"] .stage-phone{transform:rotateX(-1deg) rotateY(2deg);}
       /* Inner chassis bezel — thin black band between titanium and screen */
       .stage-phone::before{
         content:"";position:absolute;inset:6px;
@@ -1201,8 +1218,25 @@
         color:rgba(245,240,232,.85);margin-bottom:36px;
       }
       .price-tag::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--gold);}
+      .billing-toggle{
+        display:grid;grid-template-columns:1fr 1fr;gap:4px;
+        padding:5px;margin-bottom:34px;border-radius:999px;
+        background:rgba(245,240,232,.07);border:1px solid rgba(245,240,232,.13);
+      }
+      .billing-option{
+        min-height:48px;border:0;border-radius:999px;background:transparent;color:rgba(245,240,232,.62);
+        font:inherit;font-size:11px;letter-spacing:2.2px;text-transform:uppercase;cursor:pointer;
+        display:flex;align-items:center;justify-content:center;gap:8px;
+        transition:background .28s var(--easing),color .28s var(--easing),transform .28s var(--easing);
+      }
+      .billing-option span{font-size:9px;letter-spacing:1.6px;color:rgba(245,240,232,.42);}
+      .billing-option.active{background:#F5F0E8;color:var(--ink);box-shadow:0 12px 28px -18px rgba(0,0,0,.65);}
+      .billing-option.active span{color:var(--gold-deep);}
+      .billing-option:focus-visible{outline:2px solid var(--gold);outline-offset:3px;}
       .price-amount{display:flex;align-items:baseline;gap:10px;margin-bottom:14px;font-family:"Playfair Display",serif;}
-      .price-amount [data-price="year"]{font-size:96px;font-weight:900;line-height:1;letter-spacing:-.02em;color:#F5F0E8;}
+      .price-amount [data-price="active"]{font-size:96px;font-weight:900;line-height:1;letter-spacing:-.02em;color:#F5F0E8;}
+      .price-card.is-switching .price-amount{animation:_priceFlip .28s var(--easing) both;}
+      @keyframes _priceFlip{0%{opacity:.45;transform:translate3d(0,10px,0);}100%{opacity:1;transform:none;}}
       .price-per{font-size:18px;color:rgba(245,240,232,.55);font-style:italic;}
       .price-savings{font-size:13px;color:var(--gold);margin-bottom:8px;letter-spacing:.2px;}
       .price-alt{font-size:13px;color:rgba(245,240,232,.65);margin-bottom:36px;}
@@ -1330,11 +1364,14 @@
       /* =====================================================================
          REVEAL UTILITY
          ===================================================================== */
-      .reveal{opacity:1;transform:none;}
-      .motion-lite .reveal{opacity:1 !important;transform:none !important;}
-      .reveal.d1{transition-delay:.05s;}
-      .reveal.d2{transition-delay:.1s;}
-      .reveal.d3{transition-delay:.15s;}
+      .reveal{
+        opacity:0;transform:translate3d(0,34px,0);
+        transition:opacity .72s var(--easing),transform .72s var(--easing);
+      }
+      .reveal.is-visible{opacity:1;transform:none;}
+      .reveal.d1{transition-delay:.08s;}
+      .reveal.d2{transition-delay:.14s;}
+      .reveal.d3{transition-delay:.2s;}
 
       /* =====================================================================
          RESPONSIVE
@@ -1362,7 +1399,7 @@
         .stage-copy{border-right:none;}
         .stage-act{padding:80px 32px;min-height:auto;}
         .stage-phone-col{position:relative;height:auto;padding:60px 0 80px;border-bottom:1px solid var(--border);}
-        .stage-phone-wrap{transform:scale(.9);}
+        .stage-phone-wrap{--phone-scale:.9;}
         .gallery-intro{width:58vw;max-width:520px;padding-right:32px;}
         .gallery-end{width:54vw;padding-left:32px;}
         .gallery-card{width:300px;height:460px;}
@@ -1381,7 +1418,7 @@
         .journal-card,.journal-card.featured{min-height:380px;grid-row:auto;}
         #pricing{padding:100px 28px 120px;}
         .price-card{padding:48px 32px;}
-        .price-amount [data-price="year"]{font-size:64px;}
+        .price-amount [data-price="active"]{font-size:64px;}
         #faq{padding:100px 28px;}
         #download{padding:100px 28px 120px;}
         footer{padding:60px 28px 40px;}
@@ -1402,6 +1439,7 @@
         *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important;}
         .marquee-track{animation:none;}
         .reveal{opacity:1;transform:none;}
+        .stage-act{opacity:1;transform:none;}
       }
 
       /* Cookie banner */
@@ -2009,9 +2047,13 @@
           <div class="pricing-solo">
             <div class="price-card premium reveal d1">
               <div class="price-tag">BURS Premium</div>
-              <div class="price-amount"><span data-price="year">899 kr</span><span class="price-per">/year</span></div>
+              <div class="billing-toggle" role="group" aria-label="Billing period">
+                <button type="button" class="billing-option active" data-billing="year" aria-pressed="true">Yearly <span>Best value</span></button>
+                <button type="button" class="billing-option" data-billing="month" aria-pressed="false">Monthly <span>Flexible</span></button>
+              </div>
+              <div class="price-amount"><span data-price="active">899 kr</span><span class="price-per" data-price-period>/year</span></div>
               <div class="price-savings" data-price="savings">Save 37% — less than 2 cups of coffee a month</div>
-              <div class="price-alt">or <span data-price="month">119 kr</span>/month · cancel anytime</div>
+              <div class="price-alt" data-price="compare">or 119 kr/month - cancel anytime</div>
               <ul class="price-features">
                 <li>Unlimited wardrobe scanning</li>
                 <li>Context-aware outfit of the day</li>
@@ -2130,12 +2172,14 @@
       // IP-BASED CURRENCY DETECTION — silent SE/INTL swap.
       (function(){
         const PRICES={
-          SEK:{month:"119 kr",year:"899 kr",hero:"Get BURS — 899 kr/year",faq:"BURS is 119 kr/month or 899 kr/year. No free tier, no ads. Cancel anytime from your account settings."},
-          GBP:{month:"£9.99",year:"£74.99",hero:"Get BURS — £74.99/year",faq:"BURS is £9.99/month or £74.99/year. No free tier, no ads. Cancel anytime from your account settings."},
-          AED:{month:"39 AED",year:"289 AED",hero:"Get BURS — 289 AED/year",faq:"BURS is 39 AED/month or 289 AED/year. No free tier, no ads. Cancel anytime from your account settings."},
-          USD:{month:"$10.99",year:"$79.99",hero:"Get BURS — $79.99/year",faq:"BURS is $10.99/month or $79.99/year. No free tier, no ads. Cancel anytime from your account settings."},
-          EUR:{month:"€9.99",year:"€74.99",hero:"Get BURS — €74.99/year",faq:"BURS is €9.99/month or €74.99/year. No free tier, no ads. Cancel anytime from your account settings."}
+          SEK:{month:"119 kr",year:"899 kr",heroMonth:"Get BURS - 119 kr/month",heroYear:"Get BURS - 899 kr/year",compareMonth:"Switch to yearly and save 37%. Cancel anytime.",compareYear:"or 119 kr/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 37% - less than 2 cups of coffee a month.",faq:"BURS is 119 kr/month or 899 kr/year. No free tier, no ads. Cancel anytime from your account settings."},
+          GBP:{month:"£9.99",year:"£74.99",heroMonth:"Get BURS - £9.99/month",heroYear:"Get BURS - £74.99/year",compareMonth:"Switch to yearly and save 37%. Cancel anytime.",compareYear:"or £9.99/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 37% - less than 2 cups of coffee a month.",faq:"BURS is £9.99/month or £74.99/year. No free tier, no ads. Cancel anytime from your account settings."},
+          AED:{month:"39 AED",year:"289 AED",heroMonth:"Get BURS - 39 AED/month",heroYear:"Get BURS - 289 AED/year",compareMonth:"Switch to yearly and save 38%. Cancel anytime.",compareYear:"or 39 AED/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 38% - less than 2 cups of coffee a month.",faq:"BURS is 39 AED/month or 289 AED/year. No free tier, no ads. Cancel anytime from your account settings."},
+          USD:{month:"$10.99",year:"$79.99",heroMonth:"Get BURS - $10.99/month",heroYear:"Get BURS - $79.99/year",compareMonth:"Switch to yearly and save 39%. Cancel anytime.",compareYear:"or $10.99/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 39% - less than 2 cups of coffee a month.",faq:"BURS is $10.99/month or $79.99/year. No free tier, no ads. Cancel anytime from your account settings."},
+          EUR:{month:"€9.99",year:"€74.99",heroMonth:"Get BURS - €9.99/month",heroYear:"Get BURS - €74.99/year",compareMonth:"Switch to yearly and save 37%. Cancel anytime.",compareYear:"or €9.99/month - cancel anytime",savingsMonth:"Monthly flexibility - no long commitment.",savingsYear:"Save 37% - less than 2 cups of coffee a month.",faq:"BURS is €9.99/month or €74.99/year. No free tier, no ads. Cancel anytime from your account settings."}
         };
+        let currentPrices=PRICES.SEK;
+        let billingMode="year";
         function detectCurrency(){
           const language=(navigator.language||navigator.userLanguage||"").trim();
           const lang=language.toLowerCase();
@@ -2148,16 +2192,43 @@
           if(timeZone.startsWith("Europe/"))return "EUR";
           return "USD";
         }
-        function applyPrices(bundle){
-          document.querySelectorAll('[data-price="month"]').forEach(el=>{el.textContent=bundle.month;});
-          document.querySelectorAll('[data-price="year"]').forEach(el=>{el.textContent=bundle.year;});
-          document.querySelectorAll('[data-price="faq"]').forEach(el=>{el.textContent=bundle.faq;});
+        function setText(selector,value){
+          document.querySelectorAll(selector).forEach(el=>{el.textContent=value;});
+        }
+        function applyBilling(mode){
+          billingMode=mode==="month"?"month":"year";
+          const yearly=billingMode==="year";
+          setText('[data-price="active"]',yearly?currentPrices.year:currentPrices.month);
+          setText("[data-price-period]",yearly?"/year":"/month");
+          setText('[data-price="savings"]',yearly?currentPrices.savingsYear:currentPrices.savingsMonth);
+          setText('[data-price="compare"]',yearly?currentPrices.compareYear:currentPrices.compareMonth);
           document.querySelectorAll('[data-price="cta"]').forEach(el=>{
             const label=el.querySelector("span:first-child");
-            if(label){label.textContent=bundle.hero;}
-            else{el.textContent=bundle.hero;}
+            const text=yearly?currentPrices.heroYear:currentPrices.heroMonth;
+            if(label){label.textContent=text;}
+            else{el.textContent=text;}
           });
+          document.querySelectorAll("[data-billing]").forEach(button=>{
+            const active=button.dataset.billing===billingMode;
+            button.classList.toggle("active",active);
+            button.setAttribute("aria-pressed",active?"true":"false");
+          });
+          document.querySelectorAll(".price-card").forEach(card=>{
+            card.classList.remove("is-switching");
+            void card.offsetWidth;
+            card.classList.add("is-switching");
+            setTimeout(()=>card.classList.remove("is-switching"),320);
+          });
+          if(typeof window.__bursScheduleMetrics==="function")window.__bursScheduleMetrics();
         }
+        function applyPrices(bundle){
+          currentPrices=bundle;
+          setText('[data-price="faq"]',bundle.faq);
+          applyBilling(billingMode);
+        }
+        document.querySelectorAll("[data-billing]").forEach(button=>{
+          button.addEventListener("click",()=>applyBilling(button.dataset.billing));
+        });
         applyPrices(PRICES.SEK);
         const ctrl=("AbortController" in window)?new AbortController():null;
         const timer=ctrl&&setTimeout(()=>ctrl.abort(),3000);
@@ -2239,6 +2310,7 @@
           onScroll();
         });
       }
+      window.__bursScheduleMetrics=scheduleMetrics;
       window.addEventListener("scroll",scheduleScroll,{passive:true});
       window.addEventListener("resize",scheduleMetrics,{passive:true});
       window.addEventListener("load",scheduleMetrics,{once:true});
@@ -2309,16 +2381,34 @@
       // LIGHTWEIGHT INTERACTIONS
       // ============================================================
       function initCinema(){
-        document.documentElement.classList.add("motion-lite");
-        document.querySelectorAll(".reveal").forEach(el=>el.classList.add("is-visible"));
+        const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+        const revealEls=[...document.querySelectorAll(".reveal")];
+        if("IntersectionObserver" in window&&!reduceMotion){
+          const revealObserver=new IntersectionObserver(entries=>{
+            entries.forEach(entry=>{
+              if(!entry.isIntersecting)return;
+              entry.target.classList.add("is-visible");
+              revealObserver.unobserve(entry.target);
+            });
+          },{threshold:.18,rootMargin:"0px 0px -10% 0px"});
+          revealEls.forEach(el=>revealObserver.observe(el));
+        }else{
+          revealEls.forEach(el=>el.classList.add("is-visible"));
+        }
 
         const screens=[...document.querySelectorAll(".screen-stack .screen")];
         const acts=[...document.querySelectorAll(".stage-act")];
         const chips=[...document.querySelectorAll(".chip")];
+        const story=document.querySelector(".phone-stage");
         function setAct(act){
           const index=Math.max(0,Math.min(screens.length-1,act-1));
           screens.forEach((screen,i)=>screen.classList.toggle("active",i===index));
+          acts.forEach(item=>item.classList.toggle("is-active",Number(item.dataset.act)===act));
           chips.forEach(chip=>chip.classList.toggle("is-active",Number(chip.dataset.act)===act));
+          if(story){
+            story.dataset.activeAct=String(act);
+            story.style.setProperty("--story-progress",(screens.length>1?index/(screens.length-1):0).toFixed(3));
+          }
         }
         setAct(1);
         if("IntersectionObserver" in window&&acts.length){

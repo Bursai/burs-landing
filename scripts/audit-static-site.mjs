@@ -113,6 +113,24 @@ if (/applyPrices\(PRICES\.SE\)/.test(homepage)) {
 if (/PRICES\.INTL/.test(homepage)) {
   fail("Homepage pricing fallback references missing PRICES.INTL.");
 }
+if (!/class=["']billing-toggle["']/.test(homepage) || !/data-billing=["']year["']/.test(homepage) || !/data-billing=["']month["']/.test(homepage)) {
+  fail("Pricing section must include a monthly/yearly billing toggle.");
+}
+if (!/aria-pressed=/.test(homepage) || !/function applyBilling/.test(homepage)) {
+  fail("Pricing billing toggle must expose pressed state and use a single applyBilling handler.");
+}
+if (!/data-price=["']active["']/.test(homepage) || !/data-price-period/.test(homepage)) {
+  fail("Pricing card must update the active price and billing period in place.");
+}
+if (!/\.reveal\{\s*opacity:0;transform:translate3d/.test(homepage) || /\.motion-lite\s+\.reveal/.test(homepage)) {
+  fail("Landing reveal animation has been flattened instead of using lightweight entrance motion.");
+}
+if (!/\.reveal\.is-visible/.test(homepage) || !/observe\(el\)/.test(homepage)) {
+  fail("Landing reveal animation must be driven by IntersectionObserver.");
+}
+if (!/\.stage-act\.is-active/.test(homepage) || !/style\.setProperty\("--story-progress"/.test(homepage)) {
+  fail("Five-act story must expose active-act styling and a scroll progress motion variable.");
+}
 
 const weekGalleryImages = homepage.match(/<img[^>]+src=["']\/assets\/gallery\/week-[^"']+\.webp["'][^>]*class=["']gallery-img["'][^>]*>/g) || [];
 if (weekGalleryImages.length !== 7) {
