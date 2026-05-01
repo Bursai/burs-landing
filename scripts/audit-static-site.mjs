@@ -41,6 +41,16 @@ function existsFile(file) {
   return fs.existsSync(file) && fs.statSync(file).isFile();
 }
 
+function fileSize(rel) {
+  return fs.statSync(path.join(root, rel)).size;
+}
+
+function pngSize(rel) {
+  const buffer = fs.readFileSync(path.join(root, rel));
+  if (buffer.toString("ascii", 1, 4) !== "PNG") return null;
+  return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) };
+}
+
 function walk(dir) {
   for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
     if (entry.name === ".git") continue;
@@ -70,11 +80,17 @@ for (const post of expectedBlogPosts) {
   }
 }
 
-if (/filter:\s*["']blur\(/.test(homepage)) {
-  fail("GSAP still animates CSS filter blur, which is a common scroll-jank source.");
+if (/(?:^|[;{\s])filter:\s*blur\(/.test(homepage)) {
+  fail("Landing page still uses CSS filter blur, which is a common scroll-jank source.");
 }
-if (/will-change:\s*opacity,transform,filter/.test(homepage)) {
-  fail("CSS still promotes filter animation with will-change.");
+if (/will-change:\s*filter/.test(homepage) || (homepage.match(/will-change:\s*transform/g) || []).length > 3) {
+  fail("Landing page overuses persistent will-change or promotes filter animation.");
+}
+if (/preconnect["'][^>]+unpkg\.com/.test(homepage)) {
+  fail("Homepage preconnects to unpkg even though no unpkg runtime is used.");
+}
+if (!/rel=["']preload["'][^>]+href=["']https:\/\/images\.unsplash\.com\/photo-1490481651871-ab68de25d43d\?w=1800&q=75&auto=format&fit=crop/.test(homepage)) {
+  fail("Homepage hero image preload must match the optimized first-viewport CSS image URL.");
 }
 if (/gsap@|ScrollTrigger|lenis@|new Lenis|pin:true|scrub:/.test(homepage)) {
   fail("Landing page must not load or run scroll-jacking animation libraries.");
@@ -114,8 +130,8 @@ if (!/position:sticky;top:0/.test(homepage) || !/--gallery-travel/.test(homepage
 if (!/\.gallery\{[^}]*touch-action:pan-y/s.test(homepage) || !/\.gallery-pin\{[^}]*touch-action:pan-y/s.test(homepage)) {
   fail("A week in BURS must preserve vertical touch scrolling while pinned.");
 }
-if (!/window\.addEventListener\("wheel",handleGalleryWheel/.test(homepage) || !/window\.scrollBy\(\{top:galleryWheelDelta/.test(homepage)) {
-  fail("A week in BURS must normalize wheel input to vertical page scroll while pinned.");
+if (/addEventListener\(["']wheel["'][\s\S]*passive:false/.test(homepage)) {
+  fail("Landing page must not use a global non-passive wheel listener.");
 }
 if (!/<div class=["']eye["']>A week in BURS<\/div>/.test(homepage)) {
   fail("A week in BURS text-fragment target must be exact text without a leading dash.");
@@ -144,12 +160,37 @@ if (!/og:image["'] content=["']https:\/\/burs\.me\/og-image-stylish\.png/.test(h
 
 for (const file of htmlFiles.filter((item) => item.includes(`${path.sep}blog${path.sep}`))) {
   const blogHtml = fs.readFileSync(file, "utf8");
+  if (!/id=["']mobile-drawer["'][^>]*aria-hidden=["']true["'][^>]*inert/.test(blogHtml)) {
+    fail(`${path.relative(root, file)} mobile drawer must be inert while closed.`);
+  }
+  if (!/drawer\.toggleAttribute\('inert',!isOpen\)/.test(blogHtml)) {
+    fail(`${path.relative(root, file)} mobile drawer must toggle inert with menu state.`);
+  }
   if (!/class=["']nav-logo["'][\s\S]*nl-mark[\s\S]*a quieter way to dress/.test(blogHtml)) {
     fail(`${path.relative(root, file)} blog header does not match the rebuilt landing nav brand lockup.`);
   }
   if (/How It Works|Get the App|https:\/\/www\.burs\.me\/auth/.test(blogHtml)) {
     fail(`${path.relative(root, file)} still contains old blog header copy or external auth CTA.`);
   }
+}
+if (!/id=["']mobile-drawer["'][^>]*aria-hidden=["']true["'][^>]*inert/.test(homepage) || !/drawer\.toggleAttribute\('inert',!isOpen\)/.test(homepage)) {
+  fail("Homepage mobile drawer must be inert while closed and toggle inert with menu state.");
+}
+
+for (const hero of fs.readdirSync(path.join(root, "assets", "blog")).filter((name) => name.endsWith("-hero.webp"))) {
+  if (fileSize(path.join("assets", "blog", hero)) > 140_000) {
+    fail(`${hero} exceeds the 140 KB blog hero WebP budget.`);
+  }
+}
+for (const name of ["favicon-16.png", "favicon-32.png", "logo-48.png", "logo-128.png", "logo-256.png", "logo-512.png"]) {
+  const expected = Number(name.match(/(?:favicon|logo)-(\d+)/)[1]);
+  const actual = pngSize(name);
+  if (!actual || actual.width !== expected || actual.height !== expected) {
+    fail(`${name} must be a real ${expected}x${expected} PNG.`);
+  }
+}
+if (!/"src": "\/og-image-stylish\.png"/.test(fs.readFileSync(path.join(root, "manifest.json"), "utf8"))) {
+  fail("Manifest screenshot must use the optimized stylish OG image.");
 }
 const localRefPattern = /\b(?:href|src)=["'](\/[^"']+)["']/g;
 for (const file of htmlFiles) {
