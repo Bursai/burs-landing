@@ -2244,7 +2244,7 @@
       window.addEventListener("wheel",handleGalleryWheel,{passive:false});
       function normalizeWeekHash(){
         if(!gallery)return;
-        if(location.hash==="#week"){
+        if(location.hash==="#week"||location.hash.includes("A%20week%20in%20BURS")){
           requestAnimationFrame(()=>{
             gallery.scrollIntoView({block:"start"});
             scheduleScroll();

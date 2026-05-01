@@ -120,8 +120,8 @@ if (!/window\.addEventListener\("wheel",handleGalleryWheel/.test(homepage) || !/
 if (!/<div class=["']eye["']>A week in BURS<\/div>/.test(homepage)) {
   fail("A week in BURS text-fragment target must be exact text without a leading dash.");
 }
-if (!/location\.hash==="#week"/.test(homepage) || !/gallery\.scrollIntoView\(\{block:"start"\}\)/.test(homepage)) {
-  fail("A week in BURS #week links must land on the gallery section.");
+if (!/location\.hash==="#week"\|\|location\.hash\.includes\("A%20week%20in%20BURS"\)/.test(homepage) || !/gallery\.scrollIntoView\(\{block:"start"\}\)/.test(homepage)) {
+  fail("A week in BURS #week and text-fragment links must land on the gallery section.");
 }
 if (!/nav\.scrolled\{[^}]*width:min\(/s.test(homepage) || !/nav\.scrolled\{[^}]*border-radius:999px/s.test(homepage)) {
   fail("Scrolled nav must become a minimized floating pill.");
