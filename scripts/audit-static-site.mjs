@@ -134,11 +134,14 @@ if (!/\.stage-act\.is-active/.test(homepage) || !/style\.setProperty\("--story-p
 if (!/function animateStatNumber/.test(homepage) || !/stats-grid \.stat-n/.test(homepage)) {
   fail("Stats banner must restore lightweight count-up animation.");
 }
-if (!/\.manifesto\.is-visible[\s\S]*\.word/.test(homepage) || !/style\.setProperty\("--word-i"/.test(homepage)) {
+if (!/\.manifesto-text\s+\.word\{[\s\S]*--word-p:0/.test(homepage) || !/setProperty\("--word-i"/.test(homepage)) {
   fail("Manifesto must restore a staged word-by-word reveal.");
 }
-if (!/\.manifesto-text\s+\.word\{[\s\S]*text-shadow:0 34px 28px/.test(homepage) || !/\.manifesto\.is-visible\s+\.word\{[\s\S]*text-shadow:none/.test(homepage)) {
+if (!/\.manifesto-text\s+\.word\{[\s\S]*text-shadow:0 34px 28px/.test(homepage) || !/--shadow-a/.test(homepage)) {
   fail("Manifesto words must emerge from a shadow/ghost state instead of a plain fade.");
+}
+if (!/function updateManifestoGhost/.test(homepage) || !/setProperty\("--word-p"/.test(homepage) || !/word\.style\.textShadow=/.test(homepage) || !/--manifesto-shade-opacity/.test(homepage)) {
+  fail("Manifesto ghost reveal must be scroll-scrubbed rather than a one-shot reveal.");
 }
 if (!/refreshParallaxMetrics/.test(homepage) || !/--hero-y/.test(homepage) || !/--edit-y/.test(homepage) || !/--magazine-y/.test(homepage)) {
   fail("Landing must restore native scroll-linked parallax for hero, editorial, and magazine sections.");

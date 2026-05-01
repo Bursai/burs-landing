@@ -456,12 +456,11 @@
       }
       .manifesto::before{
         content:"";position:absolute;left:50%;top:50%;width:min(980px,86vw);height:56%;
-        transform:translate(-50%,-46%) scale(.94);
+        transform:translate(-50%,-50%) scale(var(--manifesto-shade-scale,.94));
         background:radial-gradient(ellipse at center,rgba(28,25,23,.13) 0%,rgba(28,25,23,.075) 36%,transparent 72%);
-        opacity:.46;pointer-events:none;
-        transition:opacity 1s var(--easing),transform 1s var(--easing);
+        opacity:var(--manifesto-shade-opacity,.46);pointer-events:none;
+        transition:opacity .12s linear,transform .12s linear;
       }
-      .manifesto.is-visible::before{opacity:.08;transform:translate(-50%,-50%) scale(1.06);}
       .manifesto-eye{font-size:11px;letter-spacing:4.5px;text-transform:uppercase;color:var(--faint);margin-bottom:60px;display:flex;align-items:center;justify-content:center;gap:18px;}
       .manifesto-eye::before,.manifesto-eye::after{content:"";display:block;width:48px;height:1px;background:var(--line);}
       .manifesto-text{
@@ -476,24 +475,30 @@
       }
       .manifesto-text .word{
         display:inline-block;padding:0 .04em;
-        color:rgba(28,25,23,.12);
-        opacity:.34;transform:translate3d(0,44px,0) scale(1.025);
-        text-shadow:0 34px 28px rgba(28,25,23,.34),0 14px 8px rgba(142,122,85,.18),0 0 34px rgba(28,25,23,.16);
-        transition:opacity .9s var(--easing),transform .9s var(--easing),color .9s var(--easing),text-shadow .9s var(--easing);
-        transition-delay:calc(var(--word-i,0) * 34ms);
+        --word-p:0;
+        --word-y:44px;
+        --word-scale:1.025;
+        --ink-a:.12;
+        --gold-a:.18;
+        --shadow-a:.34;
+        --shadow-gold-a:.18;
+        --shadow-glow-a:.16;
+        color:rgba(28,25,23,var(--ink-a));
+        opacity:calc(.34 + (var(--word-p) * .66));
+        transform:translate3d(0,var(--word-y),0) scale(var(--word-scale));
+        text-shadow:0 34px 28px rgba(28,25,23,var(--shadow-a)),0 14px 8px rgba(142,122,85,var(--shadow-gold-a)),0 0 34px rgba(28,25,23,var(--shadow-glow-a));
+        transition:opacity .12s linear,transform .12s linear,color .12s linear,text-shadow .12s linear;
       }
-      .manifesto.is-visible .word{color:var(--ink);opacity:1;transform:none;text-shadow:none;}
-      .manifesto-text em{font-style:italic;font-weight:400;color:rgba(142,122,85,.18);transition:color .9s var(--easing);transition-delay:inherit;}
-      .manifesto.is-visible .word em{color:var(--gold-deep);}
+      .manifesto-text em{font-style:italic;font-weight:400;color:rgba(142,122,85,var(--gold-a));transition:color .12s linear;}
       .manifesto-sig{
         position:relative;z-index:1;
         margin-top:60px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--faint);
         display:inline-flex;align-items:center;gap:12px;
-        opacity:.34;transform:translate3d(0,18px,0);
-        transition:opacity .75s var(--easing),transform .75s var(--easing);
-        transition-delay:.62s;
+        --sig-p:0;
+        --sig-y:18px;
+        opacity:calc(.34 + (var(--sig-p) * .66));transform:translate3d(0,var(--sig-y),0);
+        transition:opacity .12s linear,transform .12s linear;
       }
-      .manifesto.is-visible .manifesto-sig{opacity:1;transform:none;}
       .manifesto-sig::before{content:"";display:block;width:24px;height:1px;background:var(--ink);}
 
       /* =====================================================================
@@ -1524,7 +1529,8 @@
         .stage-act{opacity:1;transform:none;}
         .stats-grid .stat,.manifesto-text .word,.manifesto-sig,.gallery-card,.trip-frame,.magazine-content q,.magazine-content .top,.magazine-content .attrib,.footer-top,.footer-ai{opacity:1;transform:none;text-shadow:none;}
         .manifesto::before{opacity:.08;transform:translate(-50%,-50%) scale(1.06);}
-        .manifesto-text .word{color:var(--ink);}
+        .manifesto-text .word{color:var(--ink);--word-p:1;--word-y:0px;--word-scale:1;--ink-a:1;--gold-a:1;--shadow-a:0;--shadow-gold-a:0;--shadow-glow-a:0;}
+        .manifesto-sig{--sig-p:1;--sig-y:0px;}
         .manifesto-text .word em{color:var(--gold-deep);}
         .hero-bg,.hero-inner,.edit-img .img,.magazine-bg,.trip-frame .trip-bg,.mini-phone{transform:none !important;}
       }
@@ -2343,10 +2349,13 @@
       const galleryTrack=document.querySelector(".gallery-track");
       const sections=[...document.querySelectorAll("section[id]")];
       const hero=document.querySelector(".hero");
+      const manifesto=document.querySelector(".manifesto");
+      const manifestoWords=[...document.querySelectorAll(".manifesto-text .word")];
+      const manifestoSig=document.querySelector(".manifesto-sig");
       const editImg=document.querySelector(".edit-img");
       const magazine=document.querySelector(".magazine");
       const tripFrames=[...document.querySelectorAll(".trip-frame")];
-      let parallaxMetrics={hero:null,edit:null,magazine:null,trips:[]};
+      let parallaxMetrics={hero:null,manifesto:null,edit:null,magazine:null,trips:[]};
       let sectionBounds=[];
       let galleryMax=0;
       let galleryStart=0;
@@ -2356,6 +2365,7 @@
       function refreshParallaxMetrics(){
         parallaxMetrics={
           hero:hero?{el:hero,top:hero.offsetTop,height:hero.offsetHeight}:null,
+          manifesto:manifesto?{el:manifesto,top:manifesto.offsetTop,height:manifesto.offsetHeight}:null,
           edit:editImg?{el:editImg,top:editImg.offsetTop,height:editImg.offsetHeight}:null,
           magazine:magazine?{el:magazine,top:magazine.offsetTop,height:magazine.offsetHeight}:null,
           trips:tripFrames.map((el,index)=>({el,index,top:el.offsetTop,height:el.offsetHeight}))
@@ -2378,6 +2388,46 @@
         }
       }
       function clamp01(value){return Math.min(1,Math.max(0,value));}
+      function easeSmooth(value){return value*value*(3-2*value);}
+      function updateManifestoGhost(y,vh){
+        if(!parallaxMetrics.manifesto||!manifestoWords.length)return;
+        const item=parallaxMetrics.manifesto;
+        const start=item.top-vh*.72;
+        const end=item.top+item.height*.42;
+        const raw=clamp01((y-start)/Math.max(1,end-start));
+        const shade=1-easeSmooth(raw);
+        item.el.style.setProperty("--manifesto-shade-opacity",(.08 + shade*.38).toFixed(3));
+        item.el.style.setProperty("--manifesto-shade-scale",(1.06 - shade*.12).toFixed(3));
+        const count=Math.max(1,manifestoWords.length-1);
+        manifestoWords.forEach((word,index)=>{
+          const delay=(index/count)*.38;
+          const p=easeSmooth(clamp01((raw-delay)/.48));
+          const shadowA=((1-p)*.34).toFixed(3);
+          const shadowGoldA=((1-p)*.18).toFixed(3);
+          const shadowGlowA=((1-p)*.16).toFixed(3);
+          word.style.setProperty("--word-p",p.toFixed(3));
+          word.style.setProperty("--word-y",((1-p)*44).toFixed(1)+"px");
+          word.style.setProperty("--word-scale",(1.025 - p*.025).toFixed(3));
+          word.style.setProperty("--ink-a",(.12 + p*.88).toFixed(3));
+          word.style.setProperty("--gold-a",(.18 + p*.82).toFixed(3));
+          word.style.setProperty("--shadow-a",shadowA);
+          word.style.setProperty("--shadow-gold-a",shadowGoldA);
+          word.style.setProperty("--shadow-glow-a",shadowGlowA);
+          word.style.opacity=(.34 + p*.66).toFixed(3);
+          word.style.transform=`translate3d(0,${((1-p)*44).toFixed(1)}px,0) scale(${(1.025 - p*.025).toFixed(3)})`;
+          word.style.color=`rgba(28,25,23,${(.12 + p*.88).toFixed(3)})`;
+          word.style.textShadow=`0 34px 28px rgba(28,25,23,${shadowA}),0 14px 8px rgba(142,122,85,${shadowGoldA}),0 0 34px rgba(28,25,23,${shadowGlowA})`;
+          const em=word.querySelector("em");
+          if(em)em.style.color=`rgba(142,122,85,${(.18 + p*.82).toFixed(3)})`;
+        });
+        if(manifestoSig){
+          const sigP=easeSmooth(clamp01((raw-.58)/.3));
+          manifestoSig.style.setProperty("--sig-p",sigP.toFixed(3));
+          manifestoSig.style.setProperty("--sig-y",((1-sigP)*18).toFixed(1)+"px");
+          manifestoSig.style.opacity=(.34 + sigP*.66).toFixed(3);
+          manifestoSig.style.transform=`translate3d(0,${((1-sigP)*18).toFixed(1)}px,0)`;
+        }
+      }
       function updateParallax(){
         if(window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
         const y=window.scrollY;
@@ -2387,6 +2437,7 @@
           parallaxMetrics.hero.el.style.setProperty("--hero-y",(p*70).toFixed(1)+"px");
           parallaxMetrics.hero.el.style.setProperty("--hero-content-y",(p*42).toFixed(1)+"px");
         }
+        updateManifestoGhost(y,vh);
         if(parallaxMetrics.edit){
           const p=clamp01((y+vh-parallaxMetrics.edit.top)/Math.max(1,vh+parallaxMetrics.edit.height));
           parallaxMetrics.edit.el.style.setProperty("--edit-y",((p-.5)*-58).toFixed(1)+"px");
@@ -2529,7 +2580,7 @@
       }
       function initCinema(){
         const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-        document.querySelectorAll(".manifesto-text .word").forEach((word,index)=>{
+        manifestoWords.forEach((word,index)=>{
           word.style.setProperty("--word-i",index);
         });
         const revealEls=[...document.querySelectorAll(".reveal")];
