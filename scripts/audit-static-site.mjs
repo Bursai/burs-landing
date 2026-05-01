@@ -137,6 +137,9 @@ if (!/function animateStatNumber/.test(homepage) || !/stats-grid \.stat-n/.test(
 if (!/\.manifesto\.is-visible[\s\S]*\.word/.test(homepage) || !/style\.setProperty\("--word-i"/.test(homepage)) {
   fail("Manifesto must restore a staged word-by-word reveal.");
 }
+if (!/\.manifesto-text\s+\.word\{[\s\S]*text-shadow:0 34px 28px/.test(homepage) || !/\.manifesto\.is-visible\s+\.word\{[\s\S]*text-shadow:none/.test(homepage)) {
+  fail("Manifesto words must emerge from a shadow/ghost state instead of a plain fade.");
+}
 if (!/refreshParallaxMetrics/.test(homepage) || !/--hero-y/.test(homepage) || !/--edit-y/.test(homepage) || !/--magazine-y/.test(homepage)) {
   fail("Landing must restore native scroll-linked parallax for hero, editorial, and magazine sections.");
 }
