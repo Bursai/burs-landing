@@ -131,6 +131,24 @@ if (!/\.reveal\.is-visible/.test(homepage) || !/observe\(el\)/.test(homepage)) {
 if (!/\.stage-act\.is-active/.test(homepage) || !/style\.setProperty\("--story-progress"/.test(homepage)) {
   fail("Five-act story must expose active-act styling and a scroll progress motion variable.");
 }
+if (!/function animateStatNumber/.test(homepage) || !/stats-grid \.stat-n/.test(homepage)) {
+  fail("Stats banner must restore lightweight count-up animation.");
+}
+if (!/\.manifesto\.is-visible[\s\S]*\.word/.test(homepage) || !/style\.setProperty\("--word-i"/.test(homepage)) {
+  fail("Manifesto must restore a staged word-by-word reveal.");
+}
+if (!/refreshParallaxMetrics/.test(homepage) || !/--hero-y/.test(homepage) || !/--edit-y/.test(homepage) || !/--magazine-y/.test(homepage)) {
+  fail("Landing must restore native scroll-linked parallax for hero, editorial, and magazine sections.");
+}
+if (!/\.trip-frame\.is-visible/.test(homepage) || !/--trip-bg-y/.test(homepage) || !/--trip-phone-y/.test(homepage)) {
+  fail("Triptych must restore frame entry and lightweight internal parallax.");
+}
+if (!/\.gallery-card\.is-visible/.test(homepage)) {
+  fail("A week in BURS cards must restore viewport entry motion.");
+}
+if (!/footer\.is-visible[\s\S]*\.footer-top/.test(homepage) || !/\.dl-headline\.is-visible/.test(homepage)) {
+  fail("Footer and final CTA must restore cinematic entry motion.");
+}
 
 const weekGalleryImages = homepage.match(/<img[^>]+src=["']\/assets\/gallery\/week-[^"']+\.webp["'][^>]*class=["']gallery-img["'][^>]*>/g) || [];
 if (weekGalleryImages.length !== 7) {
