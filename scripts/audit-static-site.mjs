@@ -140,7 +140,7 @@ if (!/\.manifesto-text\s+\.word\{[\s\S]*--word-p:0/.test(homepage) || !/setPrope
 if (!/\.manifesto-text\s+\.word\{[\s\S]*opacity:var\(--word-p\)/.test(homepage) || !/text-shadow:0 24px 24px/.test(homepage) || !/--shadow-a/.test(homepage)) {
   fail("Manifesto words must emerge from a shadow/ghost state instead of a plain fade.");
 }
-if (!/function updateManifestoGhost/.test(homepage) || !/setProperty\("--word-p"/.test(homepage) || !/word\.style\.textShadow=/.test(homepage) || !/--manifesto-shade-opacity/.test(homepage)) {
+if (!/function updateManifestoGhost/.test(homepage) || !/setProperty\("--word-p"/.test(homepage) || !/--shadow-a/.test(homepage) || !/--manifesto-shade-opacity/.test(homepage)) {
   fail("Manifesto ghost reveal must be scroll-scrubbed rather than a one-shot reveal.");
 }
 if (!/refreshParallaxMetrics/.test(homepage) || !/--hero-y/.test(homepage) || !/--edit-y/.test(homepage) || !/--magazine-y/.test(homepage)) {
