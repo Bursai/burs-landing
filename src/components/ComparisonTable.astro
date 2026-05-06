@@ -1,0 +1,42 @@
+---
+// src/components/ComparisonTable.astro
+interface Row { feature: string; burs: string | boolean; b: string | boolean; c: string | boolean; }
+interface Props { headings: [string, string, string]; rows: Row[]; caption?: string; }
+const { headings, rows, caption } = Astro.props;
+function cell(v: string | boolean) {
+  if (v === true) return "✓";
+  if (v === false) return "—";
+  return v;
+}
+---
+<figure class="cmp">
+  {caption && <figcaption class="eyebrow">{caption}</figcaption>}
+  <table class="cmp__t" role="table">
+    <thead>
+      <tr>
+        <th></th>
+        <th class="cmp__brand">{headings[0]}</th>
+        <th>{headings[1]}</th>
+        <th>{headings[2]}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {rows.map(r => (
+        <tr>
+          <th scope="row">{r.feature}</th>
+          <td class="cmp__brand">{cell(r.burs)}</td>
+          <td>{cell(r.b)}</td>
+          <td>{cell(r.c)}</td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</figure>
+<style>
+  .cmp{margin:48px 0}
+  .cmp__t{width:100%;border-collapse:collapse;font-size:14px;font-family:var(--body)}
+  .cmp__t th,.cmp__t td{padding:14px 12px;border-bottom:1px solid rgba(28,25,23,.12);text-align:left;vertical-align:top}
+  .cmp__t thead th{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;color:var(--charcoal-2);border-bottom:1px solid var(--charcoal)}
+  .cmp__t tbody th{font-weight:500;font-family:var(--display);font-style:italic;font-size:18px;color:var(--charcoal)}
+  .cmp__brand{color:var(--gold-deep);font-weight:600}
+</style>

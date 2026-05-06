@@ -1,0 +1,45 @@
+---
+// src/components/ActSection.astro
+interface Props {
+  index: number;             // 1..5
+  eyebrow: string;           // e.g. "ONE — THE CLOSET"
+  headline: string;          // can include <em>
+  lede: string;
+  image: string;             // /assets/...
+  imageAlt: string;
+  reverse?: boolean;         // mirror the layout
+  bg?: "cream" | "paper" | "dark" | "ink";
+}
+
+const {
+  index, eyebrow, headline, lede,
+  image, imageAlt, reverse = false, bg = "paper"
+} = Astro.props;
+
+const sectionClass = bg === "dark" ? "section--dark" : bg === "ink" ? "section--ink" : bg === "cream" ? "section--cream" : "section--paper";
+---
+<section class={`act ${sectionClass}`} data-act={index}>
+  <div class={`wrap act__grid ${reverse ? "act__grid--reverse" : ""}`}>
+    <div class="act__copy">
+      <p class="eyebrow">{eyebrow}</p>
+      <h2 set:html={headline} />
+      <p class="lede">{lede}</p>
+      <slot name="extra" />
+    </div>
+    <div class="act__media">
+      <img src={image} alt={imageAlt} loading="lazy" decoding="async" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .act{padding-block:clamp(80px,12vh,160px)}
+  .section--cream{background:var(--cream)}
+  .act__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,96px);align-items:center}
+  .act__grid--reverse .act__copy{order:2}
+  .act__copy h2{margin-top:18px;font-weight:200;letter-spacing:-.035em;line-height:.92;text-wrap:balance}
+  .act__copy h2 :global(em){font-style:italic;color:var(--gold);font-weight:300}
+  .act__copy .lede{margin-top:20px;max-width:42ch}
+  .act__media img{width:100%;border-radius:2px;box-shadow:0 30px 60px rgba(0,0,0,.18)}
+  @media (max-width:900px){.act__grid{grid-template-columns:1fr}.act__grid--reverse .act__copy{order:0}}
+</style>
