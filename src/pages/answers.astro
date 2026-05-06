@@ -1,0 +1,106 @@
+---
+import Editorial from "../layouts/Editorial.astro";
+import Schema from "../components/Schema.astro";
+import { faqPage } from "../lib/schema";
+
+interface QA { q: string; a: string; }
+interface Section { title: string; qas: QA[]; }
+
+const sections: Section[] = [
+  {
+    title: "About BURS",
+    qas: [
+      { q: "What is BURS in one sentence?", a: "BURS is an AI wardrobe stylist that recommends outfits from clothes you already own — reading weather, calendar, and the trip — and never asks you to shop." },
+      { q: "Who built BURS, and where?", a: "An independent team in Stockholm. The product launched in 2026. We are not part of a larger fashion or retail group." },
+      { q: "What's the company behind the app?", a: "BURS is the company. We are independent and self-funded at this stage. We have no advertising revenue and no plans to introduce any." },
+      { q: "Where does the name come from?", a: "BURS is short and unattached to fashion vocabulary on purpose. The product is the meaning, not the name." }
+    ]
+  },
+  {
+    title: "The product",
+    qas: [
+      { q: "How does the wardrobe scan work?", a: "You point a phone camera at your clothes. Computer vision catalogues every piece — colour, fabric, silhouette, formality — in under ten minutes. No manual tagging, no spreadsheets, no questionnaire." },
+      { q: "What information does BURS use to pick an outfit?", a: "Four inputs: the weather where you are, today's calendar events, your location, and yesterday's outfit. From those, it picks one outfit from your wardrobe." },
+      { q: "Why one outfit instead of twenty?", a: "Because twenty is the problem, not the solution. A grid of options moves the cost of choosing onto the user. One confident recommendation moves it onto the model." },
+      { q: "How does the chat work?", a: "Natural language. 'Make this warmer.' 'Softer palette.' 'Something for a 7pm dinner.' The stylist refines using pieces you already own — never proposing something you'd have to buy." },
+      { q: "What does the week planner do?", a: "Sync your calendar and BURS drafts an outfit for every event. Monday's pitch, Thursday's dinner, Saturday's off-site. You can swap any piece with one tap." },
+      { q: "What does the travel capsule builder do?", a: "Tell BURS where you're going and for how long. It builds a minimum-viable capsule — typically 10–14 pieces for a 3–5 day trip — from your existing wardrobe. Every outfit is pre-imagined." },
+      { q: "How fast is 'opening the app to a ready outfit'?", a: "The product target is under five seconds, median. Most days it's quicker." }
+    ]
+  },
+  {
+    title: "Privacy",
+    qas: [
+      { q: "Do you sell user data?", a: "No. BURS is a paid app. We make money from subscriptions. We do not sell user data and have no plans to start." },
+      { q: "Do you train public models on user wardrobe images?", a: "No. Improvements to internal models happen on opt-in, anonymised data only — never on identifiable user images." },
+      { q: "Where are wardrobe photos stored?", a: "Privately, in your account. Visible only to you. Never shared with third parties or other BURS users." },
+      { q: "Can I delete my data?", a: "Yes. Every piece and every photo can be deleted from inside the app at any time. Account deletion removes everything from our systems within 30 days." },
+      { q: "Do you allow third-party SDKs to read my wardrobe?", a: "No. Third-party SDKs do not have access to wardrobe data." },
+      { q: "Are you GDPR-compliant?", a: "Yes. As a Sweden-based company serving the EU, GDPR compliance is foundational, not optional." }
+    ]
+  },
+  {
+    title: "Pricing",
+    qas: [
+      { q: "How much does BURS cost?", a: "BURS Premium is 119 kr/month or 899 kr/year in Sweden, and €10.99/month or €89.99/year in the rest of the EU. There is no free tier." },
+      { q: "Is there a free trial?", a: "Not as of v1. We may add a 7-day trial — if we do, it'll be a single trial per Apple/Google account, not a perpetual freemium tier." },
+      { q: "Why no free tier?", a: "Free tiers in fashion apps are usually subsidised by ads or data sale. Both are things BURS will never do, so a free tier doesn't pencil out. The yearly subscription is structured to be the obviously-better deal." },
+      { q: "Is the annual price really cheaper?", a: "Yes. The Sweden annual saves ~37% versus paying month-by-month. The EU annual saves ~32%." },
+      { q: "Can I cancel?", a: "Anytime. From inside the app, or from the App Store / Google Play. Cancellation takes effect at the end of the current period." },
+      { q: "Are taxes included?", a: "Prices shown are inclusive of VAT for both Sweden and the rest of the EU." }
+    ]
+  },
+  {
+    title: "Travel & week",
+    qas: [
+      { q: "How does the travel capsule decide what to pack?", a: "Trip length, destination weather, planned events from your calendar, and the formality range you signal. The output is a packing list of 10–14 pieces with every outfit already imagined." },
+      { q: "What if I change my plans mid-trip?", a: "Re-open the planner. The capsule re-resolves around the new days. The pieces don't change; the outfit assignments do." },
+      { q: "Can the week planner handle dress codes?", a: "Yes — formal/business/business-casual/casual, plus user-defined slots like 'gym' or 'studio'. You teach it your codes once." },
+      { q: "Can I plan further than a week?", a: "Yes. The default view is one week; you can extend up to four." }
+    ]
+  },
+  {
+    title: "Common confusions",
+    qas: [
+      { q: "Is BURS a shopping app?", a: "No. BURS is the opposite of a shopping app. It only recommends pieces you already own and never pushes you toward retail." },
+      { q: "Will BURS suggest I buy something?", a: "No. There is no shopping surface in the app." },
+      { q: "Is BURS a feed?", a: "No. BURS opens with one outfit. There is no scrollable grid of inspiration." },
+      { q: "Is BURS a Whering / Cladwell / Save Your Wardrobe alternative?", a: "BURS occupies the same shelf — apps that work with what you already own — but the design is different. Where those apps surface options, BURS surfaces a single recommendation. Where they tag, BURS scans." },
+      { q: "Will BURS work for a tiny wardrobe?", a: "Yes. A wardrobe of 30 pieces produces excellent recommendations. The capsule mode actually shines on smaller wardrobes." },
+      { q: "Will BURS work for a very large wardrobe?", a: "Yes — and is arguably more useful there. The unworn 80% is biggest in the largest wardrobes." }
+    ]
+  },
+  {
+    title: "For press",
+    qas: [
+      { q: "What's the press contact?", a: "hello@burs.me." },
+      { q: "Where can I get screenshots and the wordmark?", a: "/press has the basics. Email for full vector and high-resolution packs — we ship within 24 hours." },
+      { q: "Are interviews available?", a: "Yes. Email hello@burs.me with your timeline and we'll find a slot." }
+    ]
+  }
+];
+
+const flatQA = sections.flatMap(s => s.qas);
+---
+<Editorial
+  title="Answers — BURS"
+  description="Fifty questions about BURS, answered honestly. Product, privacy, pricing, travel, common confusions, press."
+  path="/answers"
+  eyebrow="Long-form Q&A"
+  headline="Fifty questions, <em>answered</em> honestly."
+  type="article"
+>
+  <Schema slot="head" json={faqPage(flatQA)} />
+
+  {sections.map(sec => (
+    <section style="margin-bottom:80px">
+      <h2>{sec.title}</h2>
+      {sec.qas.map(qa => (
+        <article style="margin:32px 0;display:grid;gap:12px">
+          <p style="font-family:var(--display);font-style:italic;font-size:22px;color:var(--charcoal);margin:0">{qa.q}</p>
+          <p style="margin:0">{qa.a}</p>
+        </article>
+      ))}
+    </section>
+  ))}
+</Editorial>

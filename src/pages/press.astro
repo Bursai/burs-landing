@@ -1,0 +1,50 @@
+---
+import Page from "../layouts/Page.astro";
+---
+<Page
+  title="Press — BURS"
+  description="Press kit, founder bio, and contact for BURS — an AI wardrobe stylist."
+  path="/press"
+  eyebrow="Press"
+  headline="A short note for <em>editors</em>."
+  lede="Logos, screenshots, founder bio, and a sober paragraph you can paste into a piece. For interviews, write hello@burs.me."
+>
+  <div class="press">
+    <section class="press__block">
+      <p class="eyebrow">— Boilerplate</p>
+      <p class="press__paragraph">
+        BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends one outfit for the day, the week, or a trip. BURS is paid: 119 kr/month or 899 kr/year in Sweden, and €10.99/month or €89.99/year in the rest of the EU. There is no free tier and no advertising. The app is on iOS and Android. BURS is independent and based in Stockholm.
+      </p>
+    </section>
+
+    <section class="press__block">
+      <p class="eyebrow">— Founder</p>
+      <p>Founder bio (4 sentences), available on request: <a href="mailto:hello@burs.me">hello@burs.me</a>.</p>
+    </section>
+
+    <section class="press__block">
+      <p class="eyebrow">— Downloads</p>
+      <ul class="press__dl" role="list">
+        <li><a href="/logo-512.png" download>Wordmark · PNG (512px)</a></li>
+        <li><a href="/burs-logo-256-2.png" download>Wordmark · PNG (256px, alt)</a></li>
+        <li><a href="/og-image.png" download>Default OG image · PNG</a></li>
+      </ul>
+      <p class="press__note">Need vector files or the full screenshot pack? Email and we'll send within 24 hours.</p>
+    </section>
+
+    <section class="press__block">
+      <p class="eyebrow">— Contact</p>
+      <p>Press inquiries, interviews, partnerships: <a href="mailto:hello@burs.me">hello@burs.me</a>.</p>
+      <p class="press__note">BURS uses a single contact address — <code>hello@burs.me</code> — for press, support, and partnerships.</p>
+    </section>
+  </div>
+</Page>
+
+<style>
+  .press{display:grid;gap:64px;max-width:780px}
+  .press__block{display:grid;gap:14px}
+  .press__paragraph{font-family:var(--serif);font-style:italic;font-size:19px;line-height:1.55;color:var(--charcoal-2);max-width:60ch}
+  .press__dl{list-style:none;display:grid;gap:8px}
+  .press__dl a{font-size:15px;border-bottom:1px solid currentColor;display:inline-block;padding-bottom:1px}
+  .press__note{font-size:13px;opacity:.65}
+</style>

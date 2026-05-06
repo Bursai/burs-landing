@@ -1,0 +1,45 @@
+---
+import Page from "../layouts/Page.astro";
+import Schema from "../components/Schema.astro";
+import { howTo } from "../lib/schema";
+
+const steps = [
+  { name: "The scan",            text: "Point a phone camera at your clothes. BURS uses computer vision to catalogue every piece — colour, fabric, silhouette, formality — in under ten minutes. No manual tagging." },
+  { name: "The catalogue",       text: "Each piece is stored as structured data: hue, value, weight, length, pattern, season-fit. Your closet becomes queryable for the first time." },
+  { name: "The context read",    text: "Before recommending anything, BURS reads the weather, your calendar, your location, and yesterday's outfit. The day, understood." },
+  { name: "The recommendation",  text: "BURS returns one outfit. Not twenty. One. Tap to wear; swipe down to regenerate; tap any piece to see why it was chosen." },
+  { name: "Chat refinement",     text: "Ask in plain language: 'make this warmer', 'softer palette', 'something for a 7pm dinner'. The stylist refines in a sentence — using pieces you already own." },
+  { name: "Week & travel",       text: "Sync your calendar and BURS drafts outfits for every event. Tell it where you're going and for how long, and it builds a minimum-viable capsule from your wardrobe." }
+];
+---
+<Page
+  title="Method — BURS"
+  description="How BURS reads a closet, the day, and a trip — without ever asking you to shop."
+  path="/method"
+  eyebrow="Method"
+  headline="How BURS <em>reads</em> a closet."
+  lede="Six steps. No manual tagging, no styling questionnaire, no shopping list. Just your closet, finally working."
+>
+  <Schema slot="head" json={howTo({ name: "How BURS works", description: "From the wardrobe scan to a packed travel capsule.", steps })} />
+
+  <ol class="method" role="list">
+    {steps.map((s, i) => (
+      <li class="method__step">
+        <span class="method__num">0{i+1}</span>
+        <div class="method__copy">
+          <h3>{s.name}</h3>
+          <p>{s.text}</p>
+        </div>
+      </li>
+    ))}
+  </ol>
+</Page>
+
+<style>
+  .method{list-style:none;display:grid;gap:48px;max-width:880px}
+  .method__step{display:grid;grid-template-columns:120px 1fr;gap:32px;padding-bottom:48px;border-bottom:1px solid rgba(28,25,23,.12)}
+  .method__num{font-family:var(--mono);font-size:13px;letter-spacing:.22em;color:var(--gold-deep)}
+  .method__copy h3{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(28px,3vw,42px);letter-spacing:-.02em;line-height:1.05;color:var(--charcoal)}
+  .method__copy p{margin-top:14px;font-family:var(--serif);font-style:italic;font-size:18px;line-height:1.55;color:var(--charcoal-2);max-width:54ch}
+  @media (max-width:700px){.method__step{grid-template-columns:1fr;gap:14px}}
+</style>

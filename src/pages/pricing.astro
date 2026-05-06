@@ -1,0 +1,59 @@
+---
+import Page from "../layouts/Page.astro";
+import PriceCard from "../components/PriceCard.astro";
+import ComparisonTable from "../components/ComparisonTable.astro";
+import Schema from "../components/Schema.astro";
+import { product } from "../lib/schema";
+---
+<Page
+  title="Pricing — BURS"
+  description="BURS Premium: 119 kr/mo or 899 kr/yr (Sweden), €10.99/mo or €89.99/yr (rest of EU). No free tier. No ads. Cancel anytime."
+  path="/pricing"
+  eyebrow="Pricing"
+  headline="One subscription. <em>Your</em> closet."
+  lede="A single tier. Prices below in Swedish kronor and Euros. Annual saves about a third."
+>
+  <Schema slot="head" json={product()} />
+
+  <div class="pricing">
+    <div class="pricing__cards">
+      <PriceCard locale="SE" />
+      <PriceCard locale="EU" />
+    </div>
+
+    <section class="pricing__not">
+      <p class="eyebrow">— What's not included</p>
+      <ul class="anti" style="color:var(--charcoal)" role="list">
+        <li>No free tier.</li>
+        <li>No ads.</li>
+        <li>No shopping. We never recommend pieces you don't own.</li>
+        <li>No data sale. No training on your wardrobe.</li>
+      </ul>
+    </section>
+
+    <section class="pricing__cmp">
+      <ComparisonTable
+        caption="HONEST COMPARISON"
+        headings={["BURS", "Whering", "Pinterest"]}
+        rows={[
+          { feature: "Uses only clothes you own",   burs: true,  b: true,  c: false },
+          { feature: "One outfit (not a feed)",     burs: true,  b: false, c: false },
+          { feature: "Reads weather + calendar",    burs: true,  b: false, c: false },
+          { feature: "Conversational refinement",   burs: true,  b: false, c: false },
+          { feature: "Travel capsule builder",      burs: true,  b: "partial", c: false },
+          { feature: "Free tier",                   burs: false, b: true,  c: true  },
+          { feature: "Ads",                         burs: false, b: false, c: true  }
+        ]}
+      />
+      <p class="pricing__honest">An honest comparison is opinion, not fact-claim. We picked the comparison fields we thought mattered most. Your priorities may be different.</p>
+    </section>
+  </div>
+</Page>
+
+<style>
+  .pricing{display:grid;gap:80px;max-width:980px}
+  .pricing__cards{display:grid;grid-template-columns:1fr 1fr;gap:28px}
+  @media (max-width:780px){.pricing__cards{grid-template-columns:1fr}}
+  .pricing__not{display:grid;gap:18px}
+  .pricing__honest{font-size:13px;opacity:.55;font-style:italic;margin-top:14px;max-width:54ch}
+</style>
