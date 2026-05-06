@@ -1,0 +1,9 @@
+---
+// src/components/Schema.astro
+interface Props { json: object | object[]; }
+const { json } = Astro.props;
+const arr = Array.isArray(json) ? json : [json];
+---
+{arr.map(j => (
+  <script type="application/ld+json" set:html={JSON.stringify(j)} />
+))}

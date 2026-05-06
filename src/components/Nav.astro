@@ -1,0 +1,32 @@
+---
+// src/components/Nav.astro
+const links = [
+  { href: "/manifesto", label: "Manifesto" },
+  { href: "/method",    label: "Method" },
+  { href: "/pricing",   label: "Pricing" },
+  { href: "/press",     label: "Press" },
+  { href: "/blog",      label: "Blog" }
+];
+---
+<nav class="nav" aria-label="Primary">
+  <a href="/" class="nav__brand" aria-label="BURS home">BURS<sup>™</sup></a>
+  <ul class="nav__links" role="list">
+    {links.map(l => (<li><a href={l.href}>{l.label}</a></li>))}
+  </ul>
+  <a href="https://apps.apple.com/app/burs" class="cta cta--cream" aria-label="Download BURS">
+    Get the app <span class="cta__arrow" aria-hidden="true">→</span>
+  </a>
+</nav>
+
+<style>
+  .nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:18px var(--gutter);display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(14px) saturate(140%);-webkit-backdrop-filter:blur(14px) saturate(140%);background:rgba(245,240,232,.6);border-bottom:1px solid rgba(28,25,23,.06);transition:background .4s ease,border-color .4s ease}
+  :global(body.dark-nav) .nav{background:rgba(28,25,23,.5);border-bottom-color:rgba(245,240,232,.08);color:var(--cream)}
+  :global(body.dark-nav) .nav .cta{background:var(--cream);color:var(--charcoal);border-color:var(--cream)}
+  .nav__brand{font-family:var(--display);font-style:italic;font-weight:500;font-size:26px;letter-spacing:-.025em;display:flex;align-items:baseline;gap:8px;color:inherit}
+  .nav__brand sup{font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:.22em;color:var(--gold);font-weight:500;position:relative;top:-13px}
+  .nav__links{display:flex;gap:36px;align-items:center;list-style:none}
+  .nav__links a{font-size:13px;font-weight:400;letter-spacing:.01em;position:relative;padding:4px 0;color:inherit}
+  .nav__links a::after{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:currentColor;transform:scaleX(0);transform-origin:right;transition:transform .5s var(--eio)}
+  .nav__links a:hover::after{transform:scaleX(1);transform-origin:left}
+  @media (max-width:900px){.nav__links{display:none}}
+</style>
