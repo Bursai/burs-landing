@@ -1,0 +1,48 @@
+/* src/styles/tokens.css */
+:root{
+  /* Color */
+  --ink: #0E0D0C;
+  --charcoal: #1C1917;
+  --charcoal-2: #2A2724;
+  --charcoal-3: #3A3633;
+  --cream: #F5F0E8;
+  --cream-paper: #FAF6EE;
+  --cream-warm: #EDE5D6;
+  --cream-deep: #E4D9C3;
+  --gold: #C9A86C;
+  --gold-bright: #E0BD7D;
+  --gold-deep: #A8884F;
+
+  /* Layout */
+  --max: 1440px;
+  --gutter: clamp(20px, 4vw, 56px);
+
+  /* Type */
+  --display: "Fraunces", "Times New Roman", serif;
+  --body: "Inter Tight", -apple-system, BlinkMacSystemFont, sans-serif;
+  --serif: "Spectral", Georgia, serif;
+  --mono: "JetBrains Mono", ui-monospace, monospace;
+
+  /* Type sizes */
+  --t-hero: clamp(56px, 11vw, 168px);
+  --t-section: clamp(40px, 6vw, 88px);
+  --t-h2: clamp(28px, 3.6vw, 48px);
+  --t-h3: clamp(20px, 2.2vw, 28px);
+  --t-body: 16px;
+  --t-lede: clamp(17px, 1.6vw, 20px);
+  --t-label: 11px;
+
+  /* Motion */
+  --eo: cubic-bezier(.2,.7,.2,1);
+  --eio: cubic-bezier(.7,0,.2,1);
+  --grain: .055;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --grain: 0; }
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+  }
+}
