@@ -8,5 +8,6 @@ dist/
 .superpowers/
 .vscode/
 .idea/
+.claude/
 *.log
 .cache/

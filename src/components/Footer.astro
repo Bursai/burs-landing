@@ -5,7 +5,9 @@ const year = new Date().getFullYear();
 <footer class="foot section--ink">
   <div class="wrap foot__grid">
     <div class="foot__col foot__col--lead">
-      <a href="/" class="foot__brand">BURS<sup>™</sup></a>
+      <a href="/" class="foot__brand" aria-label="BURS home">
+        <img src="/logo-512.png" alt="BURS" width="512" height="512" class="foot__logo" />
+      </a>
       <p class="lede" style="color:rgba(245,240,232,.78);max-width:32ch">
         Your closet, finally working for you.
       </p>
@@ -55,8 +57,8 @@ const year = new Date().getFullYear();
   .foot__col ul{list-style:none;display:grid;gap:8px;margin-top:14px}
   .foot__col a{font-size:14px;color:rgba(245,240,232,.85)}
   .foot__col a:hover{color:var(--gold-bright)}
-  .foot__brand{font-family:var(--display);font-style:italic;font-weight:500;font-size:32px;color:var(--cream);display:inline-block;margin-bottom:18px}
-  .foot__brand sup{font-family:var(--mono);font-style:normal;font-size:10px;letter-spacing:.22em;color:var(--gold);position:relative;top:-15px;margin-left:4px}
+  .foot__brand{display:inline-block;margin-bottom:18px}
+  .foot__logo{height:56px;width:auto;display:block;filter:invert(1) brightness(1.05)}
   .foot__rule{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,240,232,.45);padding-top:24px;flex-wrap:wrap;gap:14px}
   @media (max-width:900px){.foot__grid{grid-template-columns:1fr 1fr;gap:32px}.foot__col--lead{grid-column:1/-1}}
 </style>

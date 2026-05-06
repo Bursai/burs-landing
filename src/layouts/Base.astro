@@ -6,7 +6,6 @@ import "../styles/typography.css";
 import "../styles/utilities.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import Cursor from "../components/Cursor.astro";
 import Schema from "../components/Schema.astro";
 import { buildSeo } from "../lib/seo";
 import { organization, website } from "../lib/schema";
@@ -16,11 +15,14 @@ interface Props {
   description: string;
   path: string;
   ogImage?: string;
+  ogVideo?: string;
+  ogVideoWidth?: number;
+  ogVideoHeight?: number;
   type?: "website" | "article";
   bodyClass?: string;
 }
 
-const { title, description, path, ogImage, type, bodyClass } = Astro.props;
+const { title, description, path, ogImage, ogVideo, ogVideoWidth = 1920, ogVideoHeight = 1080, type, bodyClass } = Astro.props;
 const seo = buildSeo({ title, description, path, ogImage, type });
 ---
 <!doctype html>
@@ -46,10 +48,26 @@ const seo = buildSeo({ title, description, path, ogImage, type });
   <meta property="og:url" content={seo.canonical} />
   <meta property="og:image" content={seo.ogImage} />
   <meta property="og:type" content={seo.type} />
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:card" content={ogVideo ? "player" : "summary_large_image"} />
   <meta name="twitter:title" content={seo.title} />
   <meta name="twitter:description" content={seo.description} />
   <meta name="twitter:image" content={seo.ogImage} />
+
+  {ogVideo && (
+    <>
+      <meta property="og:video" content={ogVideo} />
+      <meta property="og:video:secure_url" content={ogVideo} />
+      <meta property="og:video:type" content="video/mp4" />
+      <meta property="og:video:width" content={String(ogVideoWidth)} />
+      <meta property="og:video:height" content={String(ogVideoHeight)} />
+      <meta property="og:type" content="video.other" />
+      <meta name="twitter:player" content={ogVideo} />
+      <meta name="twitter:player:width" content={String(ogVideoWidth)} />
+      <meta name="twitter:player:height" content={String(ogVideoHeight)} />
+      <meta name="twitter:player:stream" content={ogVideo} />
+      <meta name="twitter:player:stream:content_type" content="video/mp4" />
+    </>
+  )}
 
   <Schema json={[organization(), website()]} />
 
@@ -57,7 +75,6 @@ const seo = buildSeo({ title, description, path, ogImage, type });
 </head>
 <body class={bodyClass}>
   <div class="grain" aria-hidden="true"></div>
-  <Cursor />
   <Nav />
   <main id="main"><slot /></main>
   <Footer />

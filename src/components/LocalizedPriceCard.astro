@@ -1,0 +1,214 @@
+---
+// src/components/LocalizedPriceCard.astro
+// Renders BOTH locale variants of the price card at build time, then a
+// blocking inline script picks the right one based on (in priority order):
+//
+//   1. localStorage cache (24h)         — repeat visitors: zero flash
+//   2. timezone heuristic               — first paint approximation
+//   3. api.country.is IP lookup         — authoritative correction
+//
+// The user can manually override via the toggle below the card.
+// Selection persists for 24h so the manual choice sticks.
+
+import PriceCard from "./PriceCard.astro";
+interface Props {
+  emphasize?: "month" | "year";
+  /** Optional id if you have multiple instances on a page. */
+  id?: string;
+}
+const { emphasize = "year", id } = Astro.props;
+---
+
+<div class="lpc" data-locale="EU" data-lpc-root id={id}>
+  <div class="lpc__variant" data-for="SE">
+    <PriceCard locale="SE" emphasize={emphasize} />
+  </div>
+  <div class="lpc__variant" data-for="EU">
+    <PriceCard locale="EU" emphasize={emphasize} />
+  </div>
+
+  <div class="lpc__switch" role="group" aria-label="Pricing region">
+    <span class="lpc__switch-label">Showing prices in</span>
+    <button type="button" class="lpc__btn" data-set-locale="SE" aria-pressed="false">Sweden · SEK</button>
+    <span class="lpc__switch-sep" aria-hidden="true">/</span>
+    <button type="button" class="lpc__btn" data-set-locale="EU" aria-pressed="true">EU · EUR</button>
+  </div>
+</div>
+
+<style>
+  .lpc{
+    position:relative;
+    /* No height transition — variants are interchangeable & similarly sized */
+  }
+
+  /* Show only the active variant. The other stays in DOM (for SEO + a11y
+     fallback) but is removed from layout to avoid double-card flash. */
+  .lpc__variant{display:none}
+  .lpc[data-locale="SE"] .lpc__variant[data-for="SE"]{display:block}
+  .lpc[data-locale="EU"] .lpc__variant[data-for="EU"]{display:block}
+
+  /* ---- Switcher ---- */
+  .lpc__switch{
+    margin-top:18px;
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+    font-family:var(--mono);
+    font-size:10px;
+    letter-spacing:.22em;
+    text-transform:uppercase;
+    color:rgba(28,25,23,.55);
+    /* Hidden until JS confirms detection ran (otherwise irrelevant) */
+    opacity:0;
+    transform:translateY(4px);
+    transition:opacity .5s var(--eo), transform .5s var(--eo);
+    pointer-events:none;
+  }
+  .lpc.is-ready .lpc__switch{
+    opacity:1;
+    transform:translateY(0);
+    pointer-events:auto;
+  }
+
+  .lpc__switch-label{opacity:.85;margin-right:2px}
+
+  .lpc__btn{
+    appearance:none;background:none;border:0;padding:0;cursor:pointer;
+    font:inherit;letter-spacing:inherit;text-transform:inherit;
+    color:rgba(28,25,23,.42);
+    transition:color .25s var(--eo);
+    position:relative;
+  }
+  .lpc__btn:hover{color:var(--gold-deep)}
+  .lpc__btn[aria-pressed="true"]{color:var(--charcoal)}
+  /* Subtle gold underline on the active locale */
+  .lpc__btn[aria-pressed="true"]::after{
+    content:"";
+    position:absolute;left:0;right:0;bottom:-3px;
+    height:1px;
+    background:var(--gold);
+    opacity:.7;
+  }
+  .lpc__switch-sep{opacity:.3}
+
+  /* If the price card sits on a dark section, invert switcher colors.
+     Activated by ancestor .section--ink. */
+  :global(.section--ink) .lpc__switch{color:rgba(245,240,232,.55)}
+  :global(.section--ink) .lpc__btn{color:rgba(245,240,232,.42)}
+  :global(.section--ink) .lpc__btn[aria-pressed="true"]{color:var(--cream)}
+  :global(.section--ink) .lpc__btn:hover{color:var(--gold-bright)}
+</style>
+
+<script is:inline>
+  /* Locale auto-detect for BURS pricing.
+     Inline + non-deferred so it executes the moment the parser hits it,
+     before any visible flash for cached visitors. */
+  (function () {
+    var STORE_KEY = "burs.locale";
+    var TTL = 24 * 60 * 60 * 1000; // 24h
+    var COUNTRY_API = "https://api.country.is/";
+
+    /** @param {"SE"|"EU"} loc */
+    function applyLocale(loc, persist) {
+      var roots = document.querySelectorAll("[data-lpc-root]");
+      for (var i = 0; i < roots.length; i++) {
+        roots[i].setAttribute("data-locale", loc);
+        roots[i].classList.add("is-ready");
+        // Sync the switcher buttons
+        var btns = roots[i].querySelectorAll("[data-set-locale]");
+        for (var j = 0; j < btns.length; j++) {
+          var b = btns[j];
+          b.setAttribute(
+            "aria-pressed",
+            b.getAttribute("data-set-locale") === loc ? "true" : "false"
+          );
+        }
+      }
+      if (persist) {
+        try {
+          localStorage.setItem(
+            STORE_KEY,
+            JSON.stringify({ l: loc, t: Date.now() })
+          );
+        } catch (e) {}
+      }
+    }
+
+    function fromCountry(cc) {
+      return (cc || "").toUpperCase() === "SE" ? "SE" : "EU";
+    }
+
+    function init() {
+      // 1. Cached choice — repeat visit or prior manual override
+      try {
+        var raw = localStorage.getItem(STORE_KEY);
+        if (raw) {
+          var cached = JSON.parse(raw);
+          if (
+            cached &&
+            cached.l &&
+            cached.t &&
+            Date.now() - cached.t < TTL
+          ) {
+            applyLocale(cached.l, false);
+            attachSwitcher();
+            return; // short-circuit — no network
+          }
+        }
+      } catch (e) {}
+
+      // 2. Timezone heuristic — instant first-paint guess
+      var tzGuess = null;
+      try {
+        var tz =
+          (Intl.DateTimeFormat().resolvedOptions() || {}).timeZone || "";
+        if (/Stockholm/i.test(tz)) tzGuess = "SE";
+      } catch (e) {}
+      if (tzGuess) applyLocale(tzGuess, false);
+      else attachSwitcher(); // ensure switcher fades in even if no guess
+
+      // 3. Authoritative IP lookup — corrects the heuristic if needed
+      var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
+      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 2500) : null;
+
+      fetch(COUNTRY_API, {
+        cache: "no-store",
+        signal: ctrl ? ctrl.signal : undefined,
+      })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (data) {
+          if (timer) clearTimeout(timer);
+          if (!data || !data.country) return;
+          applyLocale(fromCountry(data.country), true);
+        })
+        .catch(function () {
+          /* network failure — keep current (default EU or tz guess) */
+          if (timer) clearTimeout(timer);
+        })
+        .finally(function () {
+          attachSwitcher();
+        });
+    }
+
+    var switcherAttached = false;
+    function attachSwitcher() {
+      if (switcherAttached) return;
+      switcherAttached = true;
+      var roots = document.querySelectorAll("[data-lpc-root]");
+      for (var i = 0; i < roots.length; i++) {
+        roots[i].classList.add("is-ready");
+        var btns = roots[i].querySelectorAll("[data-set-locale]");
+        for (var j = 0; j < btns.length; j++) {
+          btns[j].addEventListener("click", function (e) {
+            var loc = e.currentTarget.getAttribute("data-set-locale");
+            if (loc === "SE" || loc === "EU") applyLocale(loc, true);
+          });
+        }
+      }
+    }
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", init, { once: true });
+    } else {
+      init();
+    }
+  })();
+</script>

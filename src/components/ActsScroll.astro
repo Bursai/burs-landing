@@ -1,0 +1,357 @@
+---
+// src/components/ActsScroll.astro
+// Sticky iPhone on one side, 5 scroll panels on the other.
+// As each panel becomes active, the phone's screen cross-fades to that act's image.
+interface Act {
+  index: number;
+  eyebrow: string;
+  headline: string;
+  lede: string;
+  image: string;
+  imageAlt: string;
+}
+
+const acts: Act[] = [
+  {
+    index: 1,
+    eyebrow: "ONE — THE CLOSET, READ",
+    headline: "Your closet, finally <em>read</em>.",
+    lede: "Point a phone camera at your clothes. Computer vision catalogues every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging.",
+    image: "/assets/act-i-wardrobe-screen.jpeg",
+    imageAlt: "BURS wardrobe scan in progress, displaying tagged garments"
+  },
+  {
+    index: 2,
+    eyebrow: "TWO — THE DAY, UNDERSTOOD",
+    headline: "The weather. Your day. <em>Yesterday's</em> outfit.",
+    lede: "Before BURS recommends anything, it reads the weather, your calendar, your location, and yesterday's outfit. The day, understood.",
+    image: "/assets/act-ii-context-screen.jpeg",
+    imageAlt: "BURS reading the day's context: weather, calendar, location"
+  },
+  {
+    index: 3,
+    eyebrow: "THREE — TALK TO IT",
+    headline: "A stylist that <em>refines</em> in a sentence.",
+    lede: "Ask in plain language. The stylist answers using pieces already in your wardrobe.",
+    image: "/assets/act-iii-stylist-screen.jpeg",
+    imageAlt: "BURS AI stylist chat showing outfit refinements"
+  },
+  {
+    index: 4,
+    eyebrow: "FOUR — THE WEEK, DRAFTED",
+    headline: "Monday's pitch. Thursday's dinner. <em>Saturday's</em> off-site.",
+    lede: "Sync your calendar and BURS drafts an outfit for every event. Swap any piece with one tap.",
+    image: "/assets/act-iv-week-screen.jpeg",
+    imageAlt: "BURS week planner showing outfits for Monday through Sunday"
+  },
+  {
+    index: 5,
+    eyebrow: "FIVE — THE TRIP, PACKED",
+    headline: "Pack a city in <em>twelve</em> pieces.",
+    lede: "Tell BURS where you're going and for how long. It builds a minimum-viable capsule from your wardrobe — every piece earning its place, every outfit pre-imagined.",
+    image: "/assets/act-v-travel-screen.jpeg",
+    imageAlt: "BURS travel capsule builder showing 12-piece capsule for a 4-day trip"
+  }
+];
+---
+<section class="acts">
+  <div class="wrap acts__grid">
+    <!-- Sticky phone -->
+    <aside class="acts__phone-col" aria-hidden="true">
+      <div class="phone" data-phone>
+        <div class="phone__buttons" aria-hidden="true">
+          <span class="phone__btn phone__btn--action"></span>
+          <span class="phone__btn phone__btn--vup"></span>
+          <span class="phone__btn phone__btn--vdown"></span>
+          <span class="phone__btn phone__btn--side"></span>
+          <span class="phone__btn phone__btn--cam"></span>
+        </div>
+        <div class="phone__bezel">
+          <div class="phone__screen">
+            {acts.map((a, i) => (
+              <img
+                src={a.image}
+                alt={a.imageAlt}
+                data-act-screen={a.index}
+                class={i === 0 ? "is-active" : ""}
+                loading={i === 0 ? "eager" : "lazy"}
+                decoding="async"
+              />
+            ))}
+            <div class="phone__island" aria-hidden="true">
+              <span class="phone__lens"></span>
+            </div>
+            <div class="phone__glare" aria-hidden="true"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Scroll panels -->
+    <div class="acts__panels">
+      {acts.map(a => (
+        <article class="panel" data-act-panel={a.index}>
+          <p class="eyebrow">{a.eyebrow}</p>
+          <h2 set:html={a.headline} />
+          <p class="lede">{a.lede}</p>
+
+          {a.index === 3 && (
+            <ul class="chat" role="list" aria-label="Sample conversation">
+              <li class="chat__row chat__row--you"><span class="chat__who">You</span><p>Make this warmer.</p></li>
+              <li class="chat__row chat__row--burs"><span class="chat__who">BURS</span><p>Swapped the linen shirt for the merino. Same trouser.</p></li>
+              <li class="chat__row chat__row--you"><span class="chat__who">You</span><p>Softer palette.</p></li>
+              <li class="chat__row chat__row--burs"><span class="chat__who">BURS</span><p>Pulled the cream knit. Drops the contrast a stop.</p></li>
+              <li class="chat__row chat__row--you"><span class="chat__who">You</span><p>Something for a 7pm dinner.</p></li>
+              <li class="chat__row chat__row--burs"><span class="chat__who">BURS</span><p>Same trouser, the dark blazer, the suede loafer.</p></li>
+            </ul>
+          )}
+
+          <!-- Inline phone, mobile-only -->
+          <div class="panel__mobile-phone">
+            <div class="phone phone--sm">
+              <div class="phone__buttons" aria-hidden="true">
+                <span class="phone__btn phone__btn--action"></span>
+                <span class="phone__btn phone__btn--vup"></span>
+                <span class="phone__btn phone__btn--vdown"></span>
+                <span class="phone__btn phone__btn--side"></span>
+                <span class="phone__btn phone__btn--cam"></span>
+              </div>
+              <div class="phone__bezel">
+                <div class="phone__screen">
+                  <img src={a.image} alt={a.imageAlt} class="is-active" loading="lazy" decoding="async" />
+                  <div class="phone__island" aria-hidden="true"><span class="phone__lens"></span></div>
+                  <div class="phone__glare" aria-hidden="true"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .acts{background:var(--cream-paper);position:relative;padding-block:clamp(60px,8vh,120px)}
+
+  .acts__grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(40px,6vw,96px);align-items:start}
+  @media (max-width:900px){.acts__grid{grid-template-columns:1fr}}
+
+  /* Sticky phone column */
+  .acts__phone-col{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center}
+  @media (max-width:900px){.acts__phone-col{display:none}}
+
+  /* Scroll panels — each is roughly one viewport tall so the phone gets a clean handoff */
+  .acts__panels{display:flex;flex-direction:column}
+  .panel{min-height:80vh;display:flex;flex-direction:column;justify-content:center;padding:clamp(40px,8vh,80px) 0;border-top:1px solid rgba(28,25,23,.07)}
+  .panel:first-child{border-top:0}
+  .panel .eyebrow{margin-bottom:18px;color:var(--gold-deep)}
+  .panel h2{font-family:var(--display);font-weight:200;letter-spacing:-.035em;line-height:.92;font-size:clamp(40px,5.6vw,76px);color:var(--charcoal);text-wrap:balance}
+  .panel h2 :global(em){font-style:italic;color:var(--gold);font-weight:300}
+  .panel .lede{margin-top:22px;max-width:42ch;color:var(--charcoal-2);font-family:var(--serif);font-style:italic;font-size:clamp(17px,1.55vw,20px);line-height:1.5}
+
+  /* Chat bubble in Act III */
+  .chat{list-style:none;display:grid;gap:10px;max-width:46ch;margin-top:32px;font-size:15px;font-family:var(--serif);font-style:italic}
+  .chat__row{display:grid;grid-template-columns:60px 1fr;gap:18px;align-items:baseline;padding:10px 0;border-bottom:1px dashed rgba(28,25,23,.18)}
+  .chat__row--burs{color:var(--gold-deep)}
+  .chat__who{font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:.25em;text-transform:uppercase;opacity:.55;padding-top:4px}
+
+  /* iPhone 17 Pro Max — drawn in CSS, titanium frame, Dynamic Island, side buttons */
+  .phone{
+    --w: 320px;
+    --r-outer: 56px;       /* phone corner radius */
+    --r-bezel: 50px;       /* inner bezel radius */
+    --r-screen: 46px;      /* screen radius */
+    --frame-pad: 4px;      /* outer titanium ring thickness */
+    --bezel-pad: 6px;      /* black bezel around screen */
+    width: var(--w);
+    aspect-ratio: 1320 / 2868;     /* iPhone 17 Pro Max display aspect */
+    border-radius: var(--r-outer);
+    padding: var(--frame-pad);
+    position: relative;
+    /* Titanium frame: brushed dark gradient with subtle directional highlights */
+    background:
+      linear-gradient(135deg,
+        #3a3a3c 0%,
+        #1c1c1e 18%,
+        #0e0d0c 50%,
+        #1c1c1e 82%,
+        #3a3a3c 100%);
+    box-shadow:
+      /* Drop shadow */
+      0 80px 110px -30px rgba(0,0,0,.55),
+      0 35px 60px -15px rgba(0,0,0,.45),
+      /* Titanium bevel highlights */
+      inset 0 1.5px 0 0 rgba(255,255,255,.22),
+      inset 0 -1.5px 0 0 rgba(0,0,0,.7),
+      inset 1.5px 0 0 0 rgba(255,255,255,.08),
+      inset -1.5px 0 0 0 rgba(255,255,255,.08),
+      /* Tight inner ring */
+      inset 0 0 0 1px rgba(0,0,0,.6);
+  }
+
+  .phone--sm{
+    --w: 260px;
+    --r-outer: 44px;
+    --r-bezel: 40px;
+    --r-screen: 36px;
+    --frame-pad: 3px;
+    --bezel-pad: 5px;
+  }
+
+  /* Black bezel ring inside the titanium frame */
+  .phone__bezel{
+    position: relative;
+    width: 100%; height: 100%;
+    background: #000;
+    border-radius: var(--r-bezel);
+    padding: var(--bezel-pad);
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.04),
+      inset 0 0 18px rgba(0,0,0,.6);
+  }
+
+  /* Display surface */
+  .phone__screen{
+    position: relative;
+    width: 100%; height: 100%;
+    background: #0a0908;
+    border-radius: var(--r-screen);
+    overflow: hidden;
+  }
+
+  .phone__screen img{
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition:
+      opacity .8s cubic-bezier(.2,.7,.2,1),
+      transform 1.4s cubic-bezier(.2,.7,.2,1);
+    transform: scale(1.04);
+  }
+  .phone__screen img.is-active{ opacity: 1; transform: scale(1) }
+  .phone--sm .phone__screen img{ opacity: 1; transform: none }
+
+  /* Dynamic Island — true iPhone 17 Pro Max proportions */
+  .phone__island{
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28%;
+    height: 22px;
+    background: #000;
+    border-radius: 12px;
+    z-index: 3;
+    box-shadow:
+      inset 0 0 0 1px #141414,
+      inset 0 1px 0 0 rgba(255,255,255,.03),
+      0 1px 2px rgba(0,0,0,.5);
+  }
+  .phone__lens{
+    position: absolute;
+    top: 50%;
+    right: 14%;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    background: radial-gradient(circle at 30% 30%,
+      #2c2c2e 0%, #0a0908 65%);
+    box-shadow:
+      inset 0 0 0 1px rgba(80,80,80,.4),
+      inset 0 0 3px rgba(255,255,255,.1);
+  }
+
+  /* Subtle glass glare on the display */
+  .phone__glare{
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg,
+        rgba(255,255,255,.10) 0%,
+        rgba(255,255,255,0) 28%,
+        rgba(255,255,255,0) 72%,
+        rgba(255,255,255,.04) 100%);
+    z-index: 4;
+    mix-blend-mode: screen;
+  }
+
+  /* Side buttons — titanium with center highlight */
+  .phone__buttons{position:absolute;inset:0;pointer-events:none;z-index:5}
+  .phone__btn{
+    position: absolute;
+    border-radius: 1px;
+    background: linear-gradient(180deg,
+      #0a0908 0%,
+      #2c2c2e 35%,
+      #2c2c2e 65%,
+      #0a0908 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(0,0,0,.4),
+      0 1px 0 rgba(255,255,255,.06);
+  }
+  /* Left side: Action button + Vol up + Vol down */
+  .phone__btn--action{ left:-3px; top:13%; width:4px; height:34px; border-radius:2px 0 0 2px }
+  .phone__btn--vup   { left:-3px; top:calc(13% + 50px); width:4px; height:46px; border-radius:2px 0 0 2px }
+  .phone__btn--vdown { left:-3px; top:calc(13% + 110px); width:4px; height:46px; border-radius:2px 0 0 2px }
+  /* Right side: Side (power) button + Camera Control */
+  .phone__btn--side  { right:-3px; top:18%; width:4px; height:80px; border-radius:0 2px 2px 0 }
+  .phone__btn--cam   { right:-3px; top:42%; width:4px; height:38px; border-radius:0 2px 2px 0;
+                       background: linear-gradient(180deg, #0a0908 0%, #3a3a3c 30%, #2c2c2e 70%, #0a0908 100%) }
+
+  /* Mobile-only inline phone (one per panel). Desktop hides this. */
+  .panel__mobile-phone{display:none}
+  @media (max-width:900px){
+    .panel__mobile-phone{
+      display:flex;justify-content:center;
+      margin-top:36px;
+    }
+    .panel{min-height:auto;padding:48px 0}
+    .panel h2{font-size:clamp(34px,8.5vw,48px)}
+    .panel .lede{margin-top:18px}
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .phone__screen img{transition:none}
+  }
+</style>
+
+<script>
+  const screens = document.querySelectorAll<HTMLImageElement>('[data-act-screen]');
+  const panels  = document.querySelectorAll<HTMLElement>('[data-act-panel]');
+
+  if (screens.length && panels.length) {
+    const setActive = (idx: string) => {
+      screens.forEach(s => s.classList.toggle('is-active', s.dataset.actScreen === idx));
+    };
+
+    const io = new IntersectionObserver((entries) => {
+      // Find the most-visible panel and activate its screen.
+      let best: { ratio: number; idx: string } | null = null;
+      entries.forEach(en => {
+        const idx = (en.target as HTMLElement).dataset.actPanel!;
+        if (en.isIntersecting && (!best || en.intersectionRatio > best.ratio)) {
+          best = { ratio: en.intersectionRatio, idx };
+        }
+      });
+      // Also consider currently-visible panels not in this batch
+      const allRatios: { ratio: number; idx: string }[] = [];
+      panels.forEach(p => {
+        const r = p.getBoundingClientRect();
+        const vh = window.innerHeight;
+        const visible = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0));
+        const ratio = visible / Math.min(r.height, vh);
+        allRatios.push({ ratio, idx: p.dataset.actPanel! });
+      });
+      allRatios.sort((a, b) => b.ratio - a.ratio);
+      if (allRatios[0] && allRatios[0].ratio > 0.05) setActive(allRatios[0].idx);
+    }, {
+      threshold: [0, 0.25, 0.5, 0.75, 1],
+      rootMargin: '-20% 0px -20% 0px'
+    });
+
+    panels.forEach(p => io.observe(p));
+  }
+</script>

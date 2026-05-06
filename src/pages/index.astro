@@ -2,10 +2,9 @@
 import Base from "../layouts/Base.astro";
 import HeroVideo from "../components/HeroVideo.astro";
 import ManifestoBlock from "../components/ManifestoBlock.astro";
-import ActSection from "../components/ActSection.astro";
-import ChatTranscript from "../components/ChatTranscript.astro";
+import ActsScroll from "../components/ActsScroll.astro";
 import AntiList from "../components/AntiList.astro";
-import PriceCard from "../components/PriceCard.astro";
+import LocalizedPriceCard from "../components/LocalizedPriceCard.astro";
 import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
@@ -18,6 +17,9 @@ const REPRISE_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tL
   description="An AI wardrobe stylist. Scans the clothes you already own, reads the weather and your calendar, and recommends one outfit for every day."
   path="/"
   bodyClass="dark-nav"
+  ogVideo={HERO_VIDEO}
+  ogVideoWidth={1920}
+  ogVideoHeight={1080}
 >
   <Schema slot="head" json={[softwareApplication(), product()]} />
 
@@ -43,66 +45,7 @@ const REPRISE_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tL
 
   <ManifestoBlock />
 
-  <ActSection
-    index={1}
-    eyebrow="ONE — THE CLOSET, READ"
-    headline="Your closet, finally <em>read</em>."
-    lede="Point a phone camera at your clothes. Computer vision catalogues every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging."
-    image="/assets/act-i-wardrobe-screen.jpeg"
-    imageAlt="BURS wardrobe scan in progress, displaying tagged garments"
-    bg="paper"
-  />
-
-  <ActSection
-    index={2}
-    eyebrow="TWO — THE DAY, UNDERSTOOD"
-    headline="The weather. Your day. <em>Yesterday's</em> outfit."
-    lede="Before BURS recommends anything, it reads the weather, your calendar, your location, and yesterday's outfit. The day, understood."
-    image="/assets/act-ii-context-screen.jpeg"
-    imageAlt="BURS reading the day's context: weather, calendar, location"
-    reverse={true}
-    bg="cream"
-  />
-
-  <ActSection
-    index={3}
-    eyebrow="THREE — TALK TO IT"
-    headline="A stylist that <em>refines</em> in a sentence."
-    lede="Ask in plain language. The stylist answers using pieces already in your wardrobe."
-    image="/assets/act-iii-stylist-screen.jpeg"
-    imageAlt="BURS AI stylist chat showing outfit refinements"
-    bg="paper"
-  >
-    <ChatTranscript slot="extra" turns={[
-      { who: "you",  text: "Make this warmer." },
-      { who: "burs", text: "Swapped the linen shirt for the merino. Same trouser." },
-      { who: "you",  text: "Softer palette." },
-      { who: "burs", text: "Pulled the cream knit. Drops the contrast a stop." },
-      { who: "you",  text: "Something for a 7pm dinner." },
-      { who: "burs", text: "Same trouser, the dark blazer, the suede loafer." }
-    ]} />
-  </ActSection>
-
-  <ActSection
-    index={4}
-    eyebrow="FOUR — THE WEEK, DRAFTED"
-    headline="Monday's pitch. Thursday's dinner. <em>Saturday's</em> off-site."
-    lede="Sync your calendar and BURS drafts an outfit for every event. Swap any piece with one tap."
-    image="/assets/act-iv-week-screen.jpeg"
-    imageAlt="BURS week planner showing outfits for Monday through Sunday"
-    reverse={true}
-    bg="cream"
-  />
-
-  <ActSection
-    index={5}
-    eyebrow="FIVE — THE TRIP, PACKED"
-    headline="Pack a city in <em>twelve</em> pieces."
-    lede="Tell BURS where you're going and for how long. It builds a minimum-viable capsule from your wardrobe — every piece earning its place, every outfit pre-imagined."
-    image="/assets/act-v-travel-screen.jpeg"
-    imageAlt="BURS travel capsule builder showing 12-piece capsule for a 4-day trip"
-    bg="paper"
-  />
+  <ActsScroll />
 
   <section class="reprise" aria-label="Reprise film">
     <HeroVideo src={REPRISE_VIDEO} loading="lazy" ariaLabel="BURS reprise film" />
@@ -116,10 +59,10 @@ const REPRISE_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tL
       <div>
         <p class="eyebrow">— Pricing</p>
         <h2 style="font-weight:200;letter-spacing:-.025em;line-height:.95;font-size:clamp(40px,6vw,80px);margin-top:14px">One subscription. <em style="font-style:italic;color:var(--gold);font-weight:300">Your</em> closet.</h2>
-        <p class="lede" style="max-width:42ch;margin-top:18px">119 kr/mo or 899 kr/yr in Sweden. €10.99/mo or €89.99/yr in the rest of the EU. No free tier. No ads.</p>
+        <p class="lede" style="max-width:42ch;margin-top:18px">A single subscription, priced for where you live. No free tier. No ads. Cancel anytime.</p>
         <a class="cta" href="/pricing" style="margin-top:24px">See pricing <span class="cta__arrow">→</span></a>
       </div>
-      <PriceCard locale="SE" />
+      <LocalizedPriceCard />
     </div>
   </section>
 
