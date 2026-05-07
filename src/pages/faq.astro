@@ -1,0 +1,56 @@
+---
+import Page from "../layouts/Page.astro";
+import Schema from "../components/Schema.astro";
+import { faqPage } from "../lib/schema";
+
+const qa = [
+  { q: "What is BURS?", a: "BURS is an AI wardrobe stylist for iOS and Android. It scans the clothes you already own and recommends outfits, plans the week, and packs trips — using only your existing wardrobe." },
+  { q: "How does the wardrobe scan work?", a: "Point a phone camera at your clothes. BURS uses computer vision to catalogue every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging." },
+  { q: "Is BURS free?", a: "No. BURS is a premium app: 119 kr/month or 899 kr/year in Sweden; €10.99/month or €89.99/year in the rest of the EU. No free tier, no ads. Cancel anytime." },
+  { q: "Does BURS work on iPhone and Android?", a: "Yes. Identical experience on both. Your wardrobe syncs across every device you sign into." },
+  { q: "Does BURS recommend clothes I don't own?", a: "No. BURS only recommends pieces already in your wardrobe. It is the opposite of a shopping app." },
+  { q: "How does BURS handle my photos and data?", a: "Wardrobe photos stay private to your account. BURS does not sell user data and does not train public models on user images. Every piece and every photo can be deleted from inside the app at any time." },
+  { q: "What is the AI Stylist chat?", a: "A natural-language refinement layer. Ask 'make this warmer', 'softer palette', 'something for a 7pm dinner' — BURS adjusts the outfit using pieces you already own." },
+  { q: "How does the week planner work?", a: "Sync your calendar and BURS drafts an outfit for every event — Monday's pitch, Thursday's dinner, Saturday's off-site. You can swap any piece in one tap." },
+  { q: "What does the travel capsule builder do?", a: "Tell BURS where you're going and for how long. It builds a minimum-viable capsule from your own wardrobe — every piece earning its place, every outfit pre-imagined." },
+  { q: "Where does BURS work geographically?", a: "iOS and Android, English UI, EU (with Sweden as the home market). Other regions: ask via hello@burs.me." },
+  { q: "Is there a web app?", a: "No. BURS is mobile-first by design — your camera is on your phone, and that's where styling happens." },
+  { q: "Does BURS use my data to train its AI?", a: "No public-model training on user images. Internal model improvements happen on opt-in, anonymised data only." },
+  { q: "How do I cancel?", a: "From inside the app: Settings → Subscription → Cancel. Or from the App Store / Google Play. Cancellation takes effect at the end of the current period." },
+  { q: "What if BURS doesn't have an outfit I like?", a: "Tell the AI Stylist what's wrong. It refines in a sentence. If you want to start over, swipe down and the recommendation regenerates." },
+  { q: "Who built BURS?", a: "An independent team in Stockholm. For founder details, see /press." }
+];
+---
+<Page
+  title="FAQ — BURS"
+  description="Quick answers about BURS: what it does, what it costs, how it handles photos."
+  path="/faq"
+  eyebrow="FAQ"
+  headline="Quick <em>answers</em>."
+  lede="The short version. For the long form, see /answers."
+>
+  <Schema slot="head" json={faqPage(qa)} />
+
+  <ul class="faq" role="list">
+    {qa.map(({ q, a }) => (
+      <li>
+        <details>
+          <summary>{q}</summary>
+          <p>{a}</p>
+        </details>
+      </li>
+    ))}
+  </ul>
+  <p style="margin-top:48px;font-size:14px;opacity:.7">Still curious? <a href="/answers" style="border-bottom:1px solid">Read 50 questions, answered honestly →</a></p>
+</Page>
+
+<style>
+  .faq{list-style:none;display:grid;gap:0;max-width:780px;border-top:1px solid rgba(28,25,23,.15)}
+  .faq li{border-bottom:1px solid rgba(28,25,23,.15)}
+  details{padding:24px 0}
+  summary{cursor:pointer;font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(20px,2vw,26px);line-height:1.25;color:var(--charcoal);list-style:none;display:flex;justify-content:space-between;align-items:start;gap:18px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--gold);font-family:var(--mono);font-style:normal;font-size:18px;flex-shrink:0;transition:transform .35s var(--eo)}
+  details[open] summary::after{content:"–"}
+  details p{margin-top:14px;font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.55;color:var(--charcoal-2);max-width:60ch}
+</style>

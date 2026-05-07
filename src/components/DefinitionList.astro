@@ -1,0 +1,22 @@
+---
+interface Item { term: string; def: string; }
+interface Props { title?: string; items: Item[]; }
+const { title, items } = Astro.props;
+---
+<dl class="defs">
+  {title && <p class="eyebrow">{title}</p>}
+  {items.map(i => (
+    <div class="defs__row">
+      <dt><dfn>{i.term}</dfn></dt>
+      <dd>{i.def}</dd>
+    </div>
+  ))}
+</dl>
+<style>
+  .defs{margin:32px 0;display:grid;gap:18px}
+  .defs__row{display:grid;grid-template-columns:200px 1fr;gap:24px;padding-bottom:18px;border-bottom:1px solid rgba(28,25,23,.1)}
+  .defs__row dt{font-family:var(--display);font-style:italic;font-weight:400;font-size:18px;color:var(--charcoal)}
+  .defs__row dt dfn{font-style:inherit}
+  .defs__row dd{font-family:var(--serif);font-style:italic;font-size:17px;line-height:1.5;color:var(--charcoal-2)}
+  @media (max-width:700px){.defs__row{grid-template-columns:1fr;gap:6px}}
+</style>

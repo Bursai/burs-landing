@@ -1,0 +1,35 @@
+---
+// src/components/Cursor.astro
+---
+<div class="cursor" aria-hidden="true" data-cursor></div>
+
+<style is:global>
+  body{cursor:none}
+  @media (max-width:900px),(prefers-reduced-motion:reduce){body{cursor:auto}.cursor{display:none}}
+</style>
+<style>
+  .cursor{position:fixed;top:0;left:0;width:32px;height:32px;border:1px solid var(--charcoal);border-radius:50%;pointer-events:none;z-index:10000;transform:translate(-50%,-50%);mix-blend-mode:difference;transition:width .35s var(--eo),height .35s var(--eo),border-radius .35s var(--eo);will-change:transform}
+  .cursor.hover{width:80px;height:80px;background:rgba(201,168,108,.15)}
+</style>
+
+<script>
+  const c = document.querySelector('[data-cursor]') as HTMLElement | null;
+  if (c && window.matchMedia('(min-width: 901px)').matches && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    let x = 0, y = 0, tx = 0, ty = 0;
+    window.addEventListener('mousemove', (e) => { tx = e.clientX; ty = e.clientY; });
+    function loop(){
+      x += (tx - x) * 0.18; y += (ty - y) * 0.18;
+      c!.style.transform = `translate(${x}px, ${y}px) translate(-50%,-50%)`;
+      requestAnimationFrame(loop);
+    }
+    loop();
+    document.addEventListener('mouseover', (e) => {
+      const t = e.target as HTMLElement;
+      if (t.closest('a, button, [data-cursor-hover]')) c!.classList.add('hover');
+    });
+    document.addEventListener('mouseout', (e) => {
+      const t = e.target as HTMLElement;
+      if (t.closest('a, button, [data-cursor-hover]')) c!.classList.remove('hover');
+    });
+  }
+</script>

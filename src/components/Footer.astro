@@ -1,0 +1,64 @@
+---
+// src/components/Footer.astro
+const year = new Date().getFullYear();
+---
+<footer class="foot section--ink">
+  <div class="wrap foot__grid">
+    <div class="foot__col foot__col--lead">
+      <a href="/" class="foot__brand" aria-label="BURS home">
+        <img src="/logo-512.png" alt="BURS" width="512" height="512" class="foot__logo" />
+      </a>
+      <p class="lede" style="color:rgba(245,240,232,.78);max-width:32ch">
+        Your closet, finally working for you.
+      </p>
+    </div>
+
+    <div class="foot__col">
+      <p class="label">Product</p>
+      <ul role="list">
+        <li><a href="/method">Method</a></li>
+        <li><a href="/pricing">Pricing</a></li>
+        <li><a href="/answers">Answers</a></li>
+        <li><a href="/faq">FAQ</a></li>
+      </ul>
+    </div>
+
+    <div class="foot__col">
+      <p class="label">Company</p>
+      <ul role="list">
+        <li><a href="/manifesto">Manifesto</a></li>
+        <li><a href="/press">Press</a></li>
+        <li><a href="/blog">Blog</a></li>
+      </ul>
+    </div>
+
+    <div class="foot__col">
+      <p class="label">Legal</p>
+      <ul role="list">
+        <li><a href="/privacy">Privacy</a></li>
+        <li><a href="/terms">Terms</a></li>
+      </ul>
+      <p class="label" style="margin-top:18px">Contact</p>
+      <ul role="list">
+        <li><a href="mailto:hello@burs.me">hello@burs.me</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="wrap foot__rule">
+    <span>© {year} BURS · Stockholm / EU</span>
+    <span>Made for the eighty percent of your closet that never gets worn.</span>
+  </div>
+</footer>
+
+<style>
+  .foot{padding-block:clamp(60px,9vh,120px) 28px;color:var(--cream)}
+  .foot__grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:48px;padding-bottom:60px;border-bottom:1px solid rgba(245,240,232,.12)}
+  .foot__col ul{list-style:none;display:grid;gap:8px;margin-top:14px}
+  .foot__col a{font-size:14px;color:rgba(245,240,232,.85)}
+  .foot__col a:hover{color:var(--gold-bright)}
+  .foot__brand{display:inline-block;margin-bottom:18px}
+  .foot__logo{height:56px;width:auto;display:block;filter:invert(1) brightness(1.05)}
+  .foot__rule{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,240,232,.45);padding-top:24px;flex-wrap:wrap;gap:14px}
+  @media (max-width:900px){.foot__grid{grid-template-columns:1fr 1fr;gap:32px}.foot__col--lead{grid-column:1/-1}}
+</style>

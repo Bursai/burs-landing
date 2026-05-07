@@ -1,0 +1,48 @@
+---
+import { getCollection, type CollectionEntry } from "astro:content";
+import Editorial from "../../layouts/Editorial.astro";
+import Schema from "../../components/Schema.astro";
+import { article } from "../../lib/schema";
+
+export async function getStaticPaths() {
+  const posts = await getCollection("blog", ({ data }) => !data.draft);
+  return posts.map(p => ({ params: { slug: p.slug }, props: { post: p } }));
+}
+
+interface Props { post: CollectionEntry<"blog">; }
+const { post } = Astro.props;
+const { Content } = await post.render();
+const url = `https://burs.me/blog/${post.slug}`;
+---
+<Editorial
+  title={`${post.data.title} — BURS`}
+  description={post.data.description}
+  path={`/blog/${post.slug}`}
+  eyebrow={post.data.tags[0] ?? "Note"}
+  headline={post.data.title}
+  type="article"
+  ogImage={post.data.image}
+>
+  <Schema
+    slot="head"
+    json={article({
+      headline: post.data.title,
+      description: post.data.description,
+      url,
+      datePublished: post.data.pubDate.toISOString(),
+      dateModified: (post.data.updated ?? post.data.pubDate).toISOString(),
+      image: post.data.image
+    })}
+  />
+
+  <p class="postmeta">
+    Published {post.data.pubDate.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" })}
+    {post.data.updated && ` · Updated ${post.data.updated.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" })}`}
+    {post.data.tags.length > 0 && ` · Filed under: ${post.data.tags.join(", ")}`}
+  </p>
+  <Content />
+</Editorial>
+
+<style>
+  .postmeta{font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--charcoal-2);opacity:.65;margin-bottom:48px}
+</style>

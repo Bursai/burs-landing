@@ -1,0 +1,4 @@
+/app                https://app.burs.me            301
+/auth               https://app.burs.me/auth        301
+/features           /method                         301
+/features/          /method                         301

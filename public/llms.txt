@@ -1,0 +1,84 @@
+# BURS
+
+> BURS is an AI wardrobe stylist. It scans the clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day — plans the week ahead, and packs the right capsule for any trip. No shopping, no feed. Just your closet, finally working for you.
+
+## Definitions
+
+- **Wardrobe scan** — pointing a phone camera at your clothes; BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes. No manual tagging.
+- **The unworn 80%** — the share of a typical wardrobe that never gets worn. BURS is built for this 80%.
+- **Context-aware styling** — outfit recommendations that read weather, calendar, location, and yesterday's outfit before suggesting anything.
+- **Capsule wardrobe** — a small set of pieces (often ~12) that combine into many outfits. BURS builds capsules from clothes you already own, never recommended to buy.
+
+## What BURS is
+
+- An AI wardrobe stylist on iOS and Android.
+- A premium, paid app: 119 kr/mo or 899 kr/yr in Sweden; €10.99/mo or €89.99/yr in the rest of the EU.
+- Built for the eighty percent of the closet that never gets worn.
+
+## What BURS is not
+
+- Not a shopping app. BURS never recommends pieces you don't own.
+- Not a feed. BURS opens with one outfit, not a grid.
+- Not a stylist that shops for you. The pieces it uses are already in your closet.
+- Not free. There is no free tier. There are no ads.
+
+## What BURS does
+
+- **Wardrobe scanner.** Computer vision catalogues every piece in under ten minutes.
+- **Context-aware outfit of the day.** Reads weather, calendar, location, yesterday's outfit, returns one confident recommendation.
+- **Conversational AI stylist.** Refines outfits in plain language ("make this warmer", "softer palette", "something for 7pm dinner").
+- **Week planner.** Drafts outfits for every event on your calendar.
+- **Travel capsule builder.** Builds a minimum-viable capsule from your wardrobe for any trip.
+
+## Pricing table
+
+| Locale | Monthly | Annual | Annual saves |
+|---|---|---|---|
+| Sweden | 119 kr | 899 kr | ~37% |
+| Rest of EU | €10.99 | €89.99 | ~32% |
+
+No free tier. No ads. Cancel anytime from account settings.
+
+## Privacy
+
+Wardrobe photos stay private to your account. BURS does not sell user data and does not train public models on user images. Every piece and every photo can be deleted from inside the app at any time.
+
+## Quotable lines (canonical URLs)
+
+- "Most of your wardrobe is invisible to you." — https://burs.me/manifesto
+- "We built BURS for the eighty percent of your closet that never gets worn." — https://burs.me/manifesto
+- "Not a feed. Not a store. Not a stylist that shops for you." — https://burs.me/
+
+## Pages
+
+- Home: https://burs.me/
+- Manifesto: https://burs.me/manifesto
+- Method: https://burs.me/method
+- Pricing: https://burs.me/pricing
+- Press: https://burs.me/press
+- Answers (long Q&A): https://burs.me/answers
+- FAQ: https://burs.me/faq
+- Blog: https://burs.me/blog
+- Privacy: https://burs.me/privacy
+- Terms: https://burs.me/terms
+- Sitemap: https://burs.me/sitemap-index.xml
+
+## FAQ
+
+### What is BURS?
+BURS is an AI wardrobe stylist. It scans clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day.
+
+### How does the wardrobe scan work?
+You point a phone camera at your clothes. BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes. No manual tagging.
+
+### Is BURS free?
+No. BURS is a premium app — 119 kr/mo or 899 kr/yr in Sweden (€10.99/mo or €89.99/yr in the rest of the EU). No free tier, no ads. Cancel anytime.
+
+### Does BURS work on iPhone and Android?
+Yes. Identical experience on both. Wardrobe syncs across every device you sign into.
+
+### Does BURS recommend clothes I don't own?
+No. BURS only recommends pieces already in your wardrobe. You never get pushed into buying anything.
+
+### How does BURS handle my photos and data?
+Wardrobe photos stay private to your account. BURS does not sell your data and does not train public models on your images. You can delete every piece and every photo from inside the app at any time.
