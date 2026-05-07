@@ -11,15 +11,16 @@ import { softwareApplication, product } from "../lib/schema";
 
 const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_095006_fd4e35b8-e575-4e10-9226-e211d064d80c.mp4";
 const REPRISE_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_152337_bcd15c00-1a73-4cb8-b74a-032510047a3a.mp4";
+const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
 ---
 <Base
   title="BURS — Your wardrobe, intelligently styled."
   description="An AI wardrobe stylist. Scans the clothes you already own, reads the weather and your calendar, and recommends one outfit for every day."
   path="/"
   bodyClass="dark-nav"
-  ogVideo={HERO_VIDEO}
-  ogVideoWidth={1920}
-  ogVideoHeight={1080}
+  ogVideo={OG_VIDEO}
+  ogVideoWidth={1280}
+  ogVideoHeight={720}
 >
   <Schema slot="head" json={[softwareApplication(), product()]} />
 
