@@ -1,0 +1,21 @@
+---
+const denials = [
+  "Not a feed.",
+  "Not a store.",
+  "Not a stylist that shops for you.",
+  "Not free. Not ad-supported.",
+  "Not training on your closet."
+];
+---
+<section class="not section--ink">
+  <div class="wrap">
+    <p class="eyebrow" style="color:rgba(245,240,232,.6)">— WHAT BURS IS NOT</p>
+    <ul class="anti" role="list">
+      {denials.map(d => <li>{d}</li>)}
+    </ul>
+  </div>
+</section>
+<style>
+  .not{padding-block:clamp(100px,14vh,180px)}
+  .not .eyebrow{margin-bottom:36px;display:block}
+</style>

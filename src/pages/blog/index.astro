@@ -1,0 +1,59 @@
+---
+import Page from "../../layouts/Page.astro";
+import { getCollection } from "astro:content";
+
+const posts = (await getCollection("blog", ({ data }) => !data.draft))
+  .sort((a, b) => +b.data.pubDate - +a.data.pubDate);
+
+const featured = posts[0];
+const rest = posts.slice(1);
+
+function fmt(d: Date) {
+  return d.toLocaleDateString("en-GB", { year: "numeric", month: "long", day: "numeric" });
+}
+---
+<Page
+  title="Notes — BURS"
+  description="Essays on wardrobes, dressing, and the unworn 80%."
+  path="/blog"
+  eyebrow="Notes"
+  headline="On wardrobes, dressing, and the <em>unworn</em> 80%."
+  lede="Long-form writing from the BURS team."
+>
+  {featured && (
+    <article class="featured">
+      <p class="eyebrow">— Featured</p>
+      <a href={`/blog/${featured.slug}/`} class="featured__link">
+        <h2 class="featured__title">{featured.data.title}</h2>
+        <p class="featured__dek">{featured.data.description}</p>
+        <p class="label">{fmt(featured.data.pubDate)}</p>
+      </a>
+    </article>
+  )}
+
+  <ul class="cards" role="list">
+    {rest.map(p => (
+      <li>
+        <a href={`/blog/${p.slug}/`} class="card">
+          <p class="eyebrow">{p.data.tags[0] ?? "Note"}</p>
+          <h3 class="card__title">{p.data.title}</h3>
+          <p class="card__dek">{p.data.description}</p>
+          <p class="label">{fmt(p.data.pubDate)}</p>
+        </a>
+      </li>
+    ))}
+  </ul>
+</Page>
+
+<style>
+  .featured{padding:48px 0;border-top:1px solid var(--charcoal);border-bottom:1px solid rgba(28,25,23,.15);margin-bottom:64px}
+  .featured__link{display:grid;gap:18px;max-width:780px}
+  .featured__title{font-family:var(--display);font-weight:300;font-size:clamp(36px,5vw,72px);letter-spacing:-.025em;line-height:1.02;color:var(--charcoal);margin-top:14px}
+  .featured__dek{font-family:var(--serif);font-style:italic;font-size:20px;line-height:1.5;color:var(--charcoal-2);max-width:60ch}
+
+  .cards{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:48px}
+  .card{display:grid;gap:10px;padding:24px 0;border-top:1px solid rgba(28,25,23,.15)}
+  .card__title{font-family:var(--display);font-weight:300;font-size:28px;letter-spacing:-.02em;line-height:1.1;color:var(--charcoal);margin-top:6px}
+  .card__dek{font-family:var(--serif);font-style:italic;font-size:16px;line-height:1.5;color:var(--charcoal-2);max-width:48ch}
+  @media (max-width:780px){.cards{grid-template-columns:1fr}}
+</style>

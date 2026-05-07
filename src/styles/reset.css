@@ -1,0 +1,10 @@
+/* src/styles/reset.css */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+html,body{background:var(--cream);color:var(--charcoal);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+body{font-family:var(--body);font-weight:400;font-size:var(--t-body);line-height:1.55;overflow-x:hidden}
+img,svg,video{display:block;max-width:100%;height:auto}
+a{color:inherit;text-decoration:none}
+button{font:inherit;background:none;border:0;color:inherit;cursor:pointer}
+::selection{background:var(--gold);color:var(--charcoal)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}

@@ -1,0 +1,20 @@
+---
+interface Turn { who: "you" | "burs"; text: string; }
+interface Props { turns: Turn[]; }
+const { turns } = Astro.props;
+---
+<div class="chat" role="list" aria-label="Sample conversation with the BURS stylist">
+  {turns.map(t => (
+    <div class={`chat__row chat__row--${t.who}`} role="listitem">
+      <span class="chat__who">{t.who === "you" ? "You" : "BURS"}</span>
+      <p class="chat__text">{t.text}</p>
+    </div>
+  ))}
+</div>
+<style>
+  .chat{display:grid;gap:14px;font-size:15px;font-family:var(--serif);font-style:italic;max-width:46ch}
+  .chat__row{display:grid;grid-template-columns:60px 1fr;gap:18px;align-items:baseline;padding:12px 0;border-bottom:1px dashed rgba(28,25,23,.18)}
+  .chat__row--burs{color:var(--gold-deep)}
+  .chat__who{font-family:var(--mono);font-style:normal;font-size:9px;letter-spacing:.25em;text-transform:uppercase;opacity:.55;padding-top:4px}
+  .chat__text{line-height:1.45}
+</style>

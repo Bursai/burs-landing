@@ -1,0 +1,31 @@
+---
+title: "How a wardrobe scan actually works"
+description: "What computer vision sees when it looks at a closet, and what it doesn't."
+pubDate: 2026-05-20
+tags: ["Method", "Technical"]
+schema: "TechArticle"
+---
+
+The wardrobe scan in BURS is the foundation everything else stands on. If the catalogue is wrong, every recommendation is wrong. So it's worth being clear about how it works.
+
+## What the camera does
+
+You point a phone at your clothes. The frame is processed in three passes:
+
+1. **Detection.** Each garment is isolated — a jacket from the rail behind it, a folded shirt from the shelf below.
+2. **Classification.** Type (shirt, trouser, knit, dress…), formality (casual, business-casual, business, formal), season-fit, length, sleeve, neckline.
+3. **Attribute extraction.** Colour (hue, value, saturation), fabric (knit, woven, leather, suede, denim, technical), silhouette (slim, regular, relaxed, oversized), pattern (solid, stripe, check, print).
+
+These are stored as structured fields per piece. Your closet becomes queryable.
+
+## What it doesn't do
+
+The scan does not name your clothes. It does not generate stories about them. It does not match brands or estimate prices. It does not infer your style from looking at the closet — that comes later, from how you wear and refine recommendations.
+
+## Where it fails (and how it recovers)
+
+The hardest cases are pieces that look identical at a glance but behave differently in practice — a black wool sweater and a black cotton sweater, for instance. The scan distinguishes by texture, but if you wear the wool one to a context BURS expected the cotton one for, the chat refinement is your fix: "the warmer black knit, not the cotton." One sentence and the catalogue learns.
+
+## Why this matters
+
+The scan is the prerequisite for every other promise BURS makes. We invest in it disproportionately because everything downstream — context, chat, week, travel — collapses without it.

@@ -1,0 +1,74 @@
+---
+import Editorial from "../layouts/Editorial.astro";
+import PullQuote from "../components/PullQuote.astro";
+import DefinitionList from "../components/DefinitionList.astro";
+import Schema from "../components/Schema.astro";
+import { article } from "../lib/schema";
+
+const url = "https://burs.me/manifesto";
+const datePublished = "2026-05-06";
+---
+<Editorial
+  title="Manifesto — BURS"
+  description="We built BURS for the eighty percent of your closet that never gets worn. The thesis behind an AI wardrobe stylist that refuses to sell you anything."
+  path="/manifesto"
+  eyebrow="The thesis"
+  headline="We built BURS for the <em>eighty percent</em> of your closet that never gets worn."
+  type="article"
+>
+  <Schema
+    slot="head"
+    json={article({
+      headline: "We built BURS for the eighty percent of your closet that never gets worn.",
+      description: "The manifesto behind an AI wardrobe stylist that refuses to sell you anything.",
+      url,
+      datePublished
+    })}
+  />
+
+  <p class="dropcap">Most of your wardrobe is invisible to you. Eighty percent of what you own never gets worn — not because you don't like it, but because you can't see it from inside a closet at 7am. The shirt is folded behind another. The jacket is one hanger out of view. The dress was bought for a job you no longer have. The combination you'd love never occurred to you because you've never seen those two pieces at the same time.</p>
+
+  <p>This is the problem BURS exists to solve. Not the problem of <em>not having enough clothes</em>. The problem of <em>not seeing the clothes you already have</em>.</p>
+
+  <h2>The unworn 80%</h2>
+
+  <p>The number is informal — different studies put it between 50% and 80% — but the experience is universal. You stand in front of an open closet and feel that you have nothing to wear. The truth is the opposite: you have too much, and your eye is overloaded.</p>
+
+  <PullQuote cite={url}>The closet, finally read.</PullQuote>
+
+  <p>BURS reads what's already there. A wardrobe scan takes under ten minutes — point a phone camera at your clothes, tap once per cluster, done. Every piece becomes structured: colour, fabric, silhouette, formality, season-fit. Your closet, for the first time, is something you can ask questions of.</p>
+
+  <h2>Why feeds make it worse</h2>
+
+  <p>Every fashion app, instinctively, returns to the feed. Pinterest is a feed. Whering is a feed. Instagram Shopping is a feed. The feed is a default because it transfers the cost of choosing onto the user — twenty options, scroll, scroll, scroll, eventually a pin. The feed is also where shopping lives. Every fourth tile is something you could buy. The feed is, in the end, optimised for the platform's revenue, not your morning.</p>
+
+  <p>BURS does the opposite. One outfit. Not twenty. The cost of choosing has been moved off the user, onto the model.</p>
+
+  <PullQuote cite={url} align="right">One outfit. Not twenty. The cost of choosing has been moved off the user, onto the model.</PullQuote>
+
+  <h2>What "one outfit" actually means</h2>
+
+  <p>Before BURS recommends anything, it reads the weather, your calendar, your location, and yesterday's outfit. The day, understood. The recommendation that arrives is specific to <em>this</em> Tuesday, not a generic Tuesday. If you don't like it, the AI Stylist refines in a sentence — make this warmer, soften the palette, give me something for a 7pm dinner. Every refinement uses pieces already in your wardrobe.</p>
+
+  <p>The week works the same way. The trip works the same way. The capsule packs the city in twelve pieces. Your closet, finally working for you.</p>
+
+  <h2>What we will never do</h2>
+
+  <ul style="list-style:none;display:grid;gap:8px;font-family:var(--display);font-style:italic;font-size:24px;color:var(--charcoal);margin:24px 0">
+    <li>— We will never recommend pieces you don't own.</li>
+    <li>— We will never sell your wardrobe data.</li>
+    <li>— We will never train public models on your images.</li>
+    <li>— We will never run ads.</li>
+    <li>— We will never replace one outfit with twenty options.</li>
+  </ul>
+
+  <DefinitionList
+    items={[
+      { term: "The unworn 80%", def: "The share of a typical wardrobe that never gets worn — the pieces you forgot, the combinations you never saw, the trip you'll repack from scratch on Sunday." },
+      { term: "Wardrobe scan", def: "Pointing a phone camera at your clothes; BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes." },
+      { term: "Context-aware styling", def: "Outfit recommendations that read the weather, your calendar, your location, and yesterday's outfit before suggesting anything." }
+    ]}
+  />
+
+  <p style="margin-top:80px;font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.22em;text-transform:uppercase;opacity:.55">— Signed: BURS, Stockholm, 2026.</p>
+</Editorial>

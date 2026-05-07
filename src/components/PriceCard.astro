@@ -1,0 +1,46 @@
+---
+import { PRICES, format, annualSavingsPct, type Locale } from "../lib/prices";
+interface Props { locale: Locale; emphasize?: "month" | "year"; }
+const { locale, emphasize = "year" } = Astro.props;
+const tiers = PRICES[locale];
+const savings = annualSavingsPct(locale);
+const localeLabel = locale === "SE" ? "Sweden" : "Rest of EU";
+---
+<article class="pc">
+  <header class="pc__head">
+    <p class="eyebrow">BURS Premium · {localeLabel}</p>
+    <h3 class="pc__title">One subscription. <em>Your</em> closet.</h3>
+  </header>
+  <ul class="pc__tiers" role="list">
+    {tiers.map(t => (
+      <li class={`pc__tier ${t.period === emphasize ? "is-on" : ""}`}>
+        <span class="pc__amt">{format(t)}</span>
+        <span class="pc__per">per {t.period}</span>
+        {t.period === "year" && <span class="pc__save">Save ~{savings}%</span>}
+      </li>
+    ))}
+  </ul>
+  <ul class="pc__incl" role="list">
+    <li>Unlimited wardrobe scanning</li>
+    <li>Context-aware outfit of the day</li>
+    <li>AI Stylist chat</li>
+    <li>Week planner</li>
+    <li>Travel capsule builder</li>
+    <li>Wardrobe insights · Priority support</li>
+  </ul>
+  <p class="pc__not">No free tier. No ads. Cancel anytime from account settings.</p>
+  <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
+</article>
+<style>
+  .pc{background:var(--cream-paper);border:1px solid rgba(28,25,23,.1);padding:40px 36px;max-width:520px;display:grid;gap:22px}
+  .pc__title{font-size:clamp(28px,3.4vw,42px);font-weight:200;letter-spacing:-.025em;line-height:1.05;color:var(--charcoal);margin-top:8px}
+  .pc__title em{font-style:italic;color:var(--gold);font-weight:300}
+  .pc__tiers{list-style:none;display:grid;gap:8px;border-top:1px solid rgba(28,25,23,.1);border-bottom:1px solid rgba(28,25,23,.1);padding:14px 0}
+  .pc__tier{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:baseline;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
+  .pc__tier.is-on{opacity:1}
+  .pc__amt{font-family:var(--display);font-style:italic;font-weight:400;font-size:28px;letter-spacing:-.01em;text-transform:none;color:var(--charcoal)}
+  .pc__save{color:var(--gold-deep)}
+  .pc__incl{list-style:none;display:grid;gap:6px;font-size:14px;color:var(--charcoal-2)}
+  .pc__incl li::before{content:"— ";color:var(--gold);font-weight:500}
+  .pc__not{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.55}
+</style>

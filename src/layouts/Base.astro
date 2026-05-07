@@ -1,0 +1,82 @@
+---
+// src/layouts/Base.astro
+import "../styles/tokens.css";
+import "../styles/reset.css";
+import "../styles/typography.css";
+import "../styles/utilities.css";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
+import Schema from "../components/Schema.astro";
+import { buildSeo } from "../lib/seo";
+import { organization, website } from "../lib/schema";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  ogImage?: string;
+  ogVideo?: string;
+  ogVideoWidth?: number;
+  ogVideoHeight?: number;
+  type?: "website" | "article";
+  bodyClass?: string;
+}
+
+const { title, description, path, ogImage, ogVideo, ogVideoWidth = 1920, ogVideoHeight = 1080, type, bodyClass } = Astro.props;
+const seo = buildSeo({ title, description, path, ogImage, type });
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{seo.title}</title>
+  <meta name="description" content={seo.description} />
+  <link rel="canonical" href={seo.canonical} />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+
+  <link rel="preload" href="/fonts/fraunces-variable.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/inter-tight-variable.woff2" as="font" type="font/woff2" crossorigin />
+
+  <meta property="og:title" content={seo.title} />
+  <meta property="og:description" content={seo.description} />
+  <meta property="og:url" content={seo.canonical} />
+  <meta property="og:image" content={seo.ogImage} />
+  <meta property="og:type" content={seo.type} />
+  <meta name="twitter:card" content={ogVideo ? "player" : "summary_large_image"} />
+  <meta name="twitter:title" content={seo.title} />
+  <meta name="twitter:description" content={seo.description} />
+  <meta name="twitter:image" content={seo.ogImage} />
+
+  {ogVideo && (
+    <>
+      <meta property="og:video" content={ogVideo} />
+      <meta property="og:video:secure_url" content={ogVideo} />
+      <meta property="og:video:type" content="video/mp4" />
+      <meta property="og:video:width" content={String(ogVideoWidth)} />
+      <meta property="og:video:height" content={String(ogVideoHeight)} />
+      <meta property="og:type" content="video.other" />
+      <meta name="twitter:player" content={ogVideo} />
+      <meta name="twitter:player:width" content={String(ogVideoWidth)} />
+      <meta name="twitter:player:height" content={String(ogVideoHeight)} />
+      <meta name="twitter:player:stream" content={ogVideo} />
+      <meta name="twitter:player:stream:content_type" content="video/mp4" />
+    </>
+  )}
+
+  <Schema json={[organization(), website()]} />
+
+  <slot name="head" />
+</head>
+<body class={bodyClass}>
+  <div class="grain" aria-hidden="true"></div>
+  <Nav />
+  <main id="main"><slot /></main>
+  <Footer />
+</body>
+</html>

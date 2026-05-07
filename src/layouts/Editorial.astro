@@ -1,0 +1,38 @@
+---
+// src/layouts/Editorial.astro
+import Base from "./Base.astro";
+
+interface Props {
+  title: string;
+  description: string;
+  path: string;
+  eyebrow?: string;
+  headline: string;
+  ogImage?: string;
+  type?: "website" | "article";
+}
+
+const { title, description, path, eyebrow, headline, ogImage, type } = Astro.props;
+---
+<Base title={title} description={description} path={path} ogImage={ogImage} type={type ?? "article"}>
+  <article class="editorial">
+    <header class="editorial__head wrap">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1 class="editorial__h1" set:html={headline} />
+    </header>
+    <div class="editorial__body wrap">
+      <slot />
+    </div>
+  </article>
+</Base>
+
+<style>
+  .editorial{background:var(--cream-paper);padding-block:clamp(120px,18vh,200px) clamp(80px,12vh,160px)}
+  .editorial__head{max-width:980px;margin-bottom:64px}
+  .editorial__h1{font-size:clamp(40px,7vw,108px);font-weight:200;letter-spacing:-.04em;line-height:.92;margin-top:18px;text-wrap:balance}
+  .editorial__h1 :global(em){font-style:italic;color:var(--gold);font-weight:300}
+  .editorial__body{max-width:680px;font-family:var(--serif);font-size:clamp(17px,1.4vw,19px);line-height:1.65;color:var(--charcoal-2)}
+  .editorial__body :global(h2){font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(28px,3vw,40px);line-height:1.05;margin:64px 0 18px;color:var(--charcoal)}
+  .editorial__body :global(p){margin-bottom:1.4em}
+  .editorial__body :global(blockquote){font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(24px,2.4vw,32px);line-height:1.2;color:var(--charcoal);border-left:2px solid var(--gold);padding-left:22px;margin:36px 0}
+</style>
