@@ -293,13 +293,116 @@ const links = [
   .nav__hamb[aria-expanded="true"] span:nth-child(2){opacity:0}
   .nav__hamb[aria-expanded="true"] span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg)}
 
-  /* ---- Mobile ---- */
+  /* ---- Mobile ----
+     Re-imagined for small screens.
+     The desktop pill morph is dramatic — it shrinks to a centered capsule.
+     On mobile that left logo + right hamburger to float OUTSIDE the capsule,
+     vanishing onto whatever surface scrolled beneath. Here the pill instead
+     becomes a near-full-width floating bar (14px side margins) so both
+     anchors stay inside its visible surface. The hamburger itself gets a
+     refined hairline ring at rest for visibility on any hero, and sheds the
+     ring once it nests inside the bar — keeping it from double-stacking
+     glass-on-glass.
+  ------------------------------------------------------------ */
   @media (max-width:900px){
-    :root{--pill-half:100px}
+    :root{
+      --pill-h: 54px;
+      --pill-top: 10px;
+    }
+
     .nav__links,.nav__cta-wrap{display:none}
-    .nav__hamb{display:flex}
-    .nav__logo{height:44px}
-    .nav.is-scrolled .nav__brand{transform:translateX(0) scale(.78)}
+    .nav__hamb{display:inline-flex}
+    .nav__logo{height:40px}
+
+    /* Floating bar: wide capsule with breathing room on both sides */
+    .nav.is-scrolled .nav__bg{
+      clip-path:inset(
+        var(--pill-top)
+        14px
+        calc(100% - var(--pill-top) - var(--pill-h))
+        14px
+        round 28px
+      );
+      background:rgba(245,240,232,.95);
+      box-shadow:
+        0 16px 38px rgba(28,25,23,.14),
+        0 4px 12px rgba(28,25,23,.06);
+    }
+    :global(body.dark-nav) .nav.is-scrolled .nav__bg{
+      background:rgba(14,13,12,.88);
+      box-shadow:
+        0 18px 40px rgba(0,0,0,.45),
+        0 4px 12px rgba(0,0,0,.28);
+    }
+
+    /* Brand stays anchored at the gutter, scales softly into the bar */
+    .nav.is-scrolled .nav__brand{
+      transform:translateX(0) scale(.84);
+      transform-origin:left center;
+    }
+    .nav.is-scrolled .nav__logo{height:34px}
+
+    /* Hamburger — refined circular pill, always legible
+       Hairline ring + subtle frosted fill at rest. Inverts on press for the
+       drawer's hard close. Inside the floating bar it goes glass-free. */
+    .nav__hamb{
+      position:relative;
+      width:42px;height:42px;
+      border-radius:999px;
+      align-items:center;justify-content:center;gap:4.5px;
+      background:rgba(245,240,232,.78);
+      border:1px solid rgba(28,25,23,.1);
+      backdrop-filter:blur(10px) saturate(140%);
+      -webkit-backdrop-filter:blur(10px) saturate(140%);
+      box-shadow:
+        0 2px 8px rgba(28,25,23,.06),
+        inset 0 1px 0 rgba(255,255,255,.4);
+      transition:
+        transform var(--nav-dur) var(--nav-ease),
+        background .3s ease,
+        border-color .3s ease,
+        box-shadow .3s ease;
+    }
+    .nav__hamb span{width:16px;height:1.5px}
+    .nav__hamb:hover{
+      background:var(--charcoal);
+      border-color:var(--charcoal);
+    }
+    .nav__hamb:hover span{background:var(--cream)}
+    .nav__hamb:focus-visible{
+      outline:2px solid var(--gold-bright);
+      outline-offset:3px;
+    }
+    .nav__hamb[aria-expanded="true"] span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+    .nav__hamb[aria-expanded="true"] span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+
+    /* Inside the bar: shed the ring, the bar provides the surface */
+    .nav.is-scrolled .nav__hamb{
+      background:transparent;
+      border-color:transparent;
+      box-shadow:none;
+      backdrop-filter:none;
+      -webkit-backdrop-filter:none;
+      transform:scale(.9);
+    }
+
+    :global(body.dark-nav) .nav__hamb{
+      background:rgba(14,13,12,.55);
+      border-color:rgba(245,240,232,.14);
+      box-shadow:
+        0 2px 8px rgba(0,0,0,.35),
+        inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    :global(body.dark-nav) .nav__hamb:hover{
+      background:var(--cream);
+      border-color:var(--cream);
+    }
+    :global(body.dark-nav) .nav__hamb:hover span{background:var(--charcoal)}
+    :global(body.dark-nav) .nav.is-scrolled .nav__hamb{
+      background:transparent;
+      border-color:transparent;
+      box-shadow:none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce){
