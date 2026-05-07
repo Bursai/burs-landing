@@ -136,6 +136,35 @@ const { emphasize = "year", id } = Astro.props;
       return (cc || "").toUpperCase() === "SE" ? "SE" : "EU";
     }
 
+    /* Shared state across init / fetch / switcher.
+       manualOverride flips the moment the user clicks a toggle button so
+       a late-arriving IP response can't clobber their explicit choice. */
+    var manualOverride = false;
+    var ipFetchAbort = null;
+    var switcherAttached = false;
+
+    function attachSwitcher() {
+      if (switcherAttached) return;
+      switcherAttached = true;
+      var roots = document.querySelectorAll("[data-lpc-root]");
+      for (var i = 0; i < roots.length; i++) {
+        roots[i].classList.add("is-ready");
+        var btns = roots[i].querySelectorAll("[data-set-locale]");
+        for (var j = 0; j < btns.length; j++) {
+          btns[j].addEventListener("click", function (e) {
+            var loc = e.currentTarget.getAttribute("data-set-locale");
+            if (loc !== "SE" && loc !== "EU") return;
+            manualOverride = true;
+            // Cancel any pending IP lookup so its .then can't race us
+            if (ipFetchAbort) {
+              try { ipFetchAbort.abort(); } catch (e) {}
+            }
+            applyLocale(loc, true);
+          });
+        }
+      }
+    }
+
     function init() {
       // 1. Cached choice — repeat visit or prior manual override
       try {
@@ -163,46 +192,35 @@ const { emphasize = "year", id } = Astro.props;
         if (/Stockholm/i.test(tz)) tzGuess = "SE";
       } catch (e) {}
       if (tzGuess) applyLocale(tzGuess, false);
-      else attachSwitcher(); // ensure switcher fades in even if no guess
+
+      // Attach the switcher BEFORE the fetch starts so manual overrides
+      // during the in-flight request can take effect immediately.
+      attachSwitcher();
 
       // 3. Authoritative IP lookup — corrects the heuristic if needed
-      var ctrl = typeof AbortController !== "undefined" ? new AbortController() : null;
-      var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, 2500) : null;
+      ipFetchAbort = typeof AbortController !== "undefined" ? new AbortController() : null;
+      var timer = ipFetchAbort
+        ? setTimeout(function () {
+            try { ipFetchAbort.abort(); } catch (e) {}
+          }, 2500)
+        : null;
 
       fetch(COUNTRY_API, {
         cache: "no-store",
-        signal: ctrl ? ctrl.signal : undefined,
+        signal: ipFetchAbort ? ipFetchAbort.signal : undefined,
       })
         .then(function (r) { return r.ok ? r.json() : null; })
         .then(function (data) {
           if (timer) clearTimeout(timer);
+          // User already made a choice — don't overwrite it
+          if (manualOverride) return;
           if (!data || !data.country) return;
           applyLocale(fromCountry(data.country), true);
         })
         .catch(function () {
-          /* network failure — keep current (default EU or tz guess) */
+          /* network failure or aborted — keep current state */
           if (timer) clearTimeout(timer);
-        })
-        .finally(function () {
-          attachSwitcher();
         });
-    }
-
-    var switcherAttached = false;
-    function attachSwitcher() {
-      if (switcherAttached) return;
-      switcherAttached = true;
-      var roots = document.querySelectorAll("[data-lpc-root]");
-      for (var i = 0; i < roots.length; i++) {
-        roots[i].classList.add("is-ready");
-        var btns = roots[i].querySelectorAll("[data-set-locale]");
-        for (var j = 0; j < btns.length; j++) {
-          btns[j].addEventListener("click", function (e) {
-            var loc = e.currentTarget.getAttribute("data-set-locale");
-            if (loc === "SE" || loc === "EU") applyLocale(loc, true);
-          });
-        }
-      }
     }
 
     if (document.readyState === "loading") {

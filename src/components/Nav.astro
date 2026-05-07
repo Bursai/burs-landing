@@ -21,7 +21,7 @@ const links = [
       <a href="https://apps.apple.com/app/burs" class="cta cta--cream nav__cta nav__cta--full" aria-label="Download BURS">
         Get the app <span class="cta__arrow" aria-hidden="true">→</span>
       </a>
-      <a href="https://apps.apple.com/app/burs" class="nav__cta--mini" aria-label="Download BURS" tabindex="-1">
+      <a href="https://apps.apple.com/app/burs" class="nav__cta--mini" aria-label="Download BURS">
         <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12h14M13 5l7 7-7 7"/>
         </svg>
@@ -204,7 +204,9 @@ const links = [
       visibility 0s linear .4s;
   }
 
-  /* Mini CTA — compact circular icon button inside the pill */
+  /* Mini CTA — compact circular icon button inside the pill.
+     Uses visibility (not just opacity/pointer-events) so it leaves and
+     re-enters the keyboard tab order in lockstep with its visual state. */
   .nav__cta--mini{
     position:absolute;
     right:0;top:50%;
@@ -219,6 +221,7 @@ const links = [
       0 6px 14px rgba(28,25,23,.18),
       0 1px 2px rgba(28,25,23,.12);
     opacity:0;
+    visibility:hidden;
     transform:scale(.55) rotate(-12deg);
     transform-origin:center;
     pointer-events:none;
@@ -227,15 +230,25 @@ const links = [
       opacity .22s ease .05s,
       transform .5s var(--nav-ease) .05s,
       background-color .25s ease,
-      box-shadow .25s ease;
+      box-shadow .25s ease,
+      /* Hide from tab order AFTER the fade-out animation completes */
+      visibility 0s linear .55s;
   }
   .nav__cta--mini svg{
     transition:transform .35s var(--nav-ease);
   }
   .nav.is-scrolled .nav__cta--mini{
     opacity:1;
+    visibility:visible;
     transform:scale(1) rotate(0deg);
     pointer-events:auto;
+    /* Become tab-focusable as soon as the morph begins */
+    transition:
+      opacity .22s ease .05s,
+      transform .5s var(--nav-ease) .05s,
+      background-color .25s ease,
+      box-shadow .25s ease,
+      visibility 0s linear 0s;
   }
   .nav__cta--mini:hover{
     background:var(--gold-deep,#8a6a2b);
