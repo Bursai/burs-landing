@@ -307,7 +307,10 @@ const links = [
   @media (max-width:900px){
     :root{
       --pill-h: 54px;
-      --pill-top: 10px;
+      /* Centers the pill vertically inside --nav-h (84px) so the logo,
+         which is align-items:center on the nav row, sits in the pill's
+         middle instead of riding its bottom edge. */
+      --pill-top: 15px;
     }
 
     .nav__links,.nav__cta-wrap{display:none}
@@ -430,10 +433,33 @@ const links = [
     color:var(--charcoal);
   }
   :global(body.dark-nav) .drawer a{color:var(--cream)}
-  .drawer .cta{
+  /* The drawer's italic-link rule (`.drawer a { color: var(--charcoal) }`)
+     was bleeding onto the CTA, painting charcoal text on a charcoal-bg
+     button — invisible on light pages. `.drawer a.cta` (0,2,1) outranks
+     `.drawer a` (0,1,1), pinning the CTA back to its cream-on-charcoal
+     contrast regardless of body theme. */
+  .drawer a.cta{
     font-family:var(--body);font-style:normal;font-weight:500;
     font-size:14px;letter-spacing:.02em;
     margin-top:16px;
+    color:var(--cream);
+    background:var(--charcoal);
+    border-color:var(--charcoal);
+  }
+  .drawer a.cta:hover{
+    color:var(--charcoal);
+    background:var(--gold);
+    border-color:var(--gold);
+  }
+  :global(body.dark-nav) .drawer a.cta{
+    color:var(--charcoal);
+    background:var(--cream);
+    border-color:var(--cream);
+  }
+  :global(body.dark-nav) .drawer a.cta:hover{
+    color:var(--charcoal);
+    background:var(--gold);
+    border-color:var(--gold);
   }
 </style>
 
