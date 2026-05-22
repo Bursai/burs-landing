@@ -23,4 +23,12 @@ import Editorial from "../layouts/Editorial.astro";
 
   <h2>Contact</h2>
   <p>Privacy questions: <a href="mailto:hello@burs.me">hello@burs.me</a>.</p>
+
+  <h2>Google User Data</h2>
+  <p><strong>Data Accessed.</strong> BURS requests read-only access to Google Calendar (calendar.readonly scope) solely to read calendar events. We do not access contacts, email, files, Drive, or any other Google data.</p>
+  <p><strong>Data Usage.</strong> Calendar event data (title, time, location) is used exclusively to generate context-aware outfit recommendations within the BURS app. Events are processed only during the recommendation request to inform styling suggestions.</p>
+  <p><strong>Data Sharing.</strong> BURS does not sell, rent, or share Google user data with third parties. Event titles and times are transmitted to our AI processing provider (Google Gemini API) solely to generate the outfit recommendation and are not retained by that provider beyond the request lifecycle.</p>
+  <p><strong>Data Storage &amp; Protection.</strong> Google user data is transmitted over HTTPS/TLS. We do not persistently store Google Calendar data in our database; event data is held only in memory during the recommendation request. Infrastructure is hosted on Supabase (EU region) with row-level security.</p>
+  <p><strong>Data Retention &amp; Deletion.</strong> Because Google Calendar data is not persistently stored, there is nothing to retain or delete on the calendar-data side. You can revoke BURS's access at any time at <a href="https://myaccount.google.com/permissions">https://myaccount.google.com/permissions</a>. To delete your BURS account and all associated app data, go to Settings → Account → Delete Account in the app, or email <a href="mailto:hello@burs.me">hello@burs.me</a>.</p>
+  <p><strong>AI/ML Training.</strong> BURS does not use Google Workspace data to train or improve generalized AI/ML models. Calendar data is used only for in-session, per-user outfit recommendations.</p>
 </Editorial>
