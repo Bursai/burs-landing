@@ -1,6 +1,5 @@
 ---
 import Base from "../layouts/Base.astro";
-import HeroVideo from "../components/HeroVideo.astro";
 import HeroRack from "../components/HeroRack.astro";
 import ManifestoBlock from "../components/ManifestoBlock.astro";
 import ActsScroll from "../components/ActsScroll.astro";
@@ -10,7 +9,6 @@ import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
 
-const REPRISE_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_152337_bcd15c00-1a73-4cb8-b74a-032510047a3a.mp4";
 const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
 ---
 <Base
@@ -46,11 +44,6 @@ const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
   <ManifestoBlock />
 
   <ActsScroll />
-
-  <section class="reprise" aria-label="Reprise film">
-    <HeroVideo src={REPRISE_VIDEO} loading="lazy" ariaLabel="BURS reprise film" />
-    <div class="reprise__overlay" aria-hidden="true"></div>
-  </section>
 
   <AntiList />
 
@@ -99,9 +92,6 @@ const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
   .hero__cue{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);z-index:5;font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:rgba(28,25,23,.6);text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:14px}
   .hero__cue .line{width:1px;height:48px;background:linear-gradient(180deg,transparent,rgba(28,25,23,.45))}
   @media (max-width:800px){.hero__strip{grid-template-columns:1fr 1fr;gap:8px;top:90px}.hero__strip .hero__center{display:none}.hero__text{padding:140px 20px 70px}.hero__cue{display:none}}
-
-  .reprise{position:relative;min-height:80vh;overflow:hidden;background:var(--ink)}
-  .reprise__overlay{position:absolute;inset:0;background:radial-gradient(ellipse 90% 80% at 50% 50%,transparent 50%,rgba(14,13,12,.45) 100%);pointer-events:none}
 
   .pteaser{padding-block:clamp(100px,14vh,180px)}
   .pteaser__grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
