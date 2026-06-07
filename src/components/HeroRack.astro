@@ -1,0 +1,64 @@
+---
+// src/components/HeroRack.astro
+// Hero background — the BURS editorial clothing-rack illustration, used as-is.
+// Replaces the old Higgsfield .mp4. No video: a single static image on the
+// Editorial Cream background with a one-shot fade + rise entrance that rests
+// static, plus a soft cream scrim so the headline stays legible.
+// prefers-reduced-motion renders the final static state.
+const SRC = "/assets/hero-rack.png";
+---
+<div class="herorack" aria-hidden="true">
+  <img
+    class="herorack__img"
+    src={SRC}
+    alt=""
+    decoding="async"
+    fetchpriority="high"
+    loading="eager"
+  />
+  <div class="herorack__scrim" aria-hidden="true"></div>
+</div>
+
+<style>
+  .herorack{
+    position:absolute;
+    inset:0;
+    overflow:hidden;
+    background:var(--cream);
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+  }
+
+  .herorack__img{
+    width:min(1120px, 94vw);
+    height:auto;
+    margin-top:clamp(96px, 15vh, 168px);
+    opacity:0;
+    transform:translateY(14px);
+    animation:heroIn .9s var(--eo) .1s forwards;
+  }
+
+  @keyframes heroIn{
+    from{ opacity:0; transform:translateY(14px) }
+    to{ opacity:1; transform:translateY(0) }
+  }
+
+  .herorack__scrim{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:linear-gradient(180deg,
+      rgba(245,240,232,0) 38%,
+      rgba(245,240,232,.55) 62%,
+      rgba(245,240,232,.92) 100%);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .herorack__img{ opacity:1; transform:none; animation:none }
+  }
+
+  @media (max-width:800px){
+    .herorack__img{ width:96vw; margin-top:clamp(84px, 12vh, 120px) }
+  }
+</style>

@@ -15,8 +15,8 @@ const acts: Act[] = [
   {
     index: 1,
     eyebrow: "ONE — THE CLOSET, READ",
-    headline: "Your closet, finally <em>read</em>.",
-    lede: "Point a phone camera at your clothes. Computer vision catalogues every piece — colour, fabric, silhouette — in under ten minutes. No manual tagging.",
+    headline: "A stylist who's memorised your closet.",
+    lede: "Every outfit, built from what you already own. Styled for the weather, the occasion, and you.",
     image: "/assets/act-i-wardrobe-screen.jpeg",
     imageAlt: "BURS wardrobe scan in progress, displaying tagged garments"
   },
@@ -92,8 +92,8 @@ const acts: Act[] = [
       {acts.map(a => (
         <article class="panel" data-act-panel={a.index}>
           <p class="eyebrow">{a.eyebrow}</p>
-          <h2 set:html={a.headline} />
-          <p class="lede">{a.lede}</p>
+          <h2 class:list={[a.index === 1 && "panel__h2--lead"]} set:html={a.headline} />
+          <p class:list={["lede", a.index === 1 && "lede--sans"]}>{a.lede}</p>
 
           {a.index === 3 && (
             <ul class="chat" role="list" aria-label="Sample conversation">
@@ -148,7 +148,9 @@ const acts: Act[] = [
   .panel .eyebrow{margin-bottom:18px;color:var(--gold-deep)}
   .panel h2{font-family:var(--display);font-weight:200;letter-spacing:-.035em;line-height:.92;font-size:clamp(40px,5.6vw,76px);color:var(--charcoal);text-wrap:balance}
   .panel h2 :global(em){font-style:italic;color:var(--gold);font-weight:300}
+  .panel h2.panel__h2--lead{font-style:italic}
   .panel .lede{margin-top:22px;max-width:42ch;color:var(--charcoal-2);font-family:var(--serif);font-style:italic;font-size:clamp(17px,1.55vw,20px);line-height:1.5}
+  .panel .lede.lede--sans{font-family:var(--body);font-style:normal;line-height:1.55}
 
   /* Chat bubble in Act III */
   .chat{list-style:none;display:grid;gap:10px;max-width:46ch;margin-top:32px;font-size:15px;font-family:var(--serif);font-style:italic}
