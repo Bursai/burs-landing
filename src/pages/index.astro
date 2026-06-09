@@ -2,11 +2,14 @@
 import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
 import ScrollThread from "../components/ScrollThread.astro";
+import HeroVideo from "../components/HeroVideo.astro";
 import ActsScroll from "../components/ActsScroll.astro";
 import LocalizedPriceCard from "../components/LocalizedPriceCard.astro";
 import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
+
+const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_095006_fd4e35b8-e575-4e10-9226-e211d064d80c.mp4";
 ---
 <Base
   title="BURS — Your wardrobe, intelligently styled."
@@ -19,7 +22,24 @@ import { softwareApplication, product } from "../lib/schema";
   <ScrollLogoFilm />
 
   <!-- That single line continues, threading the whole page -->
-  <ScrollThread nodes={["The closet", "Pricing"]} />
+  <ScrollThread nodes={["The film", "The closet", "Pricing"]} />
+
+  <!-- Cinematic hero film — the brand in motion -->
+  <section class="herofilm" aria-label="BURS film">
+    <HeroVideo src={HERO_VIDEO} loading="lazy" ariaLabel="BURS hero film" />
+    <div class="herofilm__strip" aria-hidden="true">
+      <span class="rec">REC · STOCKHOLM</span>
+      <span>EST. 2026 · EU</span>
+    </div>
+    <div class="herofilm__inner">
+      <p class="herofilm__eyebrow">An AI wardrobe stylist</p>
+      <h2 class="herofilm__title">Your wardrobe, <em>intelligently styled</em>.</h2>
+      <div class="herofilm__cta">
+        <a class="cta cta--cream" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
+        <a class="cta cta--ghost herofilm__ghost" href="/method">See the method</a>
+      </div>
+    </div>
+  </section>
 
   <ActsScroll />
 
@@ -45,6 +65,20 @@ import { softwareApplication, product } from "../lib/schema";
 </Base>
 
 <style>
+  /* Cinematic hero film — dark band between the overture and the showcase */
+  .herofilm{position:relative;min-height:92vh;background:var(--ink);color:var(--cream);overflow:hidden;display:flex}
+  .herofilm__strip{position:absolute;top:108px;left:var(--gutter);right:var(--gutter);z-index:5;display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,240,232,.6);pointer-events:none}
+  .herofilm__strip .rec{display:inline-flex;align-items:center;gap:8px}
+  .herofilm__strip .rec::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);animation:hf-bl 1.4s ease-in-out infinite}
+  @keyframes hf-bl{0%,100%{opacity:1}50%{opacity:.3}}
+  .herofilm__inner{position:relative;z-index:4;align-self:end;width:100%;max-width:var(--max);margin:0 auto;padding:0 var(--gutter) clamp(72px,12vh,128px)}
+  .herofilm__eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:18px}
+  .herofilm__title{font-family:var(--display);font-weight:200;letter-spacing:-.04em;line-height:.92;font-size:clamp(44px,8vw,116px);color:var(--cream);max-width:16ch;text-wrap:balance}
+  .herofilm__title em{font-style:italic;color:var(--gold-bright);font-weight:300}
+  .herofilm__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px}
+  .herofilm__ghost{color:var(--cream);border-color:rgba(245,240,232,.4)}
+  .herofilm__ghost:hover{background:var(--cream);color:var(--charcoal);border-color:var(--cream)}
+
   /* Closing pricing section — the page's final beat before the footer */
   .pteaser{background:var(--cream-paper);padding-block:clamp(96px,15vh,190px)}
   .pteaser__grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
