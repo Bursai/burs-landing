@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
-import HeroVideo from "../components/HeroVideo.astro";
+import ScrollThread from "../components/ScrollThread.astro";
 import ManifestoBlock from "../components/ManifestoBlock.astro";
 import ActsScroll from "../components/ActsScroll.astro";
 import AntiList from "../components/AntiList.astro";
@@ -9,39 +9,31 @@ import LocalizedPriceCard from "../components/LocalizedPriceCard.astro";
 import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
-
-const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_095006_fd4e35b8-e575-4e10-9226-e211d064d80c.mp4";
-const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
 ---
 <Base
   title="BURS — Your wardrobe, intelligently styled."
   description="An AI wardrobe stylist. Scans the clothes you already own, reads the weather and your calendar, and recommends one outfit for every day."
   path="/"
-  ogVideo={OG_VIDEO}
-  ogVideoWidth={1280}
-  ogVideoHeight={720}
 >
   <Schema slot="head" json={[softwareApplication(), product()]} />
 
+  <!-- Opening overture: the mark draws itself from a single line -->
   <ScrollLogoFilm />
 
-  <section class="hero" aria-label="Hero">
-    <HeroVideo src={HERO_VIDEO} loading="eager" ariaLabel="BURS hero film" />
-    <div class="hero__strip" aria-hidden="true">
-      <span class="rec">REC · STOCKHOLM</span>
-      <span class="hero__center">An AI wardrobe stylist.</span>
-      <span>EST. 2026 · EU</span>
-    </div>
-    <div class="hero__text">
-      <h1 class="hero__h1">Most of your wardrobe is <em>invisible</em> to you.</h1>
-      <div class="hero__cta">
-        <a class="cta cta--cream" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
-        <a class="cta cta--ghost" href="/manifesto" style="color:var(--cream);border-color:rgba(245,240,232,.4)">Read the manifesto</a>
+  <!-- That single line continues, threading the whole page -->
+  <ScrollThread nodes={["Thesis", "The closet", "What it's not", "Pricing"]} />
+
+  <!-- Hero — the message, on the same cream the mark was drawn on -->
+  <section class="lead" aria-label="Hero">
+    <div class="wrap lead__wrap">
+      <p class="lead__eyebrow reveal">EST. 2026 · STOCKHOLM · AN AI WARDROBE STYLIST</p>
+      <h1 class="lead__h1 reveal">Most of your wardrobe is <em>invisible</em> to you.</h1>
+      <p class="lead__lede reveal">BURS reads the clothes you already own — then the weather, your
+        calendar, your day — and answers in <em>one outfit</em>.</p>
+      <div class="lead__cta reveal">
+        <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
+        <a class="cta cta--ghost" href="/manifesto">Read the manifesto</a>
       </div>
-    </div>
-    <div class="hero__cue" aria-hidden="true">
-      <span>SCROLL</span>
-      <span class="line"></span>
     </div>
   </section>
 
@@ -49,44 +41,30 @@ const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
 
   <ActsScroll />
 
-  <section class="reprise" aria-label="Editorial">
-    <img
-      class="reprise__img"
-      src="/assets/hero-rack.png"
-      alt=""
-      width="2816"
-      height="1536"
-      decoding="async"
-      loading="lazy"
-    />
-  </section>
-
   <AntiList />
 
-  <section class="pteaser section--cream" aria-label="Pricing">
+  <section class="pteaser" aria-label="Pricing">
     <div class="wrap pteaser__grid">
-      <div>
+      <div class="reveal">
         <p class="eyebrow">— Pricing</p>
-        <h2 style="font-weight:200;letter-spacing:-.025em;line-height:.95;font-size:clamp(40px,6vw,80px);margin-top:14px">One subscription. <em style="font-style:italic;color:var(--gold);font-weight:300">Your</em> closet.</h2>
-        <p class="lede" style="max-width:42ch;margin-top:18px">A single subscription, priced for where you live. No free tier. No ads. Cancel anytime.</p>
+        <h2 class="pteaser__h2">One subscription. <em>Your</em> closet.</h2>
+        <p class="lede pteaser__lede">A single subscription, priced for where you live. No free tier. No ads. Cancel anytime.</p>
         <a class="cta" href="/pricing" style="margin-top:24px">See pricing <span class="cta__arrow">→</span></a>
       </div>
-      <LocalizedPriceCard />
+      <div class="reveal">
+        <LocalizedPriceCard />
+      </div>
     </div>
   </section>
 
-  <section class="whisper section--paper" aria-label="Press">
-    <div class="wrap">
-      <p class="eyebrow">— Press</p>
-      <p class="whisper__line">Press inquiries: <a href="mailto:hello@burs.me" style="border-bottom:1px solid">hello@burs.me</a></p>
-      <p class="whisper__note">Logos, screenshots, and a ready-to-paste boilerplate at <a href="/press" style="border-bottom:1px solid">/press</a>.</p>
-    </div>
-  </section>
-
-  <section class="close section--ink" aria-label="Close">
+  <section class="close" aria-label="Close">
     <div class="wrap close__inner">
-      <h2>Your closet, finally <em>working for you</em>.</h2>
-      <a class="cta cta--cream" href="https://apps.apple.com/app/burs" style="margin-top:36px">Get the app <span class="cta__arrow">→</span></a>
+      <span class="close__mark reveal" aria-hidden="true">B</span>
+      <h2 class="reveal">Your closet, finally <em>working for you</em>.</h2>
+      <div class="close__cta reveal">
+        <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
+        <a class="cta cta--ghost" href="/pricing">See pricing</a>
+      </div>
     </div>
   </section>
 
@@ -94,34 +72,47 @@ const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
 </Base>
 
 <style>
-  .hero{position:relative;min-height:100vh;background:var(--ink);color:var(--cream);overflow:hidden}
-  .hero__strip{position:absolute;top:90px;left:var(--gutter);right:var(--gutter);z-index:5;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,240,232,.6);pointer-events:none}
-  .hero__strip .rec{display:inline-flex;align-items:center;gap:8px}
-  .hero__strip .rec::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);animation:bl 1.4s ease-in-out infinite}
-  @keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
-  .hero__center{font-family:var(--display);font-style:italic;font-weight:300;font-size:13px;letter-spacing:.02em;color:rgba(245,240,232,.85);text-transform:none;text-align:center}
-  .hero__strip>:last-child{justify-self:end}
-  .hero__text{position:absolute;inset:0;z-index:4;display:grid;grid-template-rows:1fr auto;padding:160px var(--gutter) 80px;pointer-events:none}
-  .hero__h1{align-self:end;max-width:16ch;text-wrap:balance;color:var(--cream)}
-  .hero__h1 em{font-style:italic;color:var(--gold-bright);font-weight:300}
-  .hero__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px;pointer-events:auto}
-  .hero__cue{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);z-index:5;font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:rgba(245,240,232,.7);text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:14px}
-  .hero__cue .line{width:1px;height:48px;background:linear-gradient(180deg,transparent,rgba(245,240,232,.5))}
-  @media (max-width:800px){.hero__strip{grid-template-columns:1fr 1fr;gap:8px;top:90px}.hero__strip .hero__center{display:none}.hero__text{padding:140px 20px 70px}.hero__cue{display:none}}
+  /* One continuous cream canvas — gentle paper/cream alternation for rhythm */
+  .lead{background:var(--cream);padding-block:clamp(72px,12vh,140px)}
+  .lead__wrap{max-width:min(1040px,100%)}
+  .lead__eyebrow{
+    font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;
+    color:var(--gold-deep);margin-bottom:clamp(24px,4vh,40px);
+  }
+  .lead__h1{
+    font-family:var(--display);font-weight:200;letter-spacing:-.04em;line-height:.92;
+    font-size:clamp(48px,9vw,124px);color:var(--charcoal);max-width:15ch;text-wrap:balance;
+  }
+  .lead__h1 em{font-style:italic;color:var(--gold);font-weight:300}
+  .lead__lede{
+    margin-top:28px;max-width:46ch;color:var(--charcoal-2);
+    font-family:var(--serif);font-style:italic;font-size:clamp(18px,1.8vw,23px);line-height:1.5;
+  }
+  .lead__lede em{color:var(--gold-deep);font-style:italic}
+  .lead__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:36px}
 
-  /* Reprise — editorial rack image (replaces the former second/reprise film) */
-  .reprise{display:flex;justify-content:center;align-items:center;background:var(--cream);padding-block:clamp(48px,9vh,120px);overflow:hidden}
-  .reprise__img{width:min(1120px,94vw);height:auto;display:block}
-
-  .pteaser{padding-block:clamp(100px,14vh,180px)}
+  /* Pricing */
+  .pteaser{background:var(--cream-paper);padding-block:clamp(90px,13vh,170px)}
   .pteaser__grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
+  .pteaser__h2{font-weight:200;letter-spacing:-.025em;line-height:.95;font-size:clamp(40px,6vw,80px);margin-top:14px;color:var(--charcoal)}
+  .pteaser__h2 em{font-style:italic;color:var(--gold);font-weight:300}
+  .pteaser__lede{max-width:42ch;margin-top:18px}
   @media (max-width:900px){.pteaser__grid{grid-template-columns:1fr;gap:32px}}
 
-  .whisper{padding-block:clamp(80px,10vh,140px)}
-  .whisper__line{font-family:var(--display);font-style:italic;font-size:clamp(24px,2.6vw,32px);margin-top:16px;color:var(--charcoal)}
-  .whisper__note{font-size:14px;opacity:.65;margin-top:8px}
+  /* Close */
+  .close{background:var(--cream);padding-block:clamp(110px,17vh,190px);text-align:center}
+  .close__inner{display:flex;flex-direction:column;align-items:center}
+  .close__mark{
+    font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(40px,5vw,68px);
+    color:var(--gold);line-height:1;margin-bottom:24px;
+  }
+  .close h2{font-size:clamp(44px,7.5vw,118px);font-weight:200;letter-spacing:-.04em;line-height:.92;color:var(--charcoal);max-width:18ch;margin-inline:auto;text-wrap:balance}
+  .close h2 em{font-style:italic;color:var(--gold-deep);font-weight:300}
+  .close__cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:40px}
 
-  .close{padding-block:clamp(120px,18vh,200px);text-align:center}
-  .close h2{font-size:clamp(48px,8vw,128px);font-weight:200;letter-spacing:-.04em;line-height:.92;color:var(--cream);max-width:18ch;margin-inline:auto;text-wrap:balance}
-  .close h2 em{font-style:italic;color:var(--gold-bright);font-weight:300}
+  /* Stagger the hero reveals for a drawn-in feel */
+  .lead__eyebrow.reveal{transition-delay:.05s}
+  .lead__h1.reveal{transition-delay:.12s}
+  .lead__lede.reveal{transition-delay:.22s}
+  .lead__cta.reveal{transition-delay:.32s}
 </style>

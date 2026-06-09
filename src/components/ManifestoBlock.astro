@@ -32,7 +32,7 @@ function tokenize(line: string): Tok[] {
 const tokenized = lines.map(tokenize);
 ---
 
-<section class="thesis section--ink" data-thesis-section>
+<section class="thesis" data-thesis-section>
   <div class="thesis__atmosphere" aria-hidden="true"></div>
 
   <div class="wrap thesis__wrap">
@@ -79,6 +79,7 @@ const tokenized = lines.map(tokenize);
 
   .thesis{
     position:relative;
+    background:var(--cream-paper);
     /* Sized to a single screen — all seven statements fit in view */
     min-height:100vh;
     padding-block:clamp(80px, 10vh, 120px);
@@ -92,8 +93,8 @@ const tokenized = lines.map(tokenize);
     position:absolute;inset:0;
     pointer-events:none;
     background:
-      radial-gradient(ellipse 55% 45% at 22% 28%, rgba(201,168,108,.05), transparent 70%),
-      radial-gradient(ellipse 50% 40% at 82% 78%, rgba(201,168,108,.04), transparent 70%);
+      radial-gradient(ellipse 55% 45% at 22% 28%, rgba(201,168,108,.10), transparent 70%),
+      radial-gradient(ellipse 50% 40% at 82% 78%, rgba(201,168,108,.08), transparent 70%);
   }
 
   .thesis__wrap{position:relative;z-index:1;width:100%}
@@ -109,7 +110,7 @@ const tokenized = lines.map(tokenize);
     font-size:11px;
     letter-spacing:.26em;
     text-transform:uppercase;
-    color:rgba(245,240,232,.55);
+    color:var(--gold-deep);
     margin-bottom:clamp(28px, 4vh, 48px);
     /* container fades as a whole */
     opacity:0;
@@ -157,7 +158,7 @@ const tokenized = lines.map(tokenize);
     font-size:clamp(20px, 2.4vw, 34px);
     line-height:1.2;
     letter-spacing:-.02em;
-    color:var(--cream);
+    color:var(--charcoal);
     max-width:min(60ch, 96%);
     /* Tight vertical rhythm — keeps the column compact */
     margin-bottom:clamp(8px, 1vh, 14px);
@@ -207,7 +208,7 @@ const tokenized = lines.map(tokenize);
      arrive AFTER their neighbors and a gold underline draws across
      once the word has fully revealed. */
   .thesis__line .word__inner--em{
-    color:var(--gold-bright);
+    color:var(--gold-deep);
     font-weight:300;
     position:relative;
     /* Push reveal so emphasis lands AFTER surrounding line — eye-catching */
@@ -240,7 +241,7 @@ const tokenized = lines.map(tokenize);
   .thesis__signoff-rule{
     display:block;
     width:0;height:1px;
-    background:rgba(245,240,232,.35);
+    background:rgba(28,25,23,.25);
     transition:width 1.4s cubic-bezier(.2,.65,.12,1) .4s;
   }
   .thesis__signoff.in .thesis__signoff-rule{width:clamp(48px, 6vw, 96px)}
@@ -250,7 +251,7 @@ const tokenized = lines.map(tokenize);
     font-style:italic;
     font-weight:300;
     font-size:18px;
-    color:var(--gold-bright);
+    color:var(--gold-deep);
     letter-spacing:.02em;
     transform:translateX(-6px);
     opacity:0;

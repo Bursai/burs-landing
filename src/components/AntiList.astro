@@ -7,15 +7,18 @@ const denials = [
   "Not training on your closet."
 ];
 ---
-<section class="not section--ink">
+<section class="not">
   <div class="wrap">
-    <p class="eyebrow" style="color:rgba(245,240,232,.6)">— WHAT BURS IS NOT</p>
+    <p class="eyebrow">— WHAT BURS IS NOT</p>
     <ul class="anti" role="list">
       {denials.map(d => <li>{d}</li>)}
     </ul>
   </div>
 </section>
 <style>
-  .not{padding-block:clamp(100px,14vh,180px)}
-  .not .eyebrow{margin-bottom:36px;display:block}
+  .not{background:var(--cream);padding-block:clamp(100px,14vh,180px)}
+  .not .eyebrow{margin-bottom:36px;display:block;color:var(--gold-deep)}
+  /* The global .anti color is cream (for dark sections); this section is
+     cream, so re-ink the denials to charcoal. The gold em-dash stays. */
+  .not .anti{color:var(--charcoal)}
 </style>
