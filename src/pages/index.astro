@@ -2,9 +2,7 @@
 import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
 import ScrollThread from "../components/ScrollThread.astro";
-import ManifestoBlock from "../components/ManifestoBlock.astro";
 import ActsScroll from "../components/ActsScroll.astro";
-import AntiList from "../components/AntiList.astro";
 import LocalizedPriceCard from "../components/LocalizedPriceCard.astro";
 import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
@@ -17,39 +15,28 @@ import { softwareApplication, product } from "../lib/schema";
 >
   <Schema slot="head" json={[softwareApplication(), product()]} />
 
-  <!-- Opening overture: the mark draws itself from a single line -->
+  <!-- Opening overture: the mark draws itself, the message revealed beat by beat -->
   <ScrollLogoFilm />
 
   <!-- That single line continues, threading the whole page -->
-  <ScrollThread nodes={["Thesis", "The closet", "What it's not", "Pricing"]} />
-
-  <ManifestoBlock />
+  <ScrollThread nodes={["The closet", "Pricing"]} />
 
   <ActsScroll />
 
-  <AntiList />
-
+  <!-- Closing section — pricing carries the primary CTA -->
   <section class="pteaser" aria-label="Pricing">
     <div class="wrap pteaser__grid">
       <div class="reveal">
         <p class="eyebrow">— Pricing</p>
         <h2 class="pteaser__h2">One subscription. <em>Your</em> closet.</h2>
         <p class="lede pteaser__lede">A single subscription, priced for where you live. No free tier. No ads. Cancel anytime.</p>
-        <a class="cta" href="/pricing" style="margin-top:24px">See pricing <span class="cta__arrow">→</span></a>
+        <div class="pteaser__cta">
+          <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
+          <a class="cta cta--ghost" href="/pricing">See full pricing <span class="cta__arrow">→</span></a>
+        </div>
       </div>
       <div class="reveal">
         <LocalizedPriceCard />
-      </div>
-    </div>
-  </section>
-
-  <section class="close" aria-label="Close">
-    <div class="wrap close__inner">
-      <span class="close__mark reveal" aria-hidden="true">B</span>
-      <h2 class="reveal">Your closet, finally <em>working for you</em>.</h2>
-      <div class="close__cta reveal">
-        <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
-        <a class="cta cta--ghost" href="/pricing">See pricing</a>
       </div>
     </div>
   </section>
@@ -58,23 +45,12 @@ import { softwareApplication, product } from "../lib/schema";
 </Base>
 
 <style>
-  /* One continuous cream canvas — gentle paper/cream alternation for rhythm */
-  /* Pricing */
-  .pteaser{background:var(--cream-paper);padding-block:clamp(90px,13vh,170px)}
+  /* Closing pricing section — the page's final beat before the footer */
+  .pteaser{background:var(--cream-paper);padding-block:clamp(96px,15vh,190px)}
   .pteaser__grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
   .pteaser__h2{font-weight:200;letter-spacing:-.025em;line-height:.95;font-size:clamp(40px,6vw,80px);margin-top:14px;color:var(--charcoal)}
   .pteaser__h2 em{font-style:italic;color:var(--gold);font-weight:300}
   .pteaser__lede{max-width:42ch;margin-top:18px}
+  .pteaser__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
   @media (max-width:900px){.pteaser__grid{grid-template-columns:1fr;gap:32px}}
-
-  /* Close */
-  .close{background:var(--cream);padding-block:clamp(110px,17vh,190px);text-align:center}
-  .close__inner{display:flex;flex-direction:column;align-items:center}
-  .close__mark{
-    font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(40px,5vw,68px);
-    color:var(--gold);line-height:1;margin-bottom:24px;
-  }
-  .close h2{font-size:clamp(44px,7.5vw,118px);font-weight:200;letter-spacing:-.04em;line-height:.92;color:var(--charcoal);max-width:18ch;margin-inline:auto;text-wrap:balance}
-  .close h2 em{font-style:italic;color:var(--gold-deep);font-weight:300}
-  .close__cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:40px}
 </style>
