@@ -1,0 +1,332 @@
+---
+// src/components/ScrollLogoFilm.astro
+// Apple-style scroll-scrubbed brand film.
+// A 120-frame WebP sequence (the BURS mark drawing itself, then folding into
+// the hanger) is painted to a <canvas> and scrubbed by scroll position while
+// the stage is pinned. Staged copy narrates the three beats: line → hanger →
+// brand. Falls back to a static final frame when motion is reduced.
+
+// Poster = the fully-formed mark; the reduced-motion + no-JS fallback.
+// The 120-frame sequence itself is referenced in the client script below.
+const POSTER = "/assets/logo-seq/frame_120.webp";
+---
+<section class="film" data-film aria-label="BURS — the mark, drawn">
+  <div class="film__stage">
+    <canvas class="film__canvas" data-film-canvas aria-hidden="true"></canvas>
+
+    <!-- No-JS / pre-paint fallback: the finished mark -->
+    <img class="film__poster" src={POSTER} alt="The BURS mark" decoding="async" />
+
+    <!-- Staged copy ------------------------------------------------------ -->
+    <div class="film__copy" aria-hidden="true">
+      <p
+        class="film__eyebrow"
+        data-overlay
+        data-in="0.0,0.06" data-out="0.24,0.34"
+      >An AI wardrobe stylist</p>
+
+      <div class="film__lines">
+        <h2
+          class="film__line"
+          data-overlay
+          data-in="0.08,0.18" data-out="0.30,0.40"
+        >Drawn from a <em>single line</em>.</h2>
+
+        <h2
+          class="film__line"
+          data-overlay
+          data-in="0.40,0.50" data-out="0.60,0.70"
+        >Folded into a <em>hanger</em>.</h2>
+      </div>
+
+      <div
+        class="film__final"
+        data-overlay
+        data-in="0.80,0.92"
+      >
+        <p class="film__final-eyebrow">— BURS</p>
+        <h2 class="film__final-title">Your wardrobe, <em>intelligently styled</em>.</h2>
+      </div>
+    </div>
+
+    <!-- Soft cream scrim that strengthens with the closing line for legibility -->
+    <div class="film__scrim" data-overlay data-in="0.74,0.92" aria-hidden="true"></div>
+
+    <!-- Opening scroll cue, fades as the film begins -->
+    <div class="film__cue" data-overlay data-in="0,0.01" data-out="0.04,0.12" aria-hidden="true">
+      <span>SCROLL</span>
+      <span class="film__cue-line"></span>
+    </div>
+
+    <!-- Closing cue that hands off into the hero -->
+    <div class="film__cue film__cue--end" data-overlay data-in="0.93,0.99" aria-hidden="true">
+      <span class="film__cue-line"></span>
+      <span>CONTINUE</span>
+    </div>
+  </div>
+</section>
+
+<style>
+  .film{
+    position:relative;
+    /* Scroll runway: taller = slower, more deliberate scrub */
+    height:340vh;
+    background:var(--cream);
+  }
+  @media (max-width:800px){ .film{ height:260vh } }
+
+  .film__stage{
+    position:sticky;
+    top:0;
+    height:100vh;
+    overflow:hidden;
+    display:grid;
+    place-items:center;
+  }
+
+  .film__canvas,
+  .film__poster{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+  }
+  .film__canvas{ display:block; background:var(--cream) }
+  .film__poster{ object-fit:cover; z-index:0 }
+  /* Once JS paints the canvas, it sits above the poster and hides it */
+  .film[data-ready] .film__poster{ opacity:0 }
+  .film__canvas{ position:relative; z-index:1; opacity:0; transition:opacity .4s ease }
+  .film[data-ready] .film__canvas{ opacity:1 }
+
+  /* ---- Copy layer ---- */
+  .film__copy{
+    position:absolute;
+    inset:0;
+    z-index:3;
+    display:grid;
+    grid-template-rows:1fr auto 1fr;
+    align-items:center;
+    justify-items:center;
+    padding:clamp(80px,12vh,140px) var(--gutter);
+    pointer-events:none;
+    text-align:center;
+  }
+
+  .film__eyebrow{
+    grid-row:1;
+    align-self:start;
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+  }
+
+  /* The two mid lines share the bottom band, stacked so they crossfade in place */
+  .film__lines{
+    grid-row:3;
+    grid-column:1;
+    align-self:end;
+    display:grid;
+    position:relative;
+  }
+  .film__line{
+    grid-area:1 / 1;
+    margin:0;
+    font-family:var(--display);
+    font-weight:200;
+    letter-spacing:-.035em;
+    line-height:.95;
+    font-size:clamp(32px,5.2vw,68px);
+    color:var(--charcoal);
+    text-wrap:balance;
+    max-width:18ch;
+  }
+  .film__line em{ font-style:italic; color:var(--gold); font-weight:300 }
+
+  /* Final beat — the brand payoff, centered in the lower band */
+  .film__final{
+    grid-row:3;
+    grid-column:1;
+    align-self:end;
+    display:grid;
+    justify-items:center;
+    gap:18px;
+  }
+  .film__final-eyebrow{
+    font-family:var(--mono);
+    font-size:11px;
+    letter-spacing:.34em;
+    text-transform:uppercase;
+    color:var(--gold-deep);
+  }
+  .film__final-title{
+    margin:0;
+    font-family:var(--display);
+    font-weight:200;
+    letter-spacing:-.04em;
+    line-height:.95;
+    font-size:clamp(34px,5.6vw,76px);
+    color:var(--charcoal);
+    text-wrap:balance;
+    max-width:18ch;
+  }
+  .film__final-title em{ font-style:italic; color:var(--gold-deep); font-weight:300 }
+
+  /* Bottom scrim keeps the closing line legible over the formed mark */
+  .film__scrim{
+    position:absolute;
+    inset:auto 0 0 0;
+    height:55%;
+    z-index:2;
+    background:linear-gradient(180deg,
+      rgba(245,240,232,0) 0%,
+      rgba(245,240,232,.55) 45%,
+      rgba(245,240,232,.92) 100%);
+  }
+
+  /* Overlays start hidden; JS drives opacity + lift via scroll */
+  [data-overlay]{
+    opacity:0;
+    transform:translateY(18px);
+    will-change:opacity, transform;
+  }
+
+  .film__cue{
+    position:absolute;
+    bottom:40px;left:50%;
+    transform:translateX(-50%);
+    z-index:3;
+    display:flex;flex-direction:column;align-items:center;gap:12px;
+    font-family:var(--mono);font-size:9px;letter-spacing:.3em;
+    color:var(--gold-deep);text-transform:uppercase;
+  }
+  .film__cue-line{
+    width:1px;height:44px;
+    background:linear-gradient(180deg,var(--gold) ,transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .film{ height:100vh }
+    .film__canvas{ display:none }
+    .film[data-ready] .film__poster{ opacity:1 }
+    [data-overlay]{ opacity:1; transform:none }
+    .film__eyebrow,.film__line:not(:last-child){ display:none }
+    .film__cue{ display:none }
+  }
+</style>
+
+<script>
+  type Overlay = {
+    el: HTMLElement;
+    inS: number; inE: number;
+    outS: number; outE: number;
+  };
+
+  const film = document.querySelector<HTMLElement>('[data-film]');
+  const canvas = document.querySelector<HTMLCanvasElement>('[data-film-canvas]');
+
+  if (film && canvas) {
+    const ctx = canvas.getContext('2d', { alpha: false });
+    const FRAME_COUNT = 120;
+    const BASE = '/assets/logo-seq/frame_';
+    const pad = (n: number) => String(n).padStart(3, '0');
+
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // ---- Preload the sequence -------------------------------------------
+    const frames: HTMLImageElement[] = [];
+    let firstReady = false;
+    for (let i = 1; i <= FRAME_COUNT; i++) {
+      const img = new Image();
+      img.src = `${BASE}${pad(i)}.webp`;
+      if (i === 1) {
+        img.onload = () => { firstReady = true; film.setAttribute('data-ready', ''); render(); };
+      }
+      frames.push(img);
+    }
+
+    // ---- Canvas sizing (cover) ------------------------------------------
+    let dpr = 1, cw = 0, ch = 0;
+    function resize() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cw = canvas!.clientWidth;
+      ch = canvas!.clientHeight;
+      canvas!.width = Math.round(cw * dpr);
+      canvas!.height = Math.round(ch * dpr);
+    }
+
+    function paint(idx: number) {
+      if (!ctx) return;
+      const img = frames[Math.min(FRAME_COUNT - 1, Math.max(0, idx))];
+      if (!img || !img.complete || !img.naturalWidth) return;
+      const ir = img.naturalWidth / img.naturalHeight;
+      const cr = cw / ch;
+      let dw: number, dh: number, dx: number, dy: number;
+      if (cr > ir) { dw = cw; dh = cw / ir; dx = 0; dy = (ch - dh) / 2; }
+      else { dh = ch; dw = ch * ir; dy = 0; dx = (cw - dw) / 2; }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.fillStyle = '#F5F0E8';
+      ctx.fillRect(0, 0, cw, ch);
+      ctx.drawImage(img, dx, dy, dw, dh);
+    }
+
+    // ---- Overlay copy timeline ------------------------------------------
+    const overlays: Overlay[] = Array.from(
+      film.querySelectorAll<HTMLElement>('[data-overlay]')
+    ).map(el => {
+      const [inS, inE] = (el.dataset.in ?? '0,0').split(',').map(Number);
+      const [outS, outE] = (el.dataset.out ?? '2,2').split(',').map(Number);
+      return { el, inS, inE, outS, outE };
+    });
+
+    const ramp = (p: number, a: number, b: number) =>
+      b <= a ? (p >= b ? 1 : 0) : Math.min(1, Math.max(0, (p - a) / (b - a)));
+
+    function updateOverlays(p: number) {
+      for (const o of overlays) {
+        const vis = Math.min(ramp(p, o.inS, o.inE), 1 - ramp(p, o.outS, o.outE));
+        o.el.style.opacity = String(vis);
+        o.el.style.transform = `translateY(${(1 - vis) * 18}px)`;
+      }
+    }
+
+    // ---- Scroll → progress ----------------------------------------------
+    let progress = 0;
+    function computeProgress() {
+      const rect = film!.getBoundingClientRect();
+      const total = film!.offsetHeight - window.innerHeight;
+      const scrolled = Math.min(Math.max(-rect.top, 0), total);
+      return total > 0 ? scrolled / total : 0;
+    }
+
+    function render() {
+      if (reduced) { resize(); paint(FRAME_COUNT - 1); updateOverlays(1); return; }
+      if (!firstReady) return;
+      const idx = Math.round(progress * (FRAME_COUNT - 1));
+      paint(idx);
+      updateOverlays(progress);
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        progress = computeProgress();
+        render();
+      });
+    }
+
+    resize();
+    if (reduced) {
+      render();
+    } else {
+      progress = computeProgress();
+      render();
+      window.addEventListener('scroll', onScroll, { passive: true });
+    }
+    window.addEventListener('resize', () => { resize(); render(); }, { passive: true });
+  }
+</script>
