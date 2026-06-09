@@ -1,6 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
-import HeroRack from "../components/HeroRack.astro";
+import HeroVideo from "../components/HeroVideo.astro";
 import ManifestoBlock from "../components/ManifestoBlock.astro";
 import ActsScroll from "../components/ActsScroll.astro";
 import AntiList from "../components/AntiList.astro";
@@ -9,12 +9,14 @@ import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
 
+const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_095006_fd4e35b8-e575-4e10-9226-e211d064d80c.mp4";
 const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
 ---
 <Base
   title="BURS — Your wardrobe, intelligently styled."
   description="An AI wardrobe stylist. Scans the clothes you already own, reads the weather and your calendar, and recommends one outfit for every day."
   path="/"
+  bodyClass="dark-nav"
   ogVideo={OG_VIDEO}
   ogVideoWidth={1280}
   ogVideoHeight={720}
@@ -22,7 +24,7 @@ const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
   <Schema slot="head" json={[softwareApplication(), product()]} />
 
   <section class="hero" aria-label="Hero">
-    <HeroRack />
+    <HeroVideo src={HERO_VIDEO} loading="eager" ariaLabel="BURS hero film" />
     <div class="hero__strip" aria-hidden="true">
       <span class="rec">REC · STOCKHOLM</span>
       <span class="hero__center">An AI wardrobe stylist.</span>
@@ -31,8 +33,8 @@ const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
     <div class="hero__text">
       <h1 class="hero__h1">Most of your wardrobe is <em>invisible</em> to you.</h1>
       <div class="hero__cta">
-        <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
-        <a class="cta cta--ghost" href="/manifesto">Read the manifesto</a>
+        <a class="cta cta--cream" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
+        <a class="cta cta--ghost" href="/manifesto" style="color:var(--cream);border-color:rgba(245,240,232,.4)">Read the manifesto</a>
       </div>
     </div>
     <div class="hero__cue" aria-hidden="true">
@@ -44,6 +46,18 @@ const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
   <ManifestoBlock />
 
   <ActsScroll />
+
+  <section class="reprise" aria-label="Editorial">
+    <img
+      class="reprise__img"
+      src="/assets/hero-rack.png"
+      alt=""
+      width="2816"
+      height="1536"
+      decoding="async"
+      loading="lazy"
+    />
+  </section>
 
   <AntiList />
 
@@ -78,20 +92,24 @@ const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
 </Base>
 
 <style>
-  .hero{position:relative;min-height:100vh;background:var(--cream);color:var(--charcoal);overflow:hidden}
-  .hero__strip{position:absolute;top:90px;left:var(--gutter);right:var(--gutter);z-index:5;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(28,25,23,.55);pointer-events:none}
+  .hero{position:relative;min-height:100vh;background:var(--ink);color:var(--cream);overflow:hidden}
+  .hero__strip{position:absolute;top:90px;left:var(--gutter);right:var(--gutter);z-index:5;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:rgba(245,240,232,.6);pointer-events:none}
   .hero__strip .rec{display:inline-flex;align-items:center;gap:8px}
   .hero__strip .rec::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--gold);animation:bl 1.4s ease-in-out infinite}
   @keyframes bl{0%,100%{opacity:1}50%{opacity:.3}}
-  .hero__center{font-family:var(--display);font-style:italic;font-weight:300;font-size:13px;letter-spacing:.02em;color:rgba(28,25,23,.8);text-transform:none;text-align:center}
+  .hero__center{font-family:var(--display);font-style:italic;font-weight:300;font-size:13px;letter-spacing:.02em;color:rgba(245,240,232,.85);text-transform:none;text-align:center}
   .hero__strip>:last-child{justify-self:end}
   .hero__text{position:absolute;inset:0;z-index:4;display:grid;grid-template-rows:1fr auto;padding:160px var(--gutter) 80px;pointer-events:none}
-  .hero__h1{align-self:end;max-width:16ch;text-wrap:balance;color:var(--charcoal)}
-  .hero__h1 em{font-style:italic;color:var(--gold-deep);font-weight:300}
+  .hero__h1{align-self:end;max-width:16ch;text-wrap:balance;color:var(--cream)}
+  .hero__h1 em{font-style:italic;color:var(--gold-bright);font-weight:300}
   .hero__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:32px;pointer-events:auto}
-  .hero__cue{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);z-index:5;font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:rgba(28,25,23,.6);text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:14px}
-  .hero__cue .line{width:1px;height:48px;background:linear-gradient(180deg,transparent,rgba(28,25,23,.45))}
+  .hero__cue{position:absolute;bottom:48px;left:50%;transform:translateX(-50%);z-index:5;font-family:var(--mono);font-size:9px;letter-spacing:.3em;color:rgba(245,240,232,.7);text-transform:uppercase;display:flex;flex-direction:column;align-items:center;gap:14px}
+  .hero__cue .line{width:1px;height:48px;background:linear-gradient(180deg,transparent,rgba(245,240,232,.5))}
   @media (max-width:800px){.hero__strip{grid-template-columns:1fr 1fr;gap:8px;top:90px}.hero__strip .hero__center{display:none}.hero__text{padding:140px 20px 70px}.hero__cue{display:none}}
+
+  /* Reprise — editorial rack image (replaces the former second/reprise film) */
+  .reprise{display:flex;justify-content:center;align-items:center;background:var(--cream);padding-block:clamp(48px,9vh,120px);overflow:hidden}
+  .reprise__img{width:min(1120px,94vw);height:auto;display:block}
 
   .pteaser{padding-block:clamp(100px,14vh,180px)}
   .pteaser__grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
