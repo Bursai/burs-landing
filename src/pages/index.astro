@@ -1,5 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
+import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
 import HeroVideo from "../components/HeroVideo.astro";
 import ManifestoBlock from "../components/ManifestoBlock.astro";
 import ActsScroll from "../components/ActsScroll.astro";
@@ -16,12 +17,13 @@ const OG_VIDEO = new URL("/og-burs.mp4", Astro.site).toString();
   title="BURS — Your wardrobe, intelligently styled."
   description="An AI wardrobe stylist. Scans the clothes you already own, reads the weather and your calendar, and recommends one outfit for every day."
   path="/"
-  bodyClass="dark-nav"
   ogVideo={OG_VIDEO}
   ogVideoWidth={1280}
   ogVideoHeight={720}
 >
   <Schema slot="head" json={[softwareApplication(), product()]} />
+
+  <ScrollLogoFilm />
 
   <section class="hero" aria-label="Hero">
     <HeroVideo src={HERO_VIDEO} loading="eager" ariaLabel="BURS hero film" />
