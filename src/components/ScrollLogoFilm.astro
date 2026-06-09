@@ -8,7 +8,9 @@
 
 // Poster = the fully-formed mark; the reduced-motion + no-JS fallback.
 // The 120-frame sequence itself is referenced in the client script below.
-const POSTER = "/assets/logo-seq/frame_120.webp";
+// FRAME_V busts browser/CDN caches when the frames are re-rendered.
+const FRAME_V = "3";
+const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
 ---
 <section class="film" data-film aria-label="BURS — the mark, drawn">
   <div class="film__stage">
@@ -32,29 +34,23 @@ const POSTER = "/assets/logo-seq/frame_120.webp";
       <h2 class="film__line film__line--right" data-overlay data-in="0.33,0.41" data-out="0.47,0.54"
       >BURS reads the clothes you <em>already own</em>.</h2>
 
-      <h2 class="film__line film__line--left" data-overlay data-in="0.54,0.61" data-out="0.67,0.73"
+      <h2 class="film__line film__line--left" data-overlay data-in="0.50,0.58" data-out="0.66,0.74"
       >Then the weather, your calendar, your <em>day</em>.</h2>
 
-      <!-- Payoff: the closing line resolves over the formed mark, with one download CTA -->
-      <div class="film__final" data-overlay data-in="0.78,0.88">
+      <!-- Payoff: lands on the fully-formed mark with the install CTA -->
+      <div class="film__final" data-overlay data-in="0.86,0.96">
         <h2 class="film__final-line">And answers in <em>one outfit</em>.</h2>
         <a class="cta cta--ink film__download" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
       </div>
     </div>
 
     <!-- Soft cream scrim that strengthens with the closing line for legibility -->
-    <div class="film__scrim" data-overlay data-in="0.72,0.85" aria-hidden="true"></div>
+    <div class="film__scrim" data-overlay data-in="0.80,0.93" aria-hidden="true"></div>
 
     <!-- Opening scroll cue, fades as the film begins -->
     <div class="film__cue" data-overlay data-in="0,0.01" data-out="0.04,0.12" aria-hidden="true">
       <span>SCROLL</span>
       <span class="film__cue-line"></span>
-    </div>
-
-    <!-- Closing cue that hands off into the hero -->
-    <div class="film__cue film__cue--end" data-overlay data-in="0.93,0.99" aria-hidden="true">
-      <span class="film__cue-line"></span>
-      <span>CONTINUE</span>
     </div>
   </div>
 </section>
@@ -218,8 +214,9 @@ const POSTER = "/assets/logo-seq/frame_120.webp";
 
   if (film && canvas) {
     const ctx = canvas.getContext('2d', { alpha: false });
-    const FRAME_COUNT = 120;
+    const FRAME_COUNT = 100;
     const BASE = '/assets/logo-seq/frame_';
+    const FRAME_V = '3'; // cache-bust token; bump when frames are re-rendered
     const pad = (n: number) => String(n).padStart(3, '0');
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -229,7 +226,7 @@ const POSTER = "/assets/logo-seq/frame_120.webp";
     let firstReady = false;
     for (let i = 1; i <= FRAME_COUNT; i++) {
       const img = new Image();
-      img.src = `${BASE}${pad(i)}.webp`;
+      img.src = `${BASE}${pad(i)}.webp?v=${FRAME_V}`;
       if (i === 1) {
         img.onload = () => { firstReady = true; film.setAttribute('data-ready', ''); render(); };
       }
