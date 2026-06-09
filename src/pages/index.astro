@@ -1,7 +1,6 @@
 ---
 import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
-import ScrollThread from "../components/ScrollThread.astro";
 import ActsScroll from "../components/ActsScroll.astro";
 import LocalizedPriceCard from "../components/LocalizedPriceCard.astro";
 import Reveal from "../components/Reveal.astro";
@@ -18,9 +17,6 @@ import { softwareApplication, product } from "../lib/schema";
 
   <!-- Hero: the film plays, then recedes as the mark scrubs up and tells the message -->
   <ScrollLogoFilm />
-
-  <!-- That single line continues, threading the whole page -->
-  <ScrollThread nodes={["The closet", "Pricing"]} />
 
   <ActsScroll />
 
