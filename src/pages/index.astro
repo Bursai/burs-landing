@@ -23,20 +23,6 @@ import { softwareApplication, product } from "../lib/schema";
   <!-- That single line continues, threading the whole page -->
   <ScrollThread nodes={["Thesis", "The closet", "What it's not", "Pricing"]} />
 
-  <!-- Hero — the message, on the same cream the mark was drawn on -->
-  <section class="lead" aria-label="Hero">
-    <div class="wrap lead__wrap">
-      <p class="lead__eyebrow reveal">EST. 2026 · STOCKHOLM · AN AI WARDROBE STYLIST</p>
-      <h1 class="lead__h1 reveal">Most of your wardrobe is <em>invisible</em> to you.</h1>
-      <p class="lead__lede reveal">BURS reads the clothes you already own — then the weather, your
-        calendar, your day — and answers in <em>one outfit</em>.</p>
-      <div class="lead__cta reveal">
-        <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
-        <a class="cta cta--ghost" href="/manifesto">Read the manifesto</a>
-      </div>
-    </div>
-  </section>
-
   <ManifestoBlock />
 
   <ActsScroll />
@@ -73,24 +59,6 @@ import { softwareApplication, product } from "../lib/schema";
 
 <style>
   /* One continuous cream canvas — gentle paper/cream alternation for rhythm */
-  .lead{background:var(--cream);padding-block:clamp(72px,12vh,140px)}
-  .lead__wrap{max-width:min(1040px,100%)}
-  .lead__eyebrow{
-    font-family:var(--mono);font-size:11px;letter-spacing:.26em;text-transform:uppercase;
-    color:var(--gold-deep);margin-bottom:clamp(24px,4vh,40px);
-  }
-  .lead__h1{
-    font-family:var(--display);font-weight:200;letter-spacing:-.04em;line-height:.92;
-    font-size:clamp(48px,9vw,124px);color:var(--charcoal);max-width:15ch;text-wrap:balance;
-  }
-  .lead__h1 em{font-style:italic;color:var(--gold);font-weight:300}
-  .lead__lede{
-    margin-top:28px;max-width:46ch;color:var(--charcoal-2);
-    font-family:var(--serif);font-style:italic;font-size:clamp(18px,1.8vw,23px);line-height:1.5;
-  }
-  .lead__lede em{color:var(--gold-deep);font-style:italic}
-  .lead__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:36px}
-
   /* Pricing */
   .pteaser{background:var(--cream-paper);padding-block:clamp(90px,13vh,170px)}
   .pteaser__grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
@@ -109,10 +77,4 @@ import { softwareApplication, product } from "../lib/schema";
   .close h2{font-size:clamp(44px,7.5vw,118px);font-weight:200;letter-spacing:-.04em;line-height:.92;color:var(--charcoal);max-width:18ch;margin-inline:auto;text-wrap:balance}
   .close h2 em{font-style:italic;color:var(--gold-deep);font-weight:300}
   .close__cta{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:40px}
-
-  /* Stagger the hero reveals for a drawn-in feel */
-  .lead__eyebrow.reveal{transition-delay:.05s}
-  .lead__h1.reveal{transition-delay:.12s}
-  .lead__lede.reveal{transition-delay:.22s}
-  .lead__cta.reveal{transition-delay:.32s}
 </style>
