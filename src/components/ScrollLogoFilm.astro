@@ -144,7 +144,7 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
   /* Payoff line — above the formed mark, centered */
   .film__final-line{
     position:absolute;
-    top:clamp(104px,16vh,184px);
+    top:clamp(72px,10vh,128px);
     left:50%;
     transform:translate(-50%, var(--lift));
     margin:0;
@@ -241,9 +241,15 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
       if (!img || !img.complete || !img.naturalWidth) return;
       const ir = img.naturalWidth / img.naturalHeight;
       const cr = cw / ch;
-      let dw: number, dh: number, dx: number, dy: number;
-      if (cr > ir) { dw = cw; dh = cw / ir; dx = 0; dy = (ch - dh) / 2; }
-      else { dh = ch; dw = ch * ir; dy = 0; dx = (cw - dw) / 2; }
+      // Cover, then scale the mark down a touch so the copy has clearance
+      // above and below it.
+      const MARK_SCALE = 0.82;
+      let dw: number, dh: number;
+      if (cr > ir) { dw = cw; dh = cw / ir; }
+      else { dh = ch; dw = ch * ir; }
+      dw *= MARK_SCALE; dh *= MARK_SCALE;
+      const dx = (cw - dw) / 2;
+      const dy = (ch - dh) / 2;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.fillStyle = '#F5F0E8';
       ctx.fillRect(0, 0, cw, ch);
