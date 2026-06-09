@@ -48,11 +48,12 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
       <h2 class="film__line film__line--left" data-overlay data-in="0.62,0.69" data-out="0.78,0.84"
       >Then the weather, your calendar, your <em>day</em>.</h2>
 
-      <!-- Payoff: lands on the clean formed mark, set into the upper-right space -->
-      <div class="film__final" data-overlay data-in="0.88,0.97">
-        <h2 class="film__final-line">And answers in <em>one outfit</em>.</h2>
-        <a class="cta cta--ink film__download" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
-      </div>
+      <!-- Payoff: line above the formed mark, install CTA anchored at the bottom -->
+      <h2 class="film__final-line" data-overlay data-in="0.84,0.93"
+      >And answers in <em>one outfit</em>.</h2>
+
+      <a class="cta cta--ink film__download" data-overlay data-in="0.89,0.97"
+        href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
     </div>
 
     <!-- Opening scroll cue over the video -->
@@ -128,40 +129,43 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
     top:50%;
     transform:translateY(calc(-50% + var(--lift)));
     margin:0;
-    font-family:var(--display); font-weight:200; letter-spacing:-.03em; line-height:1.06;
-    font-size:clamp(26px,3.3vw,48px);
+    font-family:var(--display); font-weight:300; letter-spacing:-.03em; line-height:1.04;
+    font-size:clamp(34px,4.7vw,68px);
     color:var(--charcoal);
-    max-width:min(30vw,15ch);
+    max-width:min(40vw,16ch);
     text-wrap:balance;
-    text-shadow:0 0 22px var(--cream), 0 0 22px var(--cream), 0 0 64px var(--cream);
+    /* Strong cream halo so the larger type stays crisp over the strokes */
+    text-shadow:0 0 18px var(--cream),0 0 18px var(--cream),0 0 38px var(--cream),0 0 78px var(--cream);
   }
   .film__line em{ font-style:italic; color:var(--gold); font-weight:300 }
   .film__line--left{ left:clamp(20px,5vw,76px); text-align:left }
   .film__line--right{ right:clamp(20px,5vw,76px); text-align:right }
 
-  /* Payoff line + install CTA, set into the upper-right negative space */
-  .film__final{
-    position:absolute;
-    top:clamp(116px,19vh,200px);
-    right:clamp(20px,5vw,76px);
-    transform:translateY(var(--lift));
-    width:min(440px,46vw);
-    display:grid;
-    justify-items:end;
-    gap:24px;
-    text-align:right;
-  }
+  /* Payoff line — above the formed mark, centered */
   .film__final-line{
+    position:absolute;
+    top:clamp(104px,16vh,184px);
+    left:50%;
+    transform:translate(-50%, var(--lift));
     margin:0;
-    font-family:var(--display); font-weight:200; letter-spacing:-.035em; line-height:1.0;
-    font-size:clamp(28px,3.6vw,52px);
+    text-align:center;
+    font-family:var(--display); font-weight:300; letter-spacing:-.035em; line-height:1.0;
+    font-size:clamp(36px,5.2vw,76px);
     color:var(--charcoal);
     text-wrap:balance;
-    max-width:13ch;
-    text-shadow:0 0 22px var(--cream), 0 0 22px var(--cream), 0 0 64px var(--cream);
+    max-width:20ch;
+    text-shadow:0 0 18px var(--cream),0 0 18px var(--cream),0 0 60px var(--cream);
   }
   .film__final-line em{ font-style:italic; color:var(--gold); font-weight:300 }
-  .film__download{ pointer-events:auto }
+
+  /* Install CTA — anchored at the bottom */
+  .film__download{
+    position:absolute;
+    left:50%;
+    bottom:clamp(44px,8vh,86px);
+    transform:translate(-50%, var(--lift));
+    pointer-events:auto;
+  }
 
   /* Ink download button for the cream film surface */
   .cta--ink{ background:var(--ink); color:var(--cream); border-color:var(--ink) }
