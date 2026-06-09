@@ -1,67 +1,65 @@
 ---
 // src/components/ScrollLogoFilm.astro
-// Apple-style scroll-scrubbed brand film.
-// A 120-frame WebP sequence (the BURS mark drawing itself, then folding into
-// the hanger) is painted to a <canvas> and scrubbed by scroll position while
-// the stage is pinned. Staged copy narrates the three beats: line → hanger →
-// brand. Falls back to a static final frame when motion is reduced.
+// Hero film + scroll-scrubbed brand mark, in one pinned stage.
+//   • At rest, the cinematic hero VIDEO plays full-bleed.
+//   • As you scroll, the video recedes into the background (fade + blur +
+//     push-back) and a 100-frame WebP sequence of the mark drawing itself
+//     scrubs up on a <canvas>, narrating the message beat by beat.
+//   • It resolves on the clean formed mark with the install CTA (upper-right).
+// Falls back to a static poster frame under reduced motion / no-JS.
 
-// Poster = the fully-formed mark; the reduced-motion + no-JS fallback.
-// The 120-frame sequence itself is referenced in the client script below.
-const POSTER = "/assets/logo-seq/frame_120.webp";
+const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_095006_fd4e35b8-e575-4e10-9226-e211d064d80c.mp4";
+
+// FRAME_V busts browser/CDN caches when the frames are re-rendered.
+const FRAME_V = "3";
+const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
 ---
-<section class="film" data-film aria-label="BURS — the mark, drawn">
+<section class="film" data-film aria-label="BURS — your wardrobe, intelligently styled">
   <div class="film__stage">
-    <canvas class="film__canvas" data-film-canvas aria-hidden="true"></canvas>
+    <!-- Hero video — recedes into the background as the animation comes up -->
+    <div class="film__video" data-film-video aria-hidden="true">
+      <video autoplay muted loop playsinline preload="auto">
+        <source src={HERO_VIDEO} type="video/mp4" />
+      </video>
+      <div class="film__video-veil"></div>
+    </div>
 
     <!-- No-JS / pre-paint fallback: the finished mark -->
     <img class="film__poster" src={POSTER} alt="The BURS mark" decoding="async" />
 
+    <!-- The scrubbed mark -->
+    <canvas class="film__canvas" data-film-canvas aria-hidden="true"></canvas>
+
     <!-- Staged copy ------------------------------------------------------ -->
     <div class="film__copy" aria-hidden="true">
-      <p
-        class="film__eyebrow"
-        data-overlay
-        data-in="0.0,0.06" data-out="0.24,0.34"
-      >An AI wardrobe stylist</p>
-
-      <div class="film__lines">
-        <h2
-          class="film__line"
-          data-overlay
-          data-in="0.08,0.18" data-out="0.30,0.40"
-        >Drawn from a <em>single line</em>.</h2>
-
-        <h2
-          class="film__line"
-          data-overlay
-          data-in="0.40,0.50" data-out="0.60,0.70"
-        >Folded into a <em>hanger</em>.</h2>
+      <!-- Hero title over the video (visible at rest, fades as you scroll) -->
+      <div class="film__hero" data-overlay data-in="-1,0" data-out="0.04,0.11">
+        <p class="film__hero-eyebrow">An AI wardrobe stylist</p>
+        <h2 class="film__hero-title">Your wardrobe, <em>intelligently styled</em>.</h2>
       </div>
 
-      <div
-        class="film__final"
-        data-overlay
-        data-in="0.80,0.92"
-      >
-        <p class="film__final-eyebrow">— BURS</p>
-        <h2 class="film__final-title">Your wardrobe, <em>intelligently styled</em>.</h2>
-      </div>
+      <!-- Each line pops into the cream around the mark, alternating sides -->
+      <h2 class="film__line film__line--left" data-overlay data-in="0.22,0.30" data-out="0.40,0.47"
+      >Most of your wardrobe is <em>invisible</em> to you.</h2>
+
+      <h2 class="film__line film__line--right" data-overlay data-in="0.46,0.53" data-out="0.60,0.66"
+      >BURS reads the clothes you <em>already own</em>.</h2>
+
+      <h2 class="film__line film__line--left" data-overlay data-in="0.62,0.69" data-out="0.78,0.84"
+      >Then the weather, your calendar, your <em>day</em>.</h2>
+
+      <!-- Payoff: line above the formed mark, install CTA anchored at the bottom -->
+      <h2 class="film__final-line" data-overlay data-in="0.84,0.93"
+      >And answers in <em>one outfit</em>.</h2>
+
+      <a class="cta cta--ink film__download" data-overlay data-in="0.89,0.97"
+        href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
     </div>
 
-    <!-- Soft cream scrim that strengthens with the closing line for legibility -->
-    <div class="film__scrim" data-overlay data-in="0.74,0.92" aria-hidden="true"></div>
-
-    <!-- Opening scroll cue, fades as the film begins -->
-    <div class="film__cue" data-overlay data-in="0,0.01" data-out="0.04,0.12" aria-hidden="true">
+    <!-- Opening scroll cue over the video -->
+    <div class="film__cue" data-overlay data-in="-1,0" data-out="0.03,0.09" aria-hidden="true">
       <span>SCROLL</span>
       <span class="film__cue-line"></span>
-    </div>
-
-    <!-- Closing cue that hands off into the hero -->
-    <div class="film__cue film__cue--end" data-overlay data-in="0.93,0.99" aria-hidden="true">
-      <span class="film__cue-line"></span>
-      <span>CONTINUE</span>
     </div>
   </div>
 </section>
@@ -69,168 +67,149 @@ const POSTER = "/assets/logo-seq/frame_120.webp";
 <style>
   .film{
     position:relative;
-    /* Scroll runway: taller = slower, more deliberate scrub */
-    height:340vh;
+    /* Scroll runway: video hero + scrub. Taller = more deliberate. */
+    height:380vh;
     background:var(--cream);
   }
-  @media (max-width:800px){ .film{ height:260vh } }
+  @media (max-width:800px){ .film{ height:300vh } }
 
   .film__stage{
     position:sticky;
     top:0;
     height:100vh;
     overflow:hidden;
-    display:grid;
-    place-items:center;
   }
 
-  .film__canvas,
-  .film__poster{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-  }
-  .film__canvas{ display:block; background:var(--cream) }
+  /* ---- Layers ---- */
+  .film__video,
+  .film__poster,
+  .film__canvas{ position:absolute; inset:0; width:100%; height:100% }
+
   .film__poster{ object-fit:cover; z-index:0 }
-  /* Once JS paints the canvas, it sits above the poster and hides it */
+  /* No-JS fallback only. Once JS runs, the canvas owns the visuals — hide the
+     poster so the finished mark never bleeds through the fading video. */
   .film[data-ready] .film__poster{ opacity:0 }
-  .film__canvas{ position:relative; z-index:1; opacity:0; transition:opacity .4s ease }
-  .film[data-ready] .film__canvas{ opacity:1 }
+
+  .film__video{ z-index:1; background:var(--ink); will-change:opacity, transform, filter }
+  .film__video video{ width:100%; height:100%; object-fit:cover; filter:contrast(1.02) saturate(.96) }
+  .film__video-veil{
+    position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg,
+      rgba(14,13,12,.5) 0%, rgba(14,13,12,.12) 32%,
+      rgba(14,13,12,.18) 64%, rgba(14,13,12,.6) 100%);
+  }
+
+  .film__canvas{ display:block; background:var(--cream); z-index:2; opacity:0 }
 
   /* ---- Copy layer ---- */
-  .film__copy{
+  .film__copy{ position:absolute; inset:0; z-index:4; pointer-events:none }
+
+  /* Hero title (cream, over the video) */
+  .film__hero{
     position:absolute;
-    inset:0;
-    z-index:3;
-    display:grid;
-    grid-template-rows:1fr auto 1fr;
-    align-items:center;
-    justify-items:center;
-    padding:clamp(80px,12vh,140px) var(--gutter);
-    pointer-events:none;
+    left:50%; top:50%;
+    transform:translate(-50%, calc(-50% + var(--lift)));
+    width:min(960px,92vw);
     text-align:center;
   }
-
-  .film__eyebrow{
-    grid-row:1;
-    align-self:start;
-    font-family:var(--mono);
-    font-size:11px;
-    letter-spacing:.32em;
-    text-transform:uppercase;
-    color:var(--gold-deep);
+  .film__hero-eyebrow{
+    font-family:var(--mono); font-size:11px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--gold-bright); margin-bottom:20px;
   }
-
-  /* The two mid lines share the bottom band, stacked so they crossfade in place */
-  .film__lines{
-    grid-row:3;
-    grid-column:1;
-    align-self:end;
-    display:grid;
-    position:relative;
+  .film__hero-title{
+    margin:0; font-family:var(--display); font-weight:200; letter-spacing:-.04em; line-height:.92;
+    font-size:clamp(44px,8vw,120px); color:var(--cream); text-wrap:balance;
   }
+  .film__hero-title em{ font-style:italic; color:var(--gold-bright); font-weight:300 }
+
+  /* Each beat is placed in the cream beside the centered mark, alternating
+     sides; a soft cream halo keeps it legible over the strokes. */
   .film__line{
-    grid-area:1 / 1;
+    position:absolute;
+    top:50%;
+    transform:translateY(calc(-50% + var(--lift)));
     margin:0;
-    font-family:var(--display);
-    font-weight:200;
-    letter-spacing:-.035em;
-    line-height:.95;
-    font-size:clamp(32px,5.2vw,68px);
+    font-family:var(--display); font-weight:300; letter-spacing:-.03em; line-height:1.04;
+    font-size:clamp(34px,4.7vw,68px);
     color:var(--charcoal);
+    max-width:min(40vw,16ch);
     text-wrap:balance;
-    max-width:18ch;
+    /* Strong cream halo so the larger type stays crisp over the strokes */
+    text-shadow:0 0 18px var(--cream),0 0 18px var(--cream),0 0 38px var(--cream),0 0 78px var(--cream);
   }
   .film__line em{ font-style:italic; color:var(--gold); font-weight:300 }
+  .film__line--left{ left:clamp(20px,5vw,76px); text-align:left }
+  .film__line--right{ right:clamp(20px,5vw,76px); text-align:right }
 
-  /* Final beat — the brand payoff, centered in the lower band */
-  .film__final{
-    grid-row:3;
-    grid-column:1;
-    align-self:end;
-    display:grid;
-    justify-items:center;
-    gap:18px;
-  }
-  .film__final-eyebrow{
-    font-family:var(--mono);
-    font-size:11px;
-    letter-spacing:.34em;
-    text-transform:uppercase;
-    color:var(--gold-deep);
-  }
-  .film__final-title{
+  /* Payoff line — above the formed mark, centered */
+  .film__final-line{
+    position:absolute;
+    top:clamp(72px,10vh,128px);
+    left:50%;
+    transform:translate(-50%, var(--lift));
     margin:0;
-    font-family:var(--display);
-    font-weight:200;
-    letter-spacing:-.04em;
-    line-height:.95;
-    font-size:clamp(34px,5.6vw,76px);
+    text-align:center;
+    font-family:var(--display); font-weight:300; letter-spacing:-.035em; line-height:1.0;
+    font-size:clamp(36px,5.2vw,76px);
     color:var(--charcoal);
     text-wrap:balance;
-    max-width:18ch;
+    max-width:20ch;
+    text-shadow:0 0 18px var(--cream),0 0 18px var(--cream),0 0 60px var(--cream);
   }
-  .film__final-title em{ font-style:italic; color:var(--gold-deep); font-weight:300 }
+  .film__final-line em{ font-style:italic; color:var(--gold); font-weight:300 }
 
-  /* Bottom scrim keeps the closing line legible over the formed mark */
-  .film__scrim{
+  /* Install CTA — anchored at the bottom */
+  .film__download{
     position:absolute;
-    inset:auto 0 0 0;
-    height:55%;
-    z-index:2;
-    background:linear-gradient(180deg,
-      rgba(245,240,232,0) 0%,
-      rgba(245,240,232,.55) 45%,
-      rgba(245,240,232,.92) 100%);
+    left:50%;
+    bottom:clamp(44px,8vh,86px);
+    transform:translate(-50%, var(--lift));
+    pointer-events:auto;
   }
+
+  /* Ink download button for the cream film surface */
+  .cta--ink{ background:var(--ink); color:var(--cream); border-color:var(--ink) }
+  .cta--ink:hover{ background:var(--gold-deep); border-color:var(--gold-deep); color:var(--ink) }
 
   /* Overlays start hidden; JS drives opacity + lift via scroll */
-  [data-overlay]{
-    opacity:0;
-    transform:translateY(18px);
-    will-change:opacity, transform;
-  }
+  [data-overlay]{ opacity:0; --lift:18px; will-change:opacity, transform }
 
   .film__cue{
     position:absolute;
-    bottom:40px;left:50%;
-    transform:translateX(-50%);
-    z-index:3;
-    display:flex;flex-direction:column;align-items:center;gap:12px;
-    font-family:var(--mono);font-size:9px;letter-spacing:.3em;
-    color:var(--gold-deep);text-transform:uppercase;
+    bottom:40px; left:50%;
+    transform:translate(-50%, var(--lift));
+    z-index:4;
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    font-family:var(--mono); font-size:9px; letter-spacing:.3em;
+    color:rgba(245,240,232,.75); text-transform:uppercase;
   }
-  .film__cue-line{
-    width:1px;height:44px;
-    background:linear-gradient(180deg,var(--gold) ,transparent);
-  }
+  .film__cue-line{ width:1px; height:44px; background:linear-gradient(180deg,rgba(245,240,232,.6),transparent) }
 
   @media (prefers-reduced-motion: reduce){
     .film{ height:100vh }
-    .film__canvas{ display:none }
+    .film__canvas,.film__video{ display:none }
     .film[data-ready] .film__poster{ opacity:1 }
-    [data-overlay]{ opacity:1; transform:none }
-    .film__eyebrow,.film__line:not(:last-child){ display:none }
-    .film__cue{ display:none }
+    /* Keep positioning transforms; just cancel the reveal lift */
+    [data-overlay]{ opacity:1; --lift:0px }
+    /* Static fallback: the formed mark + the payoff/CTA only */
+    .film__hero,.film__line,.film__cue{ display:none }
   }
 </style>
 
 <script>
-  type Overlay = {
-    el: HTMLElement;
-    inS: number; inE: number;
-    outS: number; outE: number;
-  };
-
   const film = document.querySelector<HTMLElement>('[data-film]');
   const canvas = document.querySelector<HTMLCanvasElement>('[data-film-canvas]');
+  const videoWrap = document.querySelector<HTMLElement>('[data-film-video]');
 
   if (film && canvas) {
     const ctx = canvas.getContext('2d', { alpha: false });
-    const FRAME_COUNT = 120;
+    const FRAME_COUNT = 100;
     const BASE = '/assets/logo-seq/frame_';
+    const FRAME_V = '3';
     const pad = (n: number) => String(n).padStart(3, '0');
+
+    // Crossfade band: video → canvas. Before A it's all video; after B all canvas.
+    const FADE_A = 0.05, FADE_B = 0.17;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -239,7 +218,7 @@ const POSTER = "/assets/logo-seq/frame_120.webp";
     let firstReady = false;
     for (let i = 1; i <= FRAME_COUNT; i++) {
       const img = new Image();
-      img.src = `${BASE}${pad(i)}.webp`;
+      img.src = `${BASE}${pad(i)}.webp?v=${FRAME_V}`;
       if (i === 1) {
         img.onload = () => { firstReady = true; film.setAttribute('data-ready', ''); render(); };
       }
@@ -262,9 +241,15 @@ const POSTER = "/assets/logo-seq/frame_120.webp";
       if (!img || !img.complete || !img.naturalWidth) return;
       const ir = img.naturalWidth / img.naturalHeight;
       const cr = cw / ch;
-      let dw: number, dh: number, dx: number, dy: number;
-      if (cr > ir) { dw = cw; dh = cw / ir; dx = 0; dy = (ch - dh) / 2; }
-      else { dh = ch; dw = ch * ir; dy = 0; dx = (cw - dw) / 2; }
+      // Cover, then scale the mark down a touch so the copy has clearance
+      // above and below it.
+      const MARK_SCALE = 0.82;
+      let dw: number, dh: number;
+      if (cr > ir) { dw = cw; dh = cw / ir; }
+      else { dh = ch; dw = ch * ir; }
+      dw *= MARK_SCALE; dh *= MARK_SCALE;
+      const dx = (cw - dw) / 2;
+      const dy = (ch - dh) / 2;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.fillStyle = '#F5F0E8';
       ctx.fillRect(0, 0, cw, ch);
@@ -272,6 +257,7 @@ const POSTER = "/assets/logo-seq/frame_120.webp";
     }
 
     // ---- Overlay copy timeline ------------------------------------------
+    type Overlay = { el: HTMLElement; inS: number; inE: number; outS: number; outE: number };
     const overlays: Overlay[] = Array.from(
       film.querySelectorAll<HTMLElement>('[data-overlay]')
     ).map(el => {
@@ -287,7 +273,7 @@ const POSTER = "/assets/logo-seq/frame_120.webp";
       for (const o of overlays) {
         const vis = Math.min(ramp(p, o.inS, o.inE), 1 - ramp(p, o.outS, o.outE));
         o.el.style.opacity = String(vis);
-        o.el.style.transform = `translateY(${(1 - vis) * 18}px)`;
+        o.el.style.setProperty('--lift', `${(1 - vis) * 18}px`);
       }
     }
 
@@ -301,10 +287,28 @@ const POSTER = "/assets/logo-seq/frame_120.webp";
     }
 
     function render() {
-      if (reduced) { resize(); paint(FRAME_COUNT - 1); updateOverlays(1); return; }
-      if (!firstReady) return;
-      const idx = Math.round(progress * (FRAME_COUNT - 1));
-      paint(idx);
+      if (reduced) {
+        resize();
+        paint(FRAME_COUNT - 1);
+        canvas!.style.opacity = '1';
+        updateOverlays(1);
+        return;
+      }
+
+      // Video → canvas crossfade
+      const mix = ramp(progress, FADE_A, FADE_B);      // 0 = video, 1 = canvas
+      if (videoWrap) {
+        videoWrap.style.opacity = String(1 - mix);
+        videoWrap.style.transform = `scale(${1 + mix * 0.06})`;
+        videoWrap.style.filter = `blur(${mix * 4}px)`;
+      }
+      canvas!.style.opacity = firstReady ? String(mix) : '0';
+
+      // Scrub the sequence over the post-intro range
+      if (firstReady) {
+        const scrubP = Math.min(1, Math.max(0, (progress - FADE_B) / (1 - FADE_B)));
+        paint(Math.round(scrubP * (FRAME_COUNT - 1)));
+      }
       updateOverlays(progress);
     }
 
