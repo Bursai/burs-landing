@@ -143,7 +143,9 @@ const acts: Act[] = [
 
   /* Scroll panels — each is roughly one viewport tall so the phone gets a clean handoff */
   .acts__panels{display:flex;flex-direction:column}
-  .panel{min-height:62vh;display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,5vh,56px) 0;border-top:1px solid rgba(28,25,23,.07)}
+  .panel{min-height:62vh;display:flex;flex-direction:column;justify-content:center;padding:clamp(28px,5vh,56px) 0;border-top:1px solid rgba(28,25,23,.07);transition:opacity .45s cubic-bezier(.25,.8,.25,1)}
+  /* Non-focused panels recede so the copy and the phone screen read as one beat */
+  .panel.is-dim{opacity:.35}
   .panel:first-child{border-top:0}
   .panel .eyebrow{margin-bottom:18px;color:var(--gold-deep)}
   .panel h2{font-family:var(--display);font-weight:200;letter-spacing:-.035em;line-height:.92;font-size:clamp(40px,5.6vw,76px);color:var(--charcoal);text-wrap:balance}
@@ -227,12 +229,17 @@ const acts: Act[] = [
     width: 100%; height: 100%;
     object-fit: cover;
     opacity: 0;
+    z-index: 0;
     transition:
-      opacity .8s cubic-bezier(.2,.7,.2,1),
-      transform 1.4s cubic-bezier(.2,.7,.2,1);
-    transform: scale(1.04);
+      opacity .45s cubic-bezier(.25,.8,.25,1),
+      transform 1s cubic-bezier(.2,.7,.2,1);
+    transform: scale(1.035);
+    will-change: opacity;
   }
-  .phone__screen img.is-active{ opacity: 1; transform: scale(1) }
+  /* The outgoing screen holds, fully opaque, UNDER the incoming one while it
+     fades in — the screen never dips to black mid-swap. */
+  .phone__screen img.is-prev{ opacity: 1; z-index: 1; transform: scale(1); transition: none }
+  .phone__screen img.is-active{ opacity: 1; z-index: 2; transform: scale(1) }
   .phone--sm .phone__screen img{ opacity: 1; transform: none }
 
   /* Dynamic Island — true iPhone 17 Pro Max proportions */
@@ -317,6 +324,8 @@ const acts: Act[] = [
 
   @media (prefers-reduced-motion: reduce) {
     .phone__screen img{transition:none}
+    .panel{transition:none}
+    .panel.is-dim{opacity:1}
   }
 </style>
 
@@ -325,35 +334,63 @@ const acts: Act[] = [
   const panels  = document.querySelectorAll<HTMLElement>('[data-act-panel]');
 
   if (screens.length && panels.length) {
-    const setActive = (idx: string) => {
-      screens.forEach(s => s.classList.toggle('is-active', s.dataset.actScreen === idx));
+    const desktop = window.matchMedia('(min-width: 901px)');
+
+    // Warm the screens one viewport ahead of the section so the first swap of
+    // each act never fades onto a still-decoding image.
+    const warm = new IntersectionObserver((entries, obs) => {
+      if (!entries.some(en => en.isIntersecting)) return;
+      obs.disconnect();
+      screens.forEach(img => {
+        img.loading = 'eager';
+        img.decode?.().catch(() => {});
+      });
+    }, { rootMargin: '100% 0px' });
+    warm.observe(panels[0]);
+
+    // The screen and the copy share one driver: the active act is the panel
+    // whose center sits closest to the viewport center — the same moment the
+    // reader's eye moves to it. No thresholds, no observer latency.
+    let active = '1';
+    let prev: string | null = null;
+
+    const apply = () => {
+      screens.forEach(s => {
+        s.classList.toggle('is-active', s.dataset.actScreen === active);
+        s.classList.toggle('is-prev', s.dataset.actScreen === prev);
+      });
+      panels.forEach(p => {
+        p.classList.toggle('is-dim', desktop.matches && p.dataset.actPanel !== active);
+      });
     };
 
-    const io = new IntersectionObserver((entries) => {
-      // Find the most-visible panel and activate its screen.
-      let best: { ratio: number; idx: string } | null = null;
-      entries.forEach(en => {
-        const idx = (en.target as HTMLElement).dataset.actPanel!;
-        if (en.isIntersecting && (!best || en.intersectionRatio > best.ratio)) {
-          best = { ratio: en.intersectionRatio, idx };
-        }
-      });
-      // Also consider currently-visible panels not in this batch
-      const allRatios: { ratio: number; idx: string }[] = [];
+    const pick = () => {
+      const mid = window.innerHeight / 2;
+      let bestIdx = active, bestDist = Infinity, activeDist = Infinity;
       panels.forEach(p => {
         const r = p.getBoundingClientRect();
-        const vh = window.innerHeight;
-        const visible = Math.max(0, Math.min(r.bottom, vh) - Math.max(r.top, 0));
-        const ratio = visible / Math.min(r.height, vh);
-        allRatios.push({ ratio, idx: p.dataset.actPanel! });
+        const d = Math.abs((r.top + r.bottom) / 2 - mid);
+        if (p.dataset.actPanel === active) activeDist = d;
+        if (d < bestDist) { bestDist = d; bestIdx = p.dataset.actPanel!; }
       });
-      allRatios.sort((a, b) => b.ratio - a.ratio);
-      if (allRatios[0] && allRatios[0].ratio > 0.05) setActive(allRatios[0].idx);
-    }, {
-      threshold: [0, 0.25, 0.5, 0.75, 1],
-      rootMargin: '-20% 0px -20% 0px'
-    });
+      // Small hysteresis so the swap can't flutter right at the midpoint.
+      if (bestIdx !== active && bestDist < activeDist - 12) {
+        prev = active;
+        active = bestIdx;
+      }
+      apply();
+    };
 
-    panels.forEach(p => io.observe(p));
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; pick(); });
+    };
+
+    pick();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    desktop.addEventListener?.('change', () => apply());
   }
 </script>
