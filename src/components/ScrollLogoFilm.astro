@@ -11,7 +11,7 @@
 const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_095006_fd4e35b8-e575-4e10-9226-e211d064d80c.mp4";
 
 // FRAME_V busts browser/CDN caches when the frames are re-rendered.
-const FRAME_V = "3";
+const FRAME_V = "4";
 const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
 ---
 <section class="film" data-film aria-label="BURS — your wardrobe, intelligently styled">
@@ -205,7 +205,7 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
     const ctx = canvas.getContext('2d', { alpha: false });
     const FRAME_COUNT = 100;
     const BASE = '/assets/logo-seq/frame_';
-    const FRAME_V = '3';
+    const FRAME_V = '4';
     const pad = (n: number) => String(n).padStart(3, '0');
 
     // Crossfade band: video → canvas. Before A it's all video; after B all canvas.
