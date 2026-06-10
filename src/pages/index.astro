@@ -2,7 +2,7 @@
 import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
 import ActsPlates from "../components/ActsPlates.astro";
-import LocalizedPriceCard from "../components/LocalizedPriceCard.astro";
+import PriceHangTag from "../components/PriceHangTag.astro";
 import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
@@ -33,8 +33,8 @@ import { softwareApplication, product } from "../lib/schema";
           <a class="cta cta--ghost" href="/pricing">See full pricing <span class="cta__arrow">→</span></a>
         </div>
       </div>
-      <div class="reveal">
-        <LocalizedPriceCard />
+      <div>
+        <PriceHangTag />
       </div>
     </div>
   </section>
