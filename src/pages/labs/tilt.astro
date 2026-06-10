@@ -1,0 +1,179 @@
+---
+// src/pages/labs/tilt.astro
+// Concept 05 — Tilt Phone (includes the phone mockup). The phone lives in a
+// perspective stage and leans through each act as you scroll — screens swap
+// in sync with the copy, and a pair of mono annotations land beside the
+// device for every act.
+import Base from "../../layouts/Base.astro";
+import LabHeader from "./_LabHeader.astro";
+import Phone from "./_Phone.astro";
+import { labActs } from "./_data";
+---
+<Base
+  title="Lab 05 — Tilt Phone"
+  description="Showcase concept: the phone mockup leaning in 3D with scroll, annotated per act."
+  path="/labs/tilt"
+>
+  <meta slot="head" name="robots" content="noindex,nofollow" />
+  <LabHeader n={5} name="Tilt Phone" concept="The phone leans through each act in 3D; annotations land beside it" phone />
+
+  <section class="tilt" data-tilt>
+    <div class="wrap tilt__grid">
+      <aside class="tilt__phone-col" aria-hidden="true">
+        <div class="tilt__persp">
+          <div class="tilt__rig" data-tilt-rig>
+            <Phone acts={labActs} />
+          </div>
+        </div>
+
+        <!-- Annotations: one upper-right, one lower-left of the device -->
+        {labActs.map((a, i) => (
+          <div class="tilt__notes" data-tilt-notes={a.index} class:list={[i === 0 && "is-on"]}>
+            <p class="tilt__note tilt__note--tr"><span class="tilt__rule"></span>{a.notes[0]}</p>
+            <p class="tilt__note tilt__note--bl">{a.notes[1]}<span class="tilt__rule"></span></p>
+          </div>
+        ))}
+      </aside>
+
+      <div class="tilt__panels">
+        {labActs.map(a => (
+          <article class="tpanel" data-tilt-panel={a.index}>
+            <p class="eyebrow">{a.eyebrow}</p>
+            <h2 set:html={a.headline} />
+            <p class="lede">{a.lede}</p>
+          </article>
+        ))}
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .tilt{ background: var(--cream-paper); padding-block: clamp(48px, 6vh, 90px) }
+  .tilt__grid{
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: clamp(40px, 6vw, 96px); align-items: start;
+  }
+
+  .tilt__phone-col{
+    --phone-w: min(320px, 30vh * 1320 / 2868 * 2);
+    position: sticky; top: 0; height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tilt__persp{ perspective: 1300px }
+  .tilt__rig{
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .tilt__notes{
+    position: absolute; inset: 0;
+    pointer-events: none;
+    opacity: 0; transition: opacity .5s var(--eo);
+  }
+  .tilt__notes.is-on{ opacity: 1 }
+  .tilt__note{
+    position: absolute;
+    display: flex; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 10px; letter-spacing: .18em;
+    text-transform: uppercase; color: var(--charcoal-2);
+    white-space: nowrap;
+    left: 50%; transform: translateX(-50%);
+  }
+  .tilt__rule{ display: block; width: 44px; height: 1px; background: var(--gold-deep) }
+  /* Captions ride above and below the device (phone height = w * 2868/1320) */
+  .tilt__note--tr{ top: calc(50% - var(--phone-w, 320px) * 2868 / 1320 / 2 - 52px) }
+  .tilt__note--bl{ top: calc(50% + var(--phone-w, 320px) * 2868 / 1320 / 2 + 40px) }
+
+  .tilt__panels{ display: flex; flex-direction: column }
+  .tpanel{
+    min-height: 70vh;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: clamp(28px, 5vh, 56px) 0;
+    border-top: 1px solid rgba(28,25,23,.07);
+    transition: opacity .45s var(--eo);
+  }
+  .tpanel:first-child{ border-top: 0 }
+  .tpanel.is-dim{ opacity: .35 }
+  .tpanel .eyebrow{ margin-bottom: 18px; color: var(--gold-deep) }
+  .tpanel h2{
+    margin: 0;
+    font-family: var(--display); font-weight: 200; letter-spacing: -.035em; line-height: .94;
+    font-size: clamp(36px, 4.6vw, 64px); color: var(--charcoal); text-wrap: balance;
+  }
+  .tpanel h2 :global(em){ font-style: italic; color: var(--gold); font-weight: 300 }
+  .tpanel .lede{
+    margin-top: 20px; max-width: 42ch;
+    font-family: var(--serif); font-style: italic;
+    font-size: var(--t-lede); line-height: 1.5; color: var(--charcoal-2);
+  }
+
+  @media (max-width: 900px){
+    .tilt__grid{ grid-template-columns: 1fr }
+    .tilt__phone-col{ position: relative; height: 64vh; --phone-w: min(240px, 36vh * 1320 / 2868) }
+    .tpanel{ min-height: 55vh }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-tilt]');
+  const rig = document.querySelector<HTMLElement>('[data-tilt-rig]');
+  const screens = [...document.querySelectorAll<HTMLImageElement>('[data-lab-screen]')];
+  const panels = [...document.querySelectorAll<HTMLElement>('[data-tilt-panel]')];
+  const notes = [...document.querySelectorAll<HTMLElement>('[data-tilt-notes]')];
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (section && rig && screens.length && panels.length) {
+    let active = 1;
+    let prev: number | null = null;
+
+    const apply = () => {
+      screens.forEach(s => {
+        const i = Number(s.dataset.labScreen);
+        s.classList.toggle('is-active', i === active);
+        s.classList.toggle('is-prev', i === prev);
+      });
+      panels.forEach(p => p.classList.toggle('is-dim', Number(p.dataset.tiltPanel) !== active));
+      notes.forEach(n => n.classList.toggle('is-on', Number(n.dataset.tiltNotes) === active));
+    };
+
+    const render = () => {
+      // Active act: panel center closest to viewport center (12px hysteresis)
+      const mid = window.innerHeight / 2;
+      let best = active, bestD = Infinity, activeD = Infinity;
+      panels.forEach(p => {
+        const r = p.getBoundingClientRect();
+        const d = Math.abs((r.top + r.bottom) / 2 - mid);
+        const i = Number(p.dataset.tiltPanel);
+        if (i === active) activeD = d;
+        if (d < bestD) { bestD = d; best = i; }
+      });
+      if (best !== active && bestD < activeD - 12) { prev = active; active = best; }
+      apply();
+
+      // Continuous lean: the phone sweeps across each act, alternating side
+      if (!reduced) {
+        const total = section.offsetHeight - window.innerHeight;
+        const p = total > 0 ? Math.min(1, Math.max(0, -section.getBoundingClientRect().top / total)) : 0;
+        const local = Math.min(p * panels.length, panels.length - 1e-4);
+        const idx = Math.floor(local);
+        const t = local - idx;
+        const dir = idx % 2 === 0 ? 1 : -1;
+        const ry = dir * (-9 + 18 * t);          // sweep -9° -> 9°, mirrored per act
+        const rx = 3 - 6 * t;                     // gentle nod
+        rig.style.transform = `rotateY(${ry.toFixed(2)}deg) rotateX(${rx.toFixed(2)}deg)`;
+      }
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; render(); });
+    };
+
+    render();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+  }
+</script>

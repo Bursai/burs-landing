@@ -1,0 +1,187 @@
+---
+// src/pages/labs/arch.astro
+// Concept 03 — Atelier Arch. One pinned couture plate: an arched frame holds
+// the screens, crossfading with a slow parallax drift, while a giant ghost
+// numeral turns behind it and the copy trades in the lower-left corner.
+import Base from "../../layouts/Base.astro";
+import LabHeader from "./_LabHeader.astro";
+import { labActs } from "./_data";
+---
+<Base
+  title="Lab 03 — Atelier Arch"
+  description="Showcase concept: app screens inside a couture arch with parallax and ghost numerals."
+  path="/labs/arch"
+>
+  <meta slot="head" name="robots" content="noindex,nofollow" />
+  <LabHeader n={3} name="Atelier Arch" concept="Couture arch frame, parallax crossfades, ghost numerals" />
+
+  <section class="arch" data-arch>
+    <div class="arch__stage">
+      <!-- Ghost numerals behind the arch -->
+      <div class="arch__numerals" aria-hidden="true">
+        {labActs.map((a, i) => (
+          <span class="arch__numeral" data-arch-numeral={a.index} class:list={[i === 0 && "is-on"]}>{a.numeral}</span>
+        ))}
+      </div>
+
+      <!-- The arch plate -->
+      <div class="arch__frame" aria-hidden="true">
+        <div class="arch__window">
+          {labActs.map((a, i) => (
+            <img
+              src={a.image}
+              alt={a.imageAlt}
+              data-arch-screen={a.index}
+              class:list={[i === 0 && "is-active"]}
+              loading="eager"
+              decoding="async"
+            />
+          ))}
+        </div>
+      </div>
+
+      <!-- Copy, lower-left; act marker, lower-right -->
+      <div class="arch__copy wrap">
+        {labActs.map((a, i) => (
+          <div class="arch__cap" data-arch-copy={a.index} class:list={[i === 0 && "is-on"]}>
+            <p class="eyebrow">{a.eyebrow}</p>
+            <h2 set:html={a.headline} />
+            <p class="lede">{a.lede}</p>
+          </div>
+        ))}
+        <p class="arch__marker"><span data-arch-marker>ACT I</span> / V</p>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .arch{ height: 520vh; background: var(--cream); position: relative }
+  .arch__stage{ position: sticky; top: 0; height: 100vh; overflow: hidden }
+
+  .arch__numerals{ position: absolute; inset: 0; display: grid; place-items: center }
+  .arch__numeral{
+    grid-area: 1 / 1;
+    font-family: var(--display); font-weight: 200; font-style: italic;
+    font-size: clamp(300px, 64vh, 640px); line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--gold);
+    opacity: 0;
+    transform: translateX(8vw) scale(.96);
+    transition: opacity .6s var(--eo), transform .8s var(--eo);
+    user-select: none;
+  }
+  .arch__numeral.is-on{ opacity: .38; transform: translateX(12vw) scale(1) }
+
+  .arch__frame{
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-58%, -50%);
+    height: min(80vh, 760px);
+    aspect-ratio: 1320 / 2470;
+    padding: clamp(10px, 1.2vw, 16px);
+    border: 1px solid var(--gold-deep);
+    border-radius: 50% 50% 0 0 / 32% 32% 0 0;
+    background: var(--cream-paper);
+    box-shadow: 0 50px 90px -40px rgba(14,13,12,.45);
+  }
+  .arch__window{
+    position: relative; width: 100%; height: 100%;
+    border-radius: inherit;
+    overflow: hidden;
+    border: 1px solid rgba(28,25,23,.2);
+    background: #0a0908;
+  }
+  .arch__window img{
+    position: absolute; inset: 0;
+    width: 100%; height: 112%;          /* headroom for the parallax drift */
+    object-fit: cover;
+    opacity: 0; z-index: 0;
+    transition: opacity .55s var(--eo);
+    transform: translateY(calc(var(--drift, 0) * -12%));
+    will-change: opacity, transform;
+  }
+  .arch__window img.is-prev{ opacity: 1; z-index: 1; transition: none }
+  .arch__window img.is-active{ opacity: 1; z-index: 2 }
+
+  .arch__copy{ position: absolute; left: 0; right: 0; bottom: clamp(28px, 6vh, 64px); pointer-events: none }
+  .arch__cap{
+    position: absolute; bottom: 0; left: var(--gutter);
+    max-width: 38ch;
+    opacity: 0; transform: translateY(14px);
+    transition: opacity .45s var(--eo), transform .45s var(--eo);
+  }
+  .arch__cap.is-on{ opacity: 1; transform: translateY(0) }
+  .arch__cap .eyebrow{ color: var(--gold-deep); margin-bottom: 12px }
+  .arch__cap h2{
+    margin: 0;
+    font-family: var(--display); font-weight: 300; letter-spacing: -.03em; line-height: 1.02;
+    font-size: clamp(26px, 2.8vw, 42px); color: var(--charcoal); text-wrap: balance;
+    /* Cream halo keeps the line crisp where it crosses the arch */
+    text-shadow: 0 0 16px var(--cream), 0 0 16px var(--cream), 0 0 36px var(--cream);
+  }
+  .arch__cap h2 :global(em){ font-style: italic; color: var(--gold) }
+  .arch__cap .lede{
+    margin-top: 10px;
+    font-family: var(--serif); font-style: italic;
+    font-size: 15px; line-height: 1.5; color: var(--charcoal-2);
+    text-shadow: 0 0 14px var(--cream), 0 0 14px var(--cream), 0 0 30px var(--cream);
+  }
+  .arch__marker{
+    position: absolute; bottom: 0; right: var(--gutter);
+    font-family: var(--mono); font-size: 11px; letter-spacing: .3em;
+    color: var(--charcoal-2);
+  }
+  .arch__marker span{ color: var(--gold-deep) }
+
+  @media (max-width: 800px){
+    .arch__frame{ transform: translate(-50%, -56%); height: min(62vh, 620px) }
+    .arch__numeral.is-on{ transform: translateX(0) scale(1); opacity: .2 }
+    .arch__cap{ max-width: min(86vw, 38ch) }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-arch]');
+  const screens = [...document.querySelectorAll<HTMLImageElement>('[data-arch-screen]')];
+  const numerals = [...document.querySelectorAll<HTMLElement>('[data-arch-numeral]')];
+  const caps = [...document.querySelectorAll<HTMLElement>('[data-arch-copy]')];
+  const marker = document.querySelector<HTMLElement>('[data-arch-marker]');
+  const ROMAN = ['I', 'II', 'III', 'IV', 'V'];
+
+  if (section && screens.length) {
+    const N = screens.length;
+    let active = 1;
+    let prev: number | null = null;
+
+    const render = () => {
+      const total = section.offsetHeight - window.innerHeight;
+      const p = total > 0 ? Math.min(1, Math.max(0, -section.getBoundingClientRect().top / total)) : 0;
+      const local = Math.min(p * N, N - 1e-4);
+      const idx = Math.floor(local) + 1;          // 1-based act
+      const t = local - (idx - 1);                // progress within the act
+
+      if (idx !== active) { prev = active; active = idx; }
+
+      screens.forEach(s => {
+        const i = Number(s.dataset.archScreen);
+        s.classList.toggle('is-active', i === active);
+        s.classList.toggle('is-prev', i === prev);
+        if (i === active) s.style.setProperty('--drift', String(t));
+      });
+      numerals.forEach(n => n.classList.toggle('is-on', Number(n.dataset.archNumeral) === active));
+      caps.forEach(c => c.classList.toggle('is-on', Number(c.dataset.archCopy) === active));
+      if (marker) marker.textContent = `ACT ${ROMAN[active - 1]}`;
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; render(); });
+    };
+
+    render();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+  }
+</script>

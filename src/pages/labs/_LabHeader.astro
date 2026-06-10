@@ -1,0 +1,60 @@
+---
+// src/pages/labs/_LabHeader.astro
+// Slim strip identifying the lab variant, with prev/next navigation.
+interface Props {
+  n: number;            // 1-based variant number
+  name: string;
+  concept: string;
+  phone?: boolean;      // includes the phone mockup
+}
+const { n, name, concept, phone = false } = Astro.props;
+const slugs = ["plates", "deck", "arch", "contact", "tilt", "duet"];
+const prev = slugs[(n - 2 + slugs.length) % slugs.length];
+const next = slugs[n % slugs.length];
+---
+<header class="labbar">
+  <div class="wrap labbar__row">
+    <a class="labbar__back" href="/labs">← All concepts</a>
+    <p class="labbar__name">
+      <span class="labbar__n">{String(n).padStart(2, "0")} / 06</span>
+      {name}
+      {phone && <span class="labbar__tag">phone mockup</span>}
+      <span class="labbar__concept">{concept}</span>
+    </p>
+    <nav class="labbar__nav" aria-label="Lab variants">
+      <a href={`/labs/${prev}`}>Prev</a>
+      <a href={`/labs/${next}`}>Next</a>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .labbar{
+    background: var(--ink);
+    color: var(--cream);
+    border-bottom: 1px solid rgba(245,240,232,.12);
+  }
+  .labbar__row{
+    display: flex; align-items: baseline; gap: 24px;
+    padding-block: 14px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .12em;
+  }
+  .labbar__back{ color: var(--gold-bright); text-decoration: none; white-space: nowrap }
+  .labbar__back:hover{ color: var(--cream) }
+  .labbar__name{ margin: 0; flex: 1; min-width: 0; text-transform: uppercase; letter-spacing: .2em }
+  .labbar__n{ color: var(--gold); margin-right: 14px }
+  .labbar__tag{
+    margin-left: 14px; padding: 2px 8px;
+    border: 1px solid var(--gold-deep); border-radius: 999px;
+    color: var(--gold-bright); font-size: 9px; letter-spacing: .25em;
+  }
+  .labbar__concept{
+    display: block; margin-top: 4px;
+    color: rgba(245,240,232,.55);
+    text-transform: none; letter-spacing: .04em;
+  }
+  .labbar__nav{ display: flex; gap: 18px; white-space: nowrap }
+  .labbar__nav a{ color: rgba(245,240,232,.7); text-decoration: none; text-transform: uppercase }
+  .labbar__nav a:hover{ color: var(--gold-bright) }
+  @media (max-width: 700px){ .labbar__concept{ display: none } }
+</style>

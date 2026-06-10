@@ -1,0 +1,185 @@
+---
+// src/pages/labs/duet.astro
+// Concept 06 — Stage Duet (includes the phone mockup). One pinned cinematic
+// stage: the active screen floods the backdrop in soft focus with a slow
+// Ken Burns drift, while the phone holds the same screen crisp downstage.
+// Copy plays lower-left over the light; a gold progress hairline runs the
+// bottom edge.
+import Base from "../../layouts/Base.astro";
+import LabHeader from "./_LabHeader.astro";
+import Phone from "./_Phone.astro";
+import { labActs } from "./_data";
+---
+<Base
+  title="Lab 06 — Stage Duet"
+  description="Showcase concept: soft-focus screen backdrop with the phone mockup holding it crisp downstage."
+  path="/labs/duet"
+>
+  <meta slot="head" name="robots" content="noindex,nofollow" />
+  <LabHeader n={6} name="Stage Duet" concept="Soft-focus backdrop + crisp phone downstage, copy over the light" phone />
+
+  <section class="duet" data-duet>
+    <div class="duet__stage">
+      <!-- Soft-focus backdrop -->
+      <div class="duet__back" aria-hidden="true">
+        {labActs.map((a, i) => (
+          <img
+            src={a.image}
+            alt=""
+            data-duet-back={a.index}
+            class:list={[i === 0 && "is-active"]}
+            loading="eager"
+            decoding="async"
+          />
+        ))}
+        <div class="duet__veil"></div>
+      </div>
+
+      <!-- Crisp phone, downstage right -->
+      <div class="duet__phone" aria-hidden="true">
+        <Phone acts={labActs} />
+      </div>
+
+      <!-- Copy, lower-left -->
+      <div class="duet__copy wrap">
+        {labActs.map((a, i) => (
+          <div class="duet__cap" data-duet-copy={a.index} class:list={[i === 0 && "is-on"]}>
+            <p class="eyebrow">{a.eyebrow}</p>
+            <h2 set:html={a.headline} />
+            <p class="lede">{a.lede}</p>
+          </div>
+        ))}
+      </div>
+
+      <!-- Progress hairline -->
+      <div class="duet__progress" aria-hidden="true"><span data-duet-progress></span></div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .duet{ height: 520vh; background: var(--cream); position: relative }
+  .duet__stage{ position: sticky; top: 0; height: 100vh; overflow: hidden }
+
+  .duet__back{ position: absolute; inset: 0 }
+  .duet__back img{
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: blur(26px) saturate(.92);
+    opacity: 0; z-index: 0;
+    transition: opacity .8s var(--eo);
+    transform: scale(calc(1.16 + var(--kb, 0) * 0.06));
+    will-change: opacity, transform;
+  }
+  .duet__back img.is-prev{ opacity: 1; z-index: 1; transition: none }
+  .duet__back img.is-active{ opacity: 1; z-index: 2 }
+  .duet__veil{
+    position: absolute; inset: 0; z-index: 3;
+    background:
+      linear-gradient(105deg,
+        rgba(245,240,232,.94) 0%,
+        rgba(245,240,232,.72) 38%,
+        rgba(245,240,232,.30) 68%,
+        rgba(245,240,232,.55) 100%);
+  }
+
+  .duet__phone{
+    position: absolute; z-index: 4;
+    right: clamp(24px, 9vw, 170px);
+    top: 50%;
+    transform: translateY(-50%);
+    --phone-w: min(320px, 56vh * 1320 / 2868);
+  }
+
+  .duet__copy{ position: absolute; left: 0; right: 0; bottom: clamp(36px, 9vh, 96px); z-index: 5; pointer-events: none }
+  .duet__cap{
+    position: absolute; bottom: 0; left: var(--gutter);
+    max-width: 40ch;
+    opacity: 0; transform: translateY(14px);
+    transition: opacity .5s var(--eo), transform .5s var(--eo);
+  }
+  .duet__cap.is-on{ opacity: 1; transform: translateY(0) }
+  .duet__cap .eyebrow{ color: var(--gold-deep); margin-bottom: 14px }
+  .duet__cap h2{
+    margin: 0;
+    font-family: var(--display); font-weight: 250; letter-spacing: -.032em; line-height: .98;
+    font-size: clamp(32px, 4vw, 60px); color: var(--charcoal); text-wrap: balance;
+  }
+  .duet__cap h2 :global(em){ font-style: italic; color: var(--gold) }
+  .duet__cap .lede{
+    margin-top: 14px; max-width: 46ch;
+    font-family: var(--serif); font-style: italic;
+    font-size: 16px; line-height: 1.5; color: var(--charcoal-2);
+  }
+
+  .duet__progress{
+    position: absolute; left: 0; right: 0; bottom: 0; height: 2px;
+    background: rgba(28,25,23,.1); z-index: 6;
+  }
+  .duet__progress span{
+    display: block; height: 100%; width: 0;
+    background: var(--gold-deep);
+  }
+
+  @media (max-width: 860px){
+    .duet__phone{
+      right: 50%; transform: translate(50%, -64%);
+      --phone-w: min(240px, 40vh * 1320 / 2868);
+    }
+    .duet__cap h2{ font-size: 28px }
+    .duet__veil{
+      background: linear-gradient(180deg,
+        rgba(245,240,232,.7) 0%, rgba(245,240,232,.4) 45%, rgba(245,240,232,.92) 100%);
+    }
+  }
+</style>
+
+<script>
+  const section = document.querySelector<HTMLElement>('[data-duet]');
+  const backs = [...document.querySelectorAll<HTMLImageElement>('[data-duet-back]')];
+  const screens = [...document.querySelectorAll<HTMLImageElement>('[data-lab-screen]')];
+  const caps = [...document.querySelectorAll<HTMLElement>('[data-duet-copy]')];
+  const bar = document.querySelector<HTMLElement>('[data-duet-progress]');
+
+  if (section && backs.length && screens.length) {
+    const N = backs.length;
+    let active = 1;
+    let prev: number | null = null;
+
+    const render = () => {
+      const total = section.offsetHeight - window.innerHeight;
+      const p = total > 0 ? Math.min(1, Math.max(0, -section.getBoundingClientRect().top / total)) : 0;
+      const local = Math.min(p * N, N - 1e-4);
+      const idx = Math.floor(local) + 1;
+      const t = local - (idx - 1);
+
+      if (idx !== active) { prev = active; active = idx; }
+
+      backs.forEach(b => {
+        const i = Number(b.dataset.duetBack);
+        b.classList.toggle('is-active', i === active);
+        b.classList.toggle('is-prev', i === prev);
+        if (i === active) b.style.setProperty('--kb', String(t));
+      });
+      screens.forEach(s => {
+        const i = Number(s.dataset.labScreen);
+        s.classList.toggle('is-active', i === active);
+        s.classList.toggle('is-prev', i === prev);
+      });
+      caps.forEach(c => c.classList.toggle('is-on', Number(c.dataset.duetCopy) === active));
+      if (bar) bar.style.width = `${(p * 100).toFixed(2)}%`;
+    };
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; render(); });
+    };
+
+    render();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+  }
+</script>

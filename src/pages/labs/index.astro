@@ -1,0 +1,108 @@
+---
+// src/pages/labs/index.astro
+// Index of the six app-screen showcase concepts.
+import Base from "../../layouts/Base.astro";
+
+const variants = [
+  { n: 1, slug: "plates",  name: "Editorial Plates",  phone: false,
+    blurb: "A pinned horizontal gallery. Each screen hangs as a matted exhibition plate; scroll glides the wall past the lens, captions trade in step." },
+  { n: 2, slug: "deck",    name: "Lookbook Deck",     phone: false,
+    blurb: "Screens dealt as lookbook cards. Each act slides a new card onto the pile with a settle of rotation, the previous acts fanned beneath." },
+  { n: 3, slug: "arch",    name: "Atelier Arch",      phone: false,
+    blurb: "A couture fashion-plate arch. Screens crossfade inside the arch with a slow parallax drift while a ghost numeral turns behind." },
+  { n: 4, slug: "contact", name: "Contact Sheet",     phone: false,
+    blurb: "A photographer's contact sheet. All five screens sit in the strip; a gold viewfinder slides along it and the chosen frame fills the stage." },
+  { n: 5, slug: "tilt",    name: "Tilt Phone",        phone: true,
+    blurb: "The phone, in three dimensions. It leans and turns with your scroll while annotations land beside each act's screen." },
+  { n: 6, slug: "duet",    name: "Stage Duet",        phone: true,
+    blurb: "Cinema staging. The active screen floods the backdrop soft-focus while the phone holds it crisp downstage — copy plays over the light." },
+];
+---
+<Base
+  title="Showcase lab — six concepts"
+  description="Internal lab: six design and animation concepts for showcasing the BURS app screens."
+  path="/labs"
+>
+  <meta slot="head" name="robots" content="noindex,nofollow" />
+
+  <section class="lab">
+    <div class="wrap">
+      <p class="eyebrow lab__eyebrow">INTERNAL — SHOWCASE LAB</p>
+      <h1 class="lab__title">Six ways to stage the <em>screens</em>.</h1>
+      <p class="lab__lede">
+        Five acts of the app, six presentations. Four leave the hardware behind;
+        two keep the phone. Scroll each one to feel its motion.
+      </p>
+
+      <ol class="lab__grid" role="list">
+        {variants.map(v => (
+          <li class="card">
+            <a href={`/labs/${v.slug}`}>
+              <p class="card__n">{String(v.n).padStart(2, "0")}</p>
+              <h2 class="card__name">{v.name}
+                {v.phone && <span class="card__tag">phone mockup</span>}
+              </h2>
+              <p class="card__blurb">{v.blurb}</p>
+              <span class="card__go">View concept →</span>
+            </a>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .lab{ background: var(--cream-paper); padding-block: clamp(72px, 11vh, 140px) }
+  .lab__eyebrow{ color: var(--gold-deep); margin-bottom: 18px }
+  .lab__title{
+    font-family: var(--display); font-weight: 200; letter-spacing: -.035em; line-height: .95;
+    font-size: var(--t-section); color: var(--charcoal); margin: 0;
+  }
+  .lab__title em{ font-style: italic; color: var(--gold) }
+  .lab__lede{
+    margin-top: 22px; max-width: 52ch;
+    font-family: var(--serif); font-style: italic;
+    font-size: var(--t-lede); line-height: 1.5; color: var(--charcoal-2);
+  }
+
+  .lab__grid{
+    list-style: none; padding: 0;
+    margin-top: clamp(44px, 6vh, 72px);
+    display: grid; gap: 1px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    background: rgba(28,25,23,.12);
+    border: 1px solid rgba(28,25,23,.12);
+  }
+  .card a{
+    display: flex; flex-direction: column; height: 100%;
+    padding: clamp(26px, 3vw, 40px);
+    background: var(--cream);
+    text-decoration: none;
+    transition: background .35s var(--eo);
+  }
+  .card a:hover{ background: var(--cream-warm) }
+  .card__n{ font-family: var(--mono); font-size: 11px; letter-spacing: .3em; color: var(--gold-deep) }
+  .card__name{
+    margin-top: 14px;
+    font-family: var(--display); font-weight: 300; letter-spacing: -.02em;
+    font-size: clamp(24px, 2.4vw, 32px); color: var(--charcoal);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .card__tag{
+    font-family: var(--mono); font-size: 9px; letter-spacing: .25em; text-transform: uppercase;
+    color: var(--gold-deep); border: 1px solid var(--gold-deep);
+    border-radius: 999px; padding: 3px 10px;
+  }
+  .card__blurb{
+    margin-top: 14px; flex: 1;
+    font-family: var(--serif); font-style: italic;
+    font-size: 15px; line-height: 1.55; color: var(--charcoal-2);
+  }
+  .card__go{
+    margin-top: 22px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--charcoal);
+  }
+  .card a:hover .card__go{ color: var(--gold-deep) }
+</style>
