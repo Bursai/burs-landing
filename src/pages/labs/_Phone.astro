@@ -1,0 +1,151 @@
+---
+// src/pages/labs/_Phone.astro
+// Reusable CSS iPhone shell for the lab variants. Renders all five act
+// screens stacked inside; labs toggle .is-active / .is-prev on
+// [data-lab-screen] to drive the synced crossfade.
+import type { LabAct } from "./_data";
+
+interface Props {
+  acts: LabAct[];
+}
+const { acts } = Astro.props;
+---
+<div class="lphone">
+  <div class="lphone__buttons" aria-hidden="true">
+    <span class="lphone__btn lphone__btn--action"></span>
+    <span class="lphone__btn lphone__btn--vup"></span>
+    <span class="lphone__btn lphone__btn--vdown"></span>
+    <span class="lphone__btn lphone__btn--side"></span>
+    <span class="lphone__btn lphone__btn--cam"></span>
+  </div>
+  <div class="lphone__bezel">
+    <div class="lphone__screen">
+      {acts.map((a, i) => (
+        <img
+          src={a.image}
+          alt={a.imageAlt}
+          data-lab-screen={a.index}
+          class={i === 0 ? "is-active" : ""}
+          loading="eager"
+          decoding="async"
+        />
+      ))}
+      <div class="lphone__island" aria-hidden="true"><span class="lphone__lens"></span></div>
+      <div class="lphone__glare" aria-hidden="true"></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .lphone{
+    --w: var(--phone-w, 320px);
+    --r-outer: 56px;
+    --r-bezel: 50px;
+    --r-screen: 46px;
+    width: var(--w);
+    aspect-ratio: 1320 / 2868;
+    border-radius: var(--r-outer);
+    padding: 4px;
+    position: relative;
+    background:
+      linear-gradient(135deg,
+        #3a3a3c 0%, #1c1c1e 18%, #0e0d0c 50%, #1c1c1e 82%, #3a3a3c 100%);
+    box-shadow:
+      0 80px 110px -30px rgba(0,0,0,.55),
+      0 35px 60px -15px rgba(0,0,0,.45),
+      inset 0 1.5px 0 0 rgba(255,255,255,.22),
+      inset 0 -1.5px 0 0 rgba(0,0,0,.7),
+      inset 1.5px 0 0 0 rgba(255,255,255,.08),
+      inset -1.5px 0 0 0 rgba(255,255,255,.08),
+      inset 0 0 0 1px rgba(0,0,0,.6);
+  }
+
+  .lphone__bezel{
+    position: relative;
+    width: 100%; height: 100%;
+    background: #000;
+    border-radius: var(--r-bezel);
+    padding: 6px;
+    box-shadow:
+      inset 0 0 0 1px rgba(255,255,255,.04),
+      inset 0 0 18px rgba(0,0,0,.6);
+  }
+
+  .lphone__screen{
+    position: relative;
+    width: 100%; height: 100%;
+    background: #0a0908;
+    border-radius: var(--r-screen);
+    overflow: hidden;
+  }
+
+  .lphone__screen img{
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    z-index: 0;
+    transition:
+      opacity .45s cubic-bezier(.25,.8,.25,1),
+      transform 1s var(--eo);
+    transform: scale(1.035);
+    will-change: opacity;
+  }
+  .lphone__screen img.is-prev{ opacity: 1; z-index: 1; transform: scale(1); transition: none }
+  .lphone__screen img.is-active{ opacity: 1; z-index: 2; transform: scale(1) }
+
+  .lphone__island{
+    position: absolute;
+    top: 10px; left: 50%;
+    transform: translateX(-50%);
+    width: 28%; height: 22px;
+    background: #000;
+    border-radius: 12px;
+    z-index: 3;
+    box-shadow:
+      inset 0 0 0 1px #141414,
+      inset 0 1px 0 0 rgba(255,255,255,.03),
+      0 1px 2px rgba(0,0,0,.5);
+  }
+  .lphone__lens{
+    position: absolute;
+    top: 50%; right: 14%;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    transform: translateY(-50%);
+    background: radial-gradient(circle at 30% 30%, #2c2c2e 0%, #0a0908 65%);
+    box-shadow:
+      inset 0 0 0 1px rgba(80,80,80,.4),
+      inset 0 0 3px rgba(255,255,255,.1);
+  }
+
+  .lphone__glare{
+    position: absolute; inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+      linear-gradient(135deg,
+        rgba(255,255,255,.10) 0%,
+        rgba(255,255,255,0) 28%,
+        rgba(255,255,255,0) 72%,
+        rgba(255,255,255,.04) 100%);
+    z-index: 4;
+    mix-blend-mode: screen;
+  }
+
+  .lphone__buttons{position:absolute;inset:0;pointer-events:none;z-index:5}
+  .lphone__btn{
+    position: absolute;
+    border-radius: 1px;
+    background: linear-gradient(180deg, #0a0908 0%, #2c2c2e 35%, #2c2c2e 65%, #0a0908 100%);
+    box-shadow:
+      inset 0 0 0 1px rgba(0,0,0,.4),
+      0 1px 0 rgba(255,255,255,.06);
+  }
+  .lphone__btn--action{ left:-3px; top:13%; width:4px; height:34px; border-radius:2px 0 0 2px }
+  .lphone__btn--vup   { left:-3px; top:calc(13% + 50px); width:4px; height:46px; border-radius:2px 0 0 2px }
+  .lphone__btn--vdown { left:-3px; top:calc(13% + 110px); width:4px; height:46px; border-radius:2px 0 0 2px }
+  .lphone__btn--side  { right:-3px; top:18%; width:4px; height:80px; border-radius:0 2px 2px 0 }
+  .lphone__btn--cam   { right:-3px; top:42%; width:4px; height:38px; border-radius:0 2px 2px 0;
+                        background: linear-gradient(180deg, #0a0908 0%, #3a3a3c 30%, #2c2c2e 70%, #0a0908 100%) }
+</style>

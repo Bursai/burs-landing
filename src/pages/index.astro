@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
-import ActsScroll from "../components/ActsScroll.astro";
+import ActsPlates from "../components/ActsPlates.astro";
 import LocalizedPriceCard from "../components/LocalizedPriceCard.astro";
 import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
@@ -18,7 +18,8 @@ import { softwareApplication, product } from "../lib/schema";
   <!-- Hero: the film plays, then recedes as the mark scrubs up and tells the message -->
   <ScrollLogoFilm />
 
-  <ActsScroll />
+  <!-- The app in five acts — screens as editorial plates on a gliding wall -->
+  <ActsPlates />
 
   <!-- Closing section — pricing carries the primary CTA -->
   <section class="pteaser" aria-label="Pricing">
