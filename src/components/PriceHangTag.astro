@@ -3,9 +3,10 @@
 // The price card, hung like a boutique garment tag.
 // On entering the viewport: a gold thread draws down, the tag drops onto it
 // and swings to rest like a real swing-tag (damped pendulum), then keeps an
-// almost imperceptible breathe. Hovering the tag gives it a gentle sway
-// around its eyelet. Falls back to the static card under no-JS / reduced
-// motion.
+// almost imperceptible breathe. Moving the mouse across the tag brushes it
+// aside with real pendulum physics — speed, direction and how low you touch
+// it all matter — and it swings back to rest on its own. Falls back to the
+// static card under no-JS / reduced motion.
 import LocalizedPriceCard from "./LocalizedPriceCard.astro";
 ---
 <div class="ptag" data-ptag>
@@ -73,9 +74,8 @@ import LocalizedPriceCard from "./LocalizedPriceCard.astro";
       ptag-breathe 9s 3.4s ease-in-out infinite;
   }
 
-  /* Hover: a gentle sway around the eyelet (separate `rotate` channel so it
-     never fights the entrance transforms) */
-  .ptag__tag:hover{ animation: ptag-sway 2.2s ease-in-out infinite }
+  /* Mouse brushes are simulated in JS on the tag's own `rotate` channel,
+     pivoting at the eyelet — separate from the entrance transforms above. */
 
   @keyframes ptag-thread{ from{ transform: scaleY(0) } to{ transform: scaleY(1) } }
   @keyframes ptag-drop{
@@ -97,24 +97,20 @@ import LocalizedPriceCard from "./LocalizedPriceCard.astro";
     30%{ rotate: .45deg }
     70%{ rotate: -.4deg }
   }
-  @keyframes ptag-sway{
-    0%, 100%{ rotate: 0deg }
-    28%{ rotate: 1.3deg }
-    75%{ rotate: -1.1deg }
-  }
 
   @media (prefers-reduced-motion: reduce){
     .ptag.is-armed .ptag__thread{ transform: none }
     .ptag.is-armed .ptag__tag{ opacity: 1 }
     .ptag.is-hung .ptag__pendulum,
     .ptag.is-hung .ptag__thread,
-    .ptag.is-hung .ptag__tag,
-    .ptag__tag:hover{ animation: none }
+    .ptag.is-hung .ptag__tag{ animation: none }
   }
 </style>
 
 <script>
   const tags = [...document.querySelectorAll<HTMLElement>('[data-ptag]')];
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   if (tags.length) {
     // Arm only once JS is live so the no-JS fallback stays fully visible
     tags.forEach(t => t.classList.add('is-armed'));
@@ -128,4 +124,63 @@ import LocalizedPriceCard from "./LocalizedPriceCard.astro";
     }, { threshold: 0.25, rootMargin: '0px 0px -8% 0px' });
     tags.forEach(t => io.observe(t));
   }
+
+  // ---- Brush physics ------------------------------------------------------
+  // The tag is a damped pendulum pivoting at its eyelet. Mouse movement
+  // across it imparts angular impulses — faster brushes and lower contact
+  // points (more leverage) swing it harder; it always swings back to rest.
+  if (!reduced) tags.forEach(root => {
+    const tag = root.querySelector<HTMLElement>('.ptag__tag');
+    if (!tag) return;
+
+    const K = 34;        // spring (s^-2) — ~1Hz natural swing, like a paper tag
+    const C = 1.7;       // damping (s^-1) — a few visible oscillations
+    const GAIN = 0.12;   // deg/s of impulse per px of brush
+    const MAX_W = 60;    // deg/s
+    const MAX_A = 12;    // deg
+
+    let theta = 0, omega = 0;
+    let lastX: number | null = null;
+    let lastT = 0;
+    let running = false;
+
+    const step = (now: number) => {
+      const dt = Math.min((now - lastT) / 1000, 0.032) || 0.016;
+      lastT = now;
+      omega += (-K * theta - C * omega) * dt;
+      theta += omega * dt;
+      tag.style.rotate = `${theta.toFixed(3)}deg`;
+      if (Math.abs(theta) < 0.02 && Math.abs(omega) < 0.05) {
+        running = false;
+        theta = 0; omega = 0;
+        tag.style.rotate = '';
+        return;
+      }
+      requestAnimationFrame(step);
+    };
+
+    const wake = () => {
+      if (running) return;
+      running = true;
+      lastT = performance.now();
+      requestAnimationFrame(step);
+    };
+
+    tag.addEventListener('pointerenter', e => { lastX = e.clientX; });
+    tag.addEventListener('pointerleave', () => { lastX = null; });
+    tag.addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse') return;
+      if (lastX === null) { lastX = e.clientX; return; }
+      const dx = e.clientX - lastX;
+      lastX = e.clientX;
+      if (!dx) return;
+      // Leverage: brushing near the bottom edge swings more than at the eyelet
+      const r = tag.getBoundingClientRect();
+      const lever = Math.min(1, Math.max(0.15, (e.clientY - r.top) / r.height));
+      omega = Math.min(MAX_W, Math.max(-MAX_W, omega + dx * GAIN * lever));
+      // Hard stop so wild shaking can't wind it past a believable arc
+      theta = Math.min(MAX_A, Math.max(-MAX_A, theta));
+      wake();
+    }, { passive: true });
+  });
 </script>
