@@ -5,12 +5,12 @@ export interface PriceTier { period: "month" | "year"; amount: number; currency:
 
 export const PRICES: Record<Locale, PriceTier[]> = {
   SE: [
-    { period: "month", amount: 119, currency: "SEK", symbol: "kr" },
-    { period: "year",  amount: 899, currency: "SEK", symbol: "kr" }
+    { period: "month", amount: 109, currency: "SEK", symbol: "kr" },
+    { period: "year",  amount: 799, currency: "SEK", symbol: "kr" }
   ],
   EU: [
-    { period: "month", amount: 10.99, currency: "EUR", symbol: "€" },
-    { period: "year",  amount: 89.99, currency: "EUR", symbol: "€" }
+    { period: "month", amount: 9.99, currency: "EUR", symbol: "€" },
+    { period: "year",  amount: 79.99, currency: "EUR", symbol: "€" }
   ]
 };
 

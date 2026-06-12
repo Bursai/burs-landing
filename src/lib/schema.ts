@@ -36,10 +36,10 @@ export function softwareApplication() {
     operatingSystem: "iOS, Android",
     description: "An AI wardrobe stylist. Scans your closet, reads the day, recommends one outfit.",
     offers: [
-      offerObject("EUR", 10.99, "P1M"),
-      offerObject("EUR", 89.99, "P1Y"),
-      offerObject("SEK", 119, "P1M"),
-      offerObject("SEK", 899, "P1Y")
+      offerObject("EUR", 9.99, "P1M"),
+      offerObject("EUR", 79.99, "P1Y"),
+      offerObject("SEK", 109, "P1M"),
+      offerObject("SEK", 799, "P1Y")
     ]
   });
 }
@@ -51,10 +51,10 @@ export function product() {
     brand: { "@type": "Brand", name: BRAND },
     description: "Wardrobe scanning, context-aware outfit of the day, AI Stylist chat, week planner, travel capsule builder.",
     offers: [
-      offerObject("EUR", 10.99, "P1M"),
-      offerObject("EUR", 89.99, "P1Y"),
-      offerObject("SEK", 119, "P1M"),
-      offerObject("SEK", 899, "P1Y")
+      offerObject("EUR", 9.99, "P1M"),
+      offerObject("EUR", 79.99, "P1Y"),
+      offerObject("SEK", 109, "P1M"),
+      offerObject("SEK", 799, "P1Y")
     ]
   });
 }

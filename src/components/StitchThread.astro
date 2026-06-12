@@ -1,0 +1,226 @@
+---
+// src/components/StitchThread.astro
+// The thread that draws the mark in the hero keeps going: a stitched seam
+// that runs down the page as you scroll — meandering along the margin past
+// the acts, swinging in to hang the price tag, and knotting off at the
+// footer. Same vocabulary as the hero's particle field (charcoal stitches,
+// gold accents), drawn on a fixed full-viewport canvas in document space.
+// Purely decorative: pointer-events none, hidden from AT, skipped entirely
+// under reduced motion.
+---
+<canvas class="stitch" data-stitch aria-hidden="true"></canvas>
+
+<style>
+  .stitch{
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;            /* over section backgrounds, under nav (z:100) */
+    pointer-events: none;
+  }
+</style>
+
+<script>
+  const cv = document.querySelector<HTMLCanvasElement>('[data-stitch]');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (cv && !reduced) {
+    const ctx = cv.getContext('2d', { alpha: true });
+
+    const TAU = Math.PI * 2;
+    const GOLD = 'rgba(201,168,108,';   // --gold
+    const INKC = 'rgba(42,39,36,';      // --charcoal-2
+
+    let dpr = 1, vw = 0, vh = 0;
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      vw = window.innerWidth;
+      vh = window.innerHeight;
+      cv!.width = Math.round(vw * dpr);
+      cv!.height = Math.round(vh * dpr);
+    }
+
+    // ---- Path through the page, in document space -----------------------
+    // Anchors are measured from the live layout so the seam tracks the
+    // sections (and the price tag) wherever they land responsively.
+    type Pt = { x: number; y: number };
+    let samples: Pt[] = [];          // arc-length-ish resampled polyline
+    let knots: Pt[] = [];            // tag hang point + footer tie-off
+    let docH = 0;
+
+    const docTop = (el: Element) => el.getBoundingClientRect().top + window.scrollY;
+
+    function buildPath() {
+      const film = document.querySelector('[data-film]');
+      const plates = document.querySelector('[data-plates]');
+      const desire = document.querySelector('[data-desire]');
+      const action = document.querySelector('[data-action]');
+      const tagThread = document.querySelector('.ptag__thread');
+      const foot = document.querySelector('footer');
+      if (!film || !plates) { samples = []; return; }
+
+      const g = Math.max(24, Math.min(0.07 * vw, 96)); // ≈ wrap gutter
+      const rightX = vw - g * 0.5;
+
+      const filmEnd = docTop(film) + (film as HTMLElement).offsetHeight;
+      const pTop = docTop(plates), pH = (plates as HTMLElement).offsetHeight;
+
+      const pts: Pt[] = [
+        { x: vw * 0.5, y: filmEnd - vh * 0.12 },
+        { x: rightX - g * 0.2, y: pTop + pH * 0.16 },
+        { x: rightX + g * 0.15, y: pTop + pH * 0.42 },
+        { x: rightX - g * 0.25, y: pTop + pH * 0.7 },
+        { x: rightX, y: pTop + pH * 0.96 },
+      ];
+      if (desire) {
+        const dTop = docTop(desire), dH = (desire as HTMLElement).offsetHeight;
+        pts.push({ x: rightX - g * 0.3, y: dTop + dH * 0.45 });
+        pts.push({ x: rightX + g * 0.05, y: dTop + dH * 0.95 });
+      }
+      knots = [];
+      if (tagThread) {
+        const r = tagThread.getBoundingClientRect();
+        const tx = r.left + r.width / 2, ty = r.top + window.scrollY;
+        // swing in from the margin and hang the tag from the seam
+        pts.push({ x: tx + (rightX - tx) * 0.4, y: ty - vh * 0.12 });
+        pts.push({ x: tx, y: ty });
+        knots.push({ x: tx, y: ty });
+        // ...then wrap around the card's left edge on the way down, never
+        // crossing the card itself
+        const card = document.querySelector('.ptag');
+        if (card) {
+          const cr = card.getBoundingClientRect();
+          const edgeX = Math.max(10, cr.left - 22);
+          pts.push({ x: edgeX, y: ty + 10 });
+          pts.push({ x: edgeX - 8, y: cr.bottom + window.scrollY + 40 });
+        }
+      } else if (action) {
+        const aTop = docTop(action);
+        pts.push({ x: rightX - g * 0.2, y: aTop + 80 });
+      }
+      if (foot) {
+        const fTop = docTop(foot);
+        pts.push({ x: vw * 0.5, y: fTop + 26 });
+        knots.push({ x: vw * 0.5, y: fTop + 26 });
+      }
+
+      // keep y strictly increasing so the scroll reveal is well-defined
+      for (let i = 1; i < pts.length; i++)
+        if (pts[i].y <= pts[i - 1].y) pts[i].y = pts[i - 1].y + 8;
+
+      // Catmull-Rom through the anchors → dense polyline
+      const out: Pt[] = [];
+      const P = (i: number) => pts[Math.max(0, Math.min(pts.length - 1, i))];
+      for (let i = 0; i < pts.length - 1; i++) {
+        const p0 = P(i - 1), p1 = P(i), p2 = P(i + 1), p3 = P(i + 2);
+        const segs = Math.max(8, Math.round(Math.hypot(p2.x - p1.x, p2.y - p1.y) / 26));
+        for (let j = 0; j < segs; j++) {
+          const t = j / segs, t2 = t * t, t3 = t2 * t;
+          out.push({
+            x: 0.5 * ((2 * p1.x) + (-p0.x + p2.x) * t + (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 + (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+            y: 0.5 * ((2 * p1.y) + (-p0.y + p2.y) * t + (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 + (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3),
+          });
+        }
+      }
+      out.push(pts[pts.length - 1]);
+
+      // resample to even ~13px steps so the stitches stay uniform
+      const even: Pt[] = [out[0]];
+      let acc = 0;
+      for (let i = 1; i < out.length; i++) {
+        let prev = out[i - 1];
+        const cur = out[i];
+        let d = Math.hypot(cur.x - prev.x, cur.y - prev.y);
+        while (acc + d >= 13) {
+          const t = (13 - acc) / d;
+          const nx = prev.x + (cur.x - prev.x) * t, ny = prev.y + (cur.y - prev.y) * t;
+          even.push({ x: nx, y: ny });
+          prev = { x: nx, y: ny };
+          d = Math.hypot(cur.x - prev.x, cur.y - prev.y);
+          acc = 0;
+        }
+        acc += d;
+      }
+      samples = even;
+      docH = document.documentElement.scrollHeight;
+    }
+
+    // ---- Render ----------------------------------------------------------
+    function render() {
+      if (!ctx) return;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, vw, vh);
+      if (!samples.length) return;
+
+      const sy = window.scrollY;
+      // the seam's head rides ~70% down the viewport
+      const headY = sy + vh * 0.7;
+      ctx.lineCap = 'round';
+      ctx.lineWidth = 1.2;
+
+      let head: Pt | null = null;
+      for (let i = 1; i < samples.length; i++) {
+        const a = samples[i - 1], b = samples[i];
+        if (b.y > headY) break;
+        head = b;
+        // stitch: draw every other segment; every 9th in gold
+        if (i % 2 === 0) continue;
+        if (b.y < sy - 40 || a.y > sy + vh + 40) continue;
+        const gold = i % 9 === 0;
+        ctx.strokeStyle = gold ? GOLD + '.85)' : INKC + '.42)';
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y - sy);
+        ctx.lineTo(b.x, b.y - sy);
+        ctx.stroke();
+      }
+
+      // loose specks tumbling just ahead of the head — about to be stitched
+      if (head && head.y > sy - 40 && head.y < sy + vh + 40) {
+        for (let k = 0; k < 5; k++) {
+          const a = (k * 2.4 + head.y * 0.012) % TAU;
+          const r = 10 + 9 * Math.sin(k * 1.7 + head.y * 0.008);
+          const x = head.x + Math.cos(a) * r;
+          const y = head.y - sy + Math.sin(a) * r * 0.8 + 8;
+          ctx.strokeStyle = k === 0 ? GOLD + '.8)' : INKC + '.35)';
+          ctx.beginPath();
+          ctx.moveTo(x - 3, y - 1.5);
+          ctx.lineTo(x + 3, y + 1.5);
+          ctx.stroke();
+        }
+      }
+
+      // knots: the tag hang point and the footer tie-off
+      for (const k of knots) {
+        if (k.y > headY || k.y < sy - 20 || k.y > sy + vh + 20) continue;
+        ctx.fillStyle = GOLD + '.9)';
+        ctx.beginPath();
+        ctx.arc(k.x, k.y - sy, 2.6, 0, TAU);
+        ctx.fill();
+        ctx.strokeStyle = GOLD + '.45)';
+        ctx.beginPath();
+        ctx.arc(k.x, k.y - sy, 5.4, 0, TAU);
+        ctx.stroke();
+      }
+    }
+
+    let ticking = false;
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        // pinned sections & lazy media shift the document — rebuild if it grew
+        if (Math.abs(document.documentElement.scrollHeight - docH) > 4) buildPath();
+        render();
+      });
+    }
+
+    size();
+    buildPath();
+    render();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => { size(); buildPath(); render(); }, { passive: true });
+    window.addEventListener('load', () => { buildPath(); render(); }, { once: true });
+  }
+</script>

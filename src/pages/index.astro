@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
 import ActsPlates from "../components/ActsPlates.astro";
 import PriceHangTag from "../components/PriceHangTag.astro";
+import StitchThread from "../components/StitchThread.astro";
 import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
@@ -15,23 +16,42 @@ import { softwareApplication, product } from "../lib/schema";
 >
   <Schema slot="head" json={[softwareApplication(), product()]} />
 
-  <!-- Hero: the film plays, then recedes as the mark scrubs up and tells the message -->
+  <!-- The page runs AIDA top to bottom, stitched together by one thread:
+       Attention (the film + the mark making itself), Interest (the app in
+       five acts), Desire (the feeling), Action (the price tag + CTA). -->
+
+  <!-- ATTENTION — the film plays, then the mark makes itself from loose thread -->
   <ScrollLogoFilm />
 
-  <!-- The app in five acts — screens as editorial plates on a gliding wall -->
+  <!-- INTEREST — the app in five acts, screens as editorial plates -->
   <ActsPlates />
 
-  <!-- Closing section — pricing carries the primary CTA -->
-  <section class="pteaser" aria-label="Pricing">
+  <!-- DESIRE — what mornings feel like after -->
+  <section class="desire" data-desire aria-label="What changes">
+    <div class="wrap desire__inner">
+      <p class="eyebrow reveal">— WHAT CHANGES</p>
+      <h2 class="desire__h2 reveal">Open your closet<br />and just <em>know</em>.</h2>
+      <ul class="desire__proof" role="list">
+        <li class="reveal">The 7:40 standoff with the mirror — <em>retired</em>.</li>
+        <li class="reveal">The pieces you forgot you loved, back in rotation.</li>
+        <li class="reveal">One decision already made, <em>every</em> morning.</li>
+      </ul>
+      <p class="desire__sig reveal">Nothing new to buy. Everything you own, finally working.</p>
+    </div>
+  </section>
+
+  <!-- ACTION — the thread hangs the price tag; the page's one ask -->
+  <section class="pteaser" data-action aria-label="Pricing">
     <div class="wrap pteaser__grid">
       <div class="reveal">
-        <p class="eyebrow">— Pricing</p>
-        <h2 class="pteaser__h2">One subscription. <em>Your</em> closet.</h2>
-        <p class="lede pteaser__lede">A single subscription, priced for where you live. No free tier. No ads. Cancel anytime.</p>
+        <p class="eyebrow">— THE DECISION</p>
+        <h2 class="pteaser__h2">Every morning, <em>answered</em>.</h2>
+        <p class="lede pteaser__lede">One subscription, priced for where you live — less per month than the next impulse buy you'll never wear. No free tier. No ads. Cancel anytime.</p>
         <div class="pteaser__cta">
           <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
           <a class="cta cta--ghost" href="/pricing">See full pricing <span class="cta__arrow">→</span></a>
         </div>
+        <p class="pteaser__assure">Set up in one evening · Your photos stay yours · Cancel in two taps</p>
       </div>
       <div>
         <PriceHangTag />
@@ -39,16 +59,52 @@ import { softwareApplication, product } from "../lib/schema";
     </div>
   </section>
 
+  <!-- The seam that runs from the mark to the footer, hanging the tag en route -->
+  <StitchThread />
+
   <Reveal />
 </Base>
 
 <style>
-  /* Closing pricing section — the page's final beat before the footer */
+  /* Desire — a quiet, aspirational beat between the acts and the ask */
+  .desire{background:var(--cream);padding-block:clamp(110px,18vh,220px)}
+  .desire__inner{max-width:880px}
+  .desire__h2{
+    font-weight:200;letter-spacing:-.03em;line-height:.98;
+    font-size:clamp(44px,7vw,96px);color:var(--charcoal);margin-top:16px;
+  }
+  .desire__h2 em{font-style:italic;color:var(--gold);font-weight:300}
+  .desire__proof{
+    list-style:none;margin:clamp(36px,6vh,64px) 0 0;padding:0;
+    display:grid;gap:18px;
+  }
+  .desire__proof li{
+    font-family:var(--serif);font-size:clamp(18px,2vw,24px);line-height:1.45;
+    color:var(--charcoal-2);
+    padding-left:26px;position:relative;
+  }
+  .desire__proof li::before{
+    content:"";position:absolute;left:0;top:.72em;
+    width:14px;height:1px;background:var(--gold);
+  }
+  .desire__proof em{font-style:italic;color:var(--gold-deep)}
+  .desire__sig{
+    margin-top:clamp(32px,5vh,56px);
+    font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:rgba(28,25,23,.55);
+  }
+
+  /* Action — pricing carries the page's one ask */
   .pteaser{background:var(--cream-paper);padding-block:clamp(96px,15vh,190px)}
   .pteaser__grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
   .pteaser__h2{font-weight:200;letter-spacing:-.025em;line-height:.95;font-size:clamp(40px,6vw,80px);margin-top:14px;color:var(--charcoal)}
   .pteaser__h2 em{font-style:italic;color:var(--gold);font-weight:300}
   .pteaser__lede{max-width:42ch;margin-top:18px}
   .pteaser__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .pteaser__assure{
+    margin-top:22px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+    color:rgba(28,25,23,.5);
+  }
   @media (max-width:900px){.pteaser__grid{grid-template-columns:1fr;gap:32px}}
 </style>
