@@ -26,20 +26,22 @@ import { softwareApplication, product } from "../lib/schema";
   <!-- INTEREST — the app in five acts, screens as editorial plates -->
   <ActsPlates />
 
-  <!-- DESIRE — what mornings feel like after. The headline assembles from
-       specks scattered across the whole section — the hero's "comes from
-       everywhere" convergence, put to work on type. -->
+  <!-- DESIRE — what mornings feel like after. A pinned stage like the hero:
+       the headline assembles from specks scattered across the screen, scrubbed
+       over its own scroll runway at the same deliberate pace. -->
   <section class="desire" data-desire aria-label="What changes">
-    <canvas class="desire__particles" data-desire-canvas aria-hidden="true"></canvas>
-    <div class="wrap desire__inner">
-      <p class="eyebrow reveal">— WHAT CHANGES</p>
-      <h2 class="desire__h2" data-desire-h2>Open your closet<br />and just <em>know</em>.</h2>
-      <ul class="desire__proof" role="list">
-        <li class="reveal">The 7:40 standoff with the mirror — <em>retired</em>.</li>
-        <li class="reveal">The pieces you forgot you loved, back in rotation.</li>
-        <li class="reveal">One decision already made, <em>every</em> morning.</li>
-      </ul>
-      <p class="desire__sig reveal">Nothing new to buy. Everything you own, finally working.</p>
+    <div class="desire__stage">
+      <canvas class="desire__particles" data-desire-canvas aria-hidden="true"></canvas>
+      <div class="wrap desire__inner">
+        <p class="eyebrow" data-d-step="0.03,0.10">— WHAT CHANGES</p>
+        <h2 class="desire__h2" data-desire-h2>Open your closet<br />and just <em>know</em>.</h2>
+        <ul class="desire__proof" role="list">
+          <li data-d-step="0.70,0.78">The 7:40 standoff with the mirror — <em>retired</em>.</li>
+          <li data-d-step="0.76,0.84">The pieces you forgot you loved, back in rotation.</li>
+          <li data-d-step="0.82,0.90">One decision already made, <em>every</em> morning.</li>
+        </ul>
+        <p class="desire__sig" data-d-step="0.88,0.96">Nothing new to buy. Everything you own, finally working.</p>
+      </div>
     </div>
   </section>
 
@@ -69,10 +71,18 @@ import { softwareApplication, product } from "../lib/schema";
 </Base>
 
 <style>
-  /* Desire — a quiet, aspirational beat between the acts and the ask */
-  .desire{background:var(--cream);padding-block:clamp(110px,18vh,220px);position:relative;overflow:hidden}
+  /* Desire — a quiet, aspirational beat between the acts and the ask.
+     Pinned stage + scroll runway so the assembling headline scrubs at the
+     same deliberate pace as the hero. */
+  .desire{background:var(--cream);position:relative;height:240vh}
+  @media (max-width:800px){ .desire{height:200vh} }
+  @media (prefers-reduced-motion: reduce){ .desire{height:auto;min-height:100vh} }
+  .desire__stage{
+    position:sticky;top:0;height:100vh;overflow:hidden;
+    display:flex;align-items:center;
+  }
   .desire__particles{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
-  .desire__inner{max-width:880px;position:relative;z-index:2}
+  .desire__inner{max-width:880px;position:relative;z-index:2;width:100%}
   .desire__h2{
     font-weight:200;letter-spacing:-.03em;line-height:.98;
     font-size:clamp(44px,7vw,96px);color:var(--charcoal);margin-top:16px;
@@ -114,12 +124,19 @@ import { softwareApplication, product } from "../lib/schema";
 </style>
 
 <script>
-  // DESIRE headline — specks fly in from across the section and assemble
-  // into the type, then hand off to the real text. Targets are sampled from
-  // the live glyph layout (per-character ranges), so any viewport works.
+  // DESIRE headline — specks fly in from across the screen and assemble
+  // into the type, then hand off to the real text. The section is pinned
+  // with its own scroll runway (like the hero) so the whole assembly is
+  // scrubbed by scroll at the same deliberate pace. Targets are sampled
+  // from the live glyph layout (per-character ranges), so any viewport works.
   const sec = document.querySelector<HTMLElement>('[data-desire]');
   const cv = document.querySelector<HTMLCanvasElement>('[data-desire-canvas]');
   const h2 = document.querySelector<HTMLElement>('[data-desire-h2]');
+  const steps = Array.from(document.querySelectorAll<HTMLElement>('[data-d-step]'))
+    .map(el => {
+      const [a, b] = (el.dataset.dStep ?? '0,0').split(',').map(Number);
+      return { el, a, b };
+    });
   const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (sec && cv && h2 && !noMotion) {
@@ -152,8 +169,8 @@ import { softwareApplication, product } from "../lib/schema";
 
     function size() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cw = sec!.clientWidth;
-      chh = sec!.clientHeight;
+      cw = cv!.clientWidth;
+      chh = cv!.clientHeight;
       cv!.width = Math.round(cw * dpr);
       cv!.height = Math.round(chh * dpr);
     }
@@ -161,7 +178,7 @@ import { softwareApplication, product } from "../lib/schema";
     function build() {
       const S = 0.5; // sample at half resolution — plenty for targets
       const hr = h2!.getBoundingClientRect();
-      const sr = sec!.getBoundingClientRect();
+      const sr = cv!.getBoundingClientRect();
       if (!hr.width || !hr.height) return;
       const oc = document.createElement('canvas');
       oc.width = Math.ceil(hr.width * S);
@@ -227,24 +244,30 @@ import { softwareApplication, product } from "../lib/schema";
     }
 
     function progress() {
-      const r = h2!.getBoundingClientRect();
-      const vh = window.innerHeight;
-      return ramp(vh * 0.96 - r.top, 0, vh * 0.58); // bottom of screen → upper-middle
+      // scrub across the section's own runway, like the hero
+      const total = sec!.offsetHeight - window.innerHeight;
+      const top = sec!.getBoundingClientRect().top;
+      return total > 0 ? Math.min(1, Math.max(0, -top / total)) : 0;
     }
 
     function render() {
       if (!ctx) return;
       const p = progress();
-      h2!.style.opacity = String(ramp(p, 0.74, 0.96));
+      h2!.style.opacity = String(ramp(p, 0.58, 0.76));
+      for (const s of steps) {
+        const v = ramp(p, s.a, s.b);
+        s.el.style.opacity = String(v);
+        s.el.style.transform = `translateY(${(1 - v) * 16}px)`;
+      }
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       ctx.clearRect(0, 0, cw, chh);
-      if (!ready || p <= 0 || p >= 1.05) return;
-      const A = (0.25 + 0.75 * ramp(p, 0, 0.1)) * (1 - ramp(p, 0.8, 0.98));
+      if (!ready || p <= 0) return;
+      const A = (0.25 + 0.75 * ramp(p, 0, 0.06)) * (1 - ramp(p, 0.62, 0.8));
       if (A <= 0.01) return;
       ctx.lineCap = 'round';
-      const win = 0.5;
+      const win = 0.3;
       for (const q of parts) {
-        const t0 = q.delay * (0.92 - win);
+        const t0 = 0.06 + q.delay * (0.64 - win - 0.06);
         const t = easeIO(ramp(p, t0, t0 + win));
         const mx = (q.sx + q.tx) / 2 + q.cx * (q.ty - q.sy);
         const my = (q.sy + q.ty) / 2 + q.cy * (q.sx - q.tx);
@@ -276,7 +299,11 @@ import { softwareApplication, product } from "../lib/schema";
     size();
     document.fonts.ready.then(() => {
       try { build(); } catch (e) { /* fall back to plain text */ }
-      if (!ready) h2.style.opacity = '';
+      if (!ready) {
+        h2.style.opacity = '';
+        for (const s of steps) { s.el.style.opacity = ''; s.el.style.transform = ''; }
+        return;
+      }
       render();
     });
     window.addEventListener('scroll', onScroll, { passive: true });
