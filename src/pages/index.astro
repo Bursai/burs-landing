@@ -3,6 +3,7 @@ import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
 import ActsPlates from "../components/ActsPlates.astro";
 import PriceHangTag from "../components/PriceHangTag.astro";
+import StitchThread from "../components/StitchThread.astro";
 import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
@@ -15,23 +16,47 @@ import { softwareApplication, product } from "../lib/schema";
 >
   <Schema slot="head" json={[softwareApplication(), product()]} />
 
-  <!-- Hero: the film plays, then recedes as the mark scrubs up and tells the message -->
+  <!-- The page runs AIDA top to bottom, stitched together by one thread:
+       Attention (the film + the mark making itself), Interest (the app in
+       five acts), Desire (the feeling), Action (the price tag + CTA). -->
+
+  <!-- ATTENTION — the film plays, then the mark makes itself from loose thread -->
   <ScrollLogoFilm />
 
-  <!-- The app in five acts — screens as editorial plates on a gliding wall -->
+  <!-- INTEREST — the app in five acts, screens as editorial plates -->
   <ActsPlates />
 
-  <!-- Closing section — pricing carries the primary CTA -->
-  <section class="pteaser" aria-label="Pricing">
+  <!-- DESIRE — what mornings feel like after. A pinned stage like the hero:
+       the headline assembles from specks scattered across the screen, scrubbed
+       over its own scroll runway at the same deliberate pace. -->
+  <section class="desire" data-desire aria-label="What changes">
+    <div class="desire__stage">
+      <canvas class="desire__particles" data-desire-canvas aria-hidden="true"></canvas>
+      <div class="wrap desire__inner">
+        <p class="eyebrow" data-d-step="0.03,0.10">— WHAT CHANGES</p>
+        <h2 class="desire__h2" data-desire-h2>Open your closet<br />and just <em>know</em>.</h2>
+        <ul class="desire__proof" role="list">
+          <li data-d-step="0.70,0.78">The 7:40 standoff with the mirror — <em>retired</em>.</li>
+          <li data-d-step="0.76,0.84">The pieces you forgot you loved, back in rotation.</li>
+          <li data-d-step="0.82,0.90">One decision already made, <em>every</em> morning.</li>
+        </ul>
+        <p class="desire__sig" data-d-step="0.88,0.96">Nothing new to buy. Everything you own, finally working.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTION — the thread hangs the price tag; the page's one ask -->
+  <section class="pteaser" data-action aria-label="Pricing">
     <div class="wrap pteaser__grid">
       <div class="reveal">
-        <p class="eyebrow">— Pricing</p>
-        <h2 class="pteaser__h2">One subscription. <em>Your</em> closet.</h2>
-        <p class="lede pteaser__lede">A single subscription, priced for where you live. No free tier. No ads. Cancel anytime.</p>
+        <p class="eyebrow">— THE DECISION</p>
+        <h2 class="pteaser__h2">Every morning, <em>answered</em>.</h2>
+        <p class="lede pteaser__lede">One subscription, priced for where you live — less per month than the next impulse buy you'll never wear. No free tier. No ads. Cancel anytime.</p>
         <div class="pteaser__cta">
           <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
           <a class="cta cta--ghost" href="/pricing">See full pricing <span class="cta__arrow">→</span></a>
         </div>
+        <p class="pteaser__assure">Set up in one evening · Your photos stay yours · Cancel in two taps</p>
       </div>
       <div>
         <PriceHangTag />
@@ -39,16 +64,253 @@ import { softwareApplication, product } from "../lib/schema";
     </div>
   </section>
 
+  <!-- The seam that runs from the mark to the footer, hanging the tag en route -->
+  <StitchThread />
+
   <Reveal />
 </Base>
 
 <style>
-  /* Closing pricing section — the page's final beat before the footer */
+  /* Desire — a quiet, aspirational beat between the acts and the ask.
+     Pinned stage + scroll runway so the assembling headline scrubs at the
+     same deliberate pace as the hero. */
+  .desire{background:var(--cream);position:relative;height:240vh}
+  @media (max-width:800px){ .desire{height:200vh} }
+  @media (prefers-reduced-motion: reduce){ .desire{height:auto;min-height:100vh} }
+  .desire__stage{
+    position:sticky;top:0;height:100vh;overflow:hidden;
+    display:flex;align-items:center;
+  }
+  .desire__particles{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:1}
+  .desire__inner{max-width:880px;position:relative;z-index:2;width:100%}
+  .desire__h2{
+    font-weight:200;letter-spacing:-.03em;line-height:.98;
+    font-size:clamp(44px,7vw,96px);color:var(--charcoal);margin-top:16px;
+  }
+  .desire__h2 em{font-style:italic;color:var(--gold);font-weight:300}
+  .desire__proof{
+    list-style:none;margin:clamp(36px,6vh,64px) 0 0;padding:0;
+    display:grid;gap:18px;
+  }
+  .desire__proof li{
+    font-family:var(--serif);font-size:clamp(18px,2vw,24px);line-height:1.45;
+    color:var(--charcoal-2);
+    padding-left:26px;position:relative;
+  }
+  .desire__proof li::before{
+    content:"";position:absolute;left:0;top:.72em;
+    width:14px;height:1px;background:var(--gold);
+  }
+  .desire__proof em{font-style:italic;color:var(--gold-deep)}
+  .desire__sig{
+    margin-top:clamp(32px,5vh,56px);
+    font-family:var(--mono);font-size:11px;letter-spacing:.28em;text-transform:uppercase;
+    color:rgba(28,25,23,.55);
+  }
+
+  /* Action — pricing carries the page's one ask */
   .pteaser{background:var(--cream-paper);padding-block:clamp(96px,15vh,190px)}
   .pteaser__grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
   .pteaser__h2{font-weight:200;letter-spacing:-.025em;line-height:.95;font-size:clamp(40px,6vw,80px);margin-top:14px;color:var(--charcoal)}
   .pteaser__h2 em{font-style:italic;color:var(--gold);font-weight:300}
   .pteaser__lede{max-width:42ch;margin-top:18px}
   .pteaser__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .pteaser__assure{
+    margin-top:22px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+    color:rgba(28,25,23,.5);
+  }
   @media (max-width:900px){.pteaser__grid{grid-template-columns:1fr;gap:32px}}
 </style>
+
+<script>
+  // DESIRE headline — specks fly in from across the screen and assemble
+  // into the type, then hand off to the real text. The section is pinned
+  // with its own scroll runway (like the hero) so the whole assembly is
+  // scrubbed by scroll at the same deliberate pace. Targets are sampled
+  // from the live glyph layout (per-character ranges), so any viewport works.
+  const sec = document.querySelector<HTMLElement>('[data-desire]');
+  const cv = document.querySelector<HTMLCanvasElement>('[data-desire-canvas]');
+  const h2 = document.querySelector<HTMLElement>('[data-desire-h2]');
+  const steps = Array.from(document.querySelectorAll<HTMLElement>('[data-d-step]'))
+    .map(el => {
+      const [a, b] = (el.dataset.dStep ?? '0,0').split(',').map(Number);
+      return { el, a, b };
+    });
+  const noMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (sec && cv && h2 && !noMotion) {
+    const ctx = cv.getContext('2d', { alpha: true });
+    const TAU = Math.PI * 2;
+    const N = 1300;
+    const GOLD = 'rgba(201,168,108,';
+    const INKC = 'rgba(42,39,36,';
+
+    const mulberry = (a: number) => () => {
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+
+    const ramp = (p: number, a: number, b: number) =>
+      Math.min(1, Math.max(0, (p - a) / (b - a)));
+    const easeIO = (t: number) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+    type P = {
+      sx: number; sy: number; tx: number; ty: number;
+      cx: number; cy: number; delay: number;
+      len: number; w: number; a0: number; a1: number;
+      gold: boolean; alpha: number; driftA: number; phase: number;
+    };
+    let parts: P[] = [];
+    let dpr = 1, cw = 0, chh = 0;
+    let ready = false;
+
+    function size() {
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      cw = cv!.clientWidth;
+      chh = cv!.clientHeight;
+      cv!.width = Math.round(cw * dpr);
+      cv!.height = Math.round(chh * dpr);
+    }
+
+    function build() {
+      const S = 0.5; // sample at half resolution — plenty for targets
+      const hr = h2!.getBoundingClientRect();
+      const sr = cv!.getBoundingClientRect();
+      if (!hr.width || !hr.height) return;
+      const oc = document.createElement('canvas');
+      oc.width = Math.ceil(hr.width * S);
+      oc.height = Math.ceil(hr.height * S);
+      const octx = oc.getContext('2d', { willReadFrequently: true });
+      if (!octx) return;
+
+      // paint every character at its laid-out position
+      const range = document.createRange();
+      const walk = (node: Node) => {
+        if (node.nodeType === Node.TEXT_NODE && node.textContent) {
+          const el = node.parentElement!;
+          const cs = getComputedStyle(el);
+          const fs = parseFloat(cs.fontSize);
+          octx.font = `${cs.fontStyle} ${cs.fontWeight} ${fs * S}px ${cs.fontFamily}`;
+          octx.fillStyle = cs.color;
+          const text = node.textContent;
+          for (let i = 0; i < text.length; i++) {
+            if (text[i].trim() === '') continue;
+            range.setStart(node, i);
+            range.setEnd(node, i + 1);
+            const r = range.getClientRects()[0];
+            if (!r) continue;
+            octx.fillText(text[i], (r.left - hr.left) * S, (r.top - hr.top + r.height * 0.8) * S);
+          }
+        } else {
+          node.childNodes.forEach(walk);
+        }
+      };
+      walk(h2!);
+
+      // sample the painted glyphs → convergence targets
+      const d = octx.getImageData(0, 0, oc.width, oc.height).data;
+      const px: { x: number; y: number; gold: boolean }[] = [];
+      for (let y = 0; y < oc.height; y++)
+        for (let x = 0; x < oc.width; x++) {
+          const i = (y * oc.width + x) * 4;
+          if (d[i + 3] > 120) px.push({ x: x / S, y: y / S, gold: d[i] > 150 && d[i + 2] < 150 });
+        }
+      if (!px.length) return;
+
+      const rnd = mulberry(4117);
+      for (let i = px.length - 1; i > 0; i--) {
+        const j = Math.floor(rnd() * (i + 1));
+        [px[i], px[j]] = [px[j], px[i]];
+      }
+      const offX = hr.left - sr.left, offY = hr.top - sr.top;
+      parts = [];
+      for (let i = 0; i < N; i++) {
+        const t = px[i % px.length];
+        parts.push({
+          sx: rnd() * cw, sy: rnd() * chh,
+          tx: offX + t.x + (i >= px.length ? (rnd() - 0.5) * 3 : 0),
+          ty: offY + t.y + (i >= px.length ? (rnd() - 0.5) * 3 : 0),
+          cx: (rnd() - 0.5) * 0.7, cy: (rnd() - 0.5) * 0.7,
+          delay: rnd(), len: 3 + rnd() * 5, w: 0.8 + rnd() * 0.8,
+          a0: rnd() * TAU, a1: (rnd() - 0.5) * 0.3,
+          gold: t.gold, alpha: 0.5 + rnd() * 0.5,
+          driftA: 3 + rnd() * 7, phase: rnd() * TAU,
+        });
+      }
+      ready = true;
+    }
+
+    function progress() {
+      // scrub across the section's own runway, like the hero
+      const total = sec!.offsetHeight - window.innerHeight;
+      const top = sec!.getBoundingClientRect().top;
+      return total > 0 ? Math.min(1, Math.max(0, -top / total)) : 0;
+    }
+
+    function render() {
+      if (!ctx) return;
+      const p = progress();
+      h2!.style.opacity = String(ramp(p, 0.58, 0.76));
+      for (const s of steps) {
+        const v = ramp(p, s.a, s.b);
+        s.el.style.opacity = String(v);
+        s.el.style.transform = `translateY(${(1 - v) * 16}px)`;
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cw, chh);
+      if (!ready || p <= 0) return;
+      const A = (0.25 + 0.75 * ramp(p, 0, 0.06)) * (1 - ramp(p, 0.62, 0.8));
+      if (A <= 0.01) return;
+      ctx.lineCap = 'round';
+      const win = 0.3;
+      for (const q of parts) {
+        const t0 = 0.06 + q.delay * (0.64 - win - 0.06);
+        const t = easeIO(ramp(p, t0, t0 + win));
+        const mx = (q.sx + q.tx) / 2 + q.cx * (q.ty - q.sy);
+        const my = (q.sy + q.ty) / 2 + q.cy * (q.sx - q.tx);
+        const u = 1 - t;
+        let x = u * u * q.sx + 2 * u * t * mx + t * t * q.tx;
+        let y = u * u * q.sy + 2 * u * t * my + t * t * q.ty;
+        x += Math.sin(p * TAU * 1.3 + q.phase) * q.driftA * u;
+        y += Math.cos(p * TAU + q.phase) * q.driftA * 0.7 * u;
+        const ang = q.a0 + (q.a1 - q.a0) * t;
+        const al = A * q.alpha;
+        ctx.strokeStyle = q.gold ? GOLD + al + ')' : INKC + al * 0.85 + ')';
+        ctx.lineWidth = q.w;
+        const hx = Math.cos(ang) * q.len / 2, hy = Math.sin(ang) * q.len / 2;
+        ctx.beginPath();
+        ctx.moveTo(x - hx, y - hy);
+        ctx.lineTo(x + hx, y + hy);
+        ctx.stroke();
+      }
+    }
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; render(); });
+    };
+
+    h2.style.opacity = '0';
+    size();
+    document.fonts.ready.then(() => {
+      try { build(); } catch (e) { /* fall back to plain text */ }
+      if (!ready) {
+        h2.style.opacity = '';
+        for (const s of steps) { s.el.style.opacity = ''; s.el.style.transform = ''; }
+        return;
+      }
+      render();
+    });
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', () => {
+      size();
+      if (ready) { ready = false; try { build(); } catch (e) { h2!.style.opacity = ''; } }
+      render();
+    }, { passive: true });
+  }
+</script>
