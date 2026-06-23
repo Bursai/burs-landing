@@ -1,0 +1,62 @@
+---
+import Editorial from "../layouts/Editorial.astro";
+
+const SUPPORT_EMAIL = "hello@burs.me";
+const subject = "Account deletion request";
+const body = [
+  "Hello BURS team,",
+  "",
+  "I would like to permanently delete my BURS account and all associated data.",
+  "",
+  "Account email: <the email address you signed up with>",
+  "",
+  "I understand this action is irreversible.",
+].join("\n");
+const mailtoHref =
+  `mailto:${SUPPORT_EMAIL}` +
+  `?subject=${encodeURIComponent(subject)}` +
+  `&body=${encodeURIComponent(body)}`;
+---
+<Editorial
+  title="Delete your BURS account"
+  description="How to permanently delete your BURS account and all of your personal data — in the app, or by request."
+  path="/delete-account"
+  eyebrow="Your Data"
+  headline="Delete your <em>BURS</em> account."
+>
+  <p>You can permanently delete your BURS account at any time. Deletion is <strong>immediate and irreversible</strong> — once it completes, your data cannot be recovered. There are two ways to do it.</p>
+
+  <h2>Delete in the app</h2>
+  <p>The fastest way is from inside the BURS app:</p>
+  <ol>
+    <li>Open the BURS app and sign in.</li>
+    <li>Go to <strong>Settings → Account</strong>.</li>
+    <li>Tap <strong>Delete account</strong>.</li>
+    <li>Confirm in the dialog to permanently delete your account.</li>
+  </ol>
+  <p>Your account and all associated data are removed straight away — no waiting period and no follow-up required.</p>
+
+  <h2>Request deletion by email</h2>
+  <p>If you can't access the app, email us from the address you used to sign up and we'll delete your account for you. We may need to verify your identity before completing the request.</p>
+  <p><a href={mailtoHref}>Email a deletion request →</a></p>
+  <p>Or write to us directly at <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.</p>
+
+  <h2>What gets deleted</h2>
+  <p>Deleting your account permanently removes all of the personal data we hold about you, including:</p>
+  <ul>
+    <li>your account and login — email, profile, display name;</li>
+    <li>your wardrobe — every garment, photo, and image we stored for you;</li>
+    <li>your saved and generated outfits, and your outfit history;</li>
+    <li>your plans, calendar context, and wear logs;</li>
+    <li>your style preferences, feedback, and AI stylist chat history;</li>
+    <li>your subscription, billing, and usage records on our side;</li>
+    <li>any wardrobe-data exports we generated for you.</li>
+  </ul>
+  <p>We stop sending any further data about you to our AI provider, and where their API permits we follow up with a deletion request for any short-term logs they may hold. Some short-lived backups or audit logs at our infrastructure providers may persist for a limited window, as described in our <a href="/privacy">Privacy Policy</a>.</p>
+
+  <h2>About your subscription</h2>
+  <p>A subscription managed by the App Store or Google Play must be cancelled separately in that store — deleting your BURS account does not cancel a store-managed subscription. On iOS: <strong>Settings → your name → Subscriptions</strong>. On Android: <strong>Play Store → Subscriptions</strong>.</p>
+
+  <h2>Need help?</h2>
+  <p>For any question about deleting your account or exercising your data rights, contact us at <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.</p>
+</Editorial>
