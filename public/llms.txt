@@ -12,7 +12,7 @@
 ## What BURS is
 
 - An AI wardrobe stylist on iOS and Android.
-- A premium, paid app: 119 kr/mo or 899 kr/yr in Sweden; €10.99/mo or €89.99/yr in the rest of the EU.
+- A premium, paid app: 109 kr/mo or 799 kr/yr in Sweden; €9.99/mo or €69.99/yr in the rest of the EU.
 - Built for the eighty percent of the closet that never gets worn.
 
 ## What BURS is not
@@ -34,8 +34,8 @@
 
 | Locale | Monthly | Annual | Annual saves |
 |---|---|---|---|
-| Sweden | 119 kr | 899 kr | ~37% |
-| Rest of EU | €10.99 | €89.99 | ~32% |
+| Sweden | 109 kr | 799 kr | ~39% |
+| Rest of EU | €9.99 | €69.99 | ~42% |
 
 No free tier. No ads. Cancel anytime from account settings.
 
@@ -72,7 +72,7 @@ BURS is an AI wardrobe stylist. It scans clothes you already own, reads the weat
 You point a phone camera at your clothes. BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes. No manual tagging.
 
 ### Is BURS free?
-No. BURS is a premium app — 119 kr/mo or 899 kr/yr in Sweden (€10.99/mo or €89.99/yr in the rest of the EU). No free tier, no ads. Cancel anytime.
+No. BURS is a premium app — 109 kr/mo or 799 kr/yr in Sweden (€9.99/mo or €69.99/yr in the rest of the EU). No free tier, no ads. Cancel anytime.
 
 ### Does BURS work on iPhone and Android?
 Yes. Identical experience on both. Wardrobe syncs across every device you sign into.

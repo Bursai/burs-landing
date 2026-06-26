@@ -10,7 +10,7 @@ export const PRICES: Record<Locale, PriceTier[]> = {
   ],
   EU: [
     { period: "month", amount: 9.99, currency: "EUR", symbol: "€" },
-    { period: "year",  amount: 79.99, currency: "EUR", symbol: "€" }
+    { period: "year",  amount: 69.99, currency: "EUR", symbol: "€" }
   ]
 };
 

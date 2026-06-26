@@ -10,7 +10,7 @@ describe('prices', () => {
 
   it('EU prices', () => {
     expect(PRICES.EU[0].amount).toBe(9.99);
-    expect(PRICES.EU[1].amount).toBe(79.99);
+    expect(PRICES.EU[1].amount).toBe(69.99);
   });
 
   it('format uses correct symbol position', () => {
@@ -18,8 +18,8 @@ describe('prices', () => {
     expect(format(PRICES.EU[0])).toBe('€9.99');
   });
 
-  it('annual savings ~39% (SE) and ~33% (EU)', () => {
+  it('annual savings ~39% (SE) and ~42% (EU)', () => {
     expect(annualSavingsPct('SE')).toBe(39);
-    expect(annualSavingsPct('EU')).toBe(33);
+    expect(annualSavingsPct('EU')).toBe(42);
   });
 });
