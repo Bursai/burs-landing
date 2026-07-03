@@ -40,6 +40,11 @@ const seo = buildSeo({ title, description, path, ogImage, type });
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.json" />
 
+  <!-- Smart App Banner (iOS Safari) — prompts installed-Safari visitors to
+       open/get the app. Real numeric App Store ID; the listing itself goes
+       live at release (see src/pages/go.astro for the launch-funnel note). -->
+  <meta name="apple-itunes-app" content="app-id=6772630210" />
+
   <link rel="preload" href="/fonts/fraunces-variable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/inter-tight-variable.woff2" as="font" type="font/woff2" crossorigin />
 
