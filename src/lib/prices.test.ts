@@ -3,23 +3,18 @@ import { describe, it, expect } from 'vitest';
 import { PRICES, format, annualSavingsPct } from './prices';
 
 describe('prices', () => {
-  it('SE prices', () => {
-    expect(PRICES.SE[0].amount).toBe(109);
-    expect(PRICES.SE[1].amount).toBe(799);
+  it('single EUR price list (monthly + yearly)', () => {
+    expect(PRICES).toHaveLength(2);
+    expect(PRICES[0]).toMatchObject({ period: 'month', amount: 9.99, currency: 'EUR' });
+    expect(PRICES[1]).toMatchObject({ period: 'year', amount: 79.99, currency: 'EUR' });
   });
 
-  it('EU prices', () => {
-    expect(PRICES.EU[0].amount).toBe(9.99);
-    expect(PRICES.EU[1].amount).toBe(69.99);
+  it('format places the euro symbol before the amount', () => {
+    expect(format(PRICES[0])).toBe('€9.99');
+    expect(format(PRICES[1])).toBe('€79.99');
   });
 
-  it('format uses correct symbol position', () => {
-    expect(format(PRICES.SE[0])).toBe('109 kr');
-    expect(format(PRICES.EU[0])).toBe('€9.99');
-  });
-
-  it('annual savings ~39% (SE) and ~42% (EU)', () => {
-    expect(annualSavingsPct('SE')).toBe(39);
-    expect(annualSavingsPct('EU')).toBe(42);
+  it('annual savings ~33%', () => {
+    expect(annualSavingsPct()).toBe(33);
   });
 });
