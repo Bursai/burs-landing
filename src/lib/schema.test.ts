@@ -31,8 +31,11 @@ describe('schema', () => {
     expect((b.itemListElement as any[])[1].position).toBe(2);
   });
 
-  it('product carries 4 offers (EUR + SEK, monthly + yearly)', () => {
+  it('product carries 2 EUR offers (monthly + yearly)', () => {
     const p = product();
-    expect((p.offers as any[]).length).toBe(4);
+    const offers = p.offers as any[];
+    expect(offers.length).toBe(2);
+    expect(offers.every(o => o.priceCurrency === 'EUR')).toBe(true);
+    expect(offers.map(o => o.price)).toEqual([9.99, 79.99]);
   });
 });

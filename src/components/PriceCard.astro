@@ -1,18 +1,16 @@
 ---
-import { PRICES, format, annualSavingsPct, type Locale } from "../lib/prices";
-interface Props { locale: Locale; emphasize?: "month" | "year"; }
-const { locale, emphasize = "year" } = Astro.props;
-const tiers = PRICES[locale];
-const savings = annualSavingsPct(locale);
-const localeLabel = locale === "SE" ? "Sweden" : "Rest of EU";
+import { PRICES, format, annualSavingsPct } from "../lib/prices";
+interface Props { emphasize?: "month" | "year"; }
+const { emphasize = "year" } = Astro.props;
+const savings = annualSavingsPct();
 ---
 <article class="pc">
   <header class="pc__head">
-    <p class="eyebrow">BURS Premium · {localeLabel}</p>
+    <p class="eyebrow">BURS Premium</p>
     <h3 class="pc__title">One subscription. <em>Your</em> closet.</h3>
   </header>
   <ul class="pc__tiers" role="list">
-    {tiers.map(t => (
+    {PRICES.map(t => (
       <li class={`pc__tier ${t.period === emphasize ? "is-on" : ""}`}>
         <span class="pc__amt">{format(t)}</span>
         <span class="pc__per">per {t.period}</span>
@@ -29,6 +27,7 @@ const localeLabel = locale === "SE" ? "Sweden" : "Rest of EU";
     <li>Wardrobe insights · Priority support</li>
   </ul>
   <p class="pc__not">No free tier. No ads. Cancel anytime from account settings.</p>
+  <p class="pc__bill">Billed by your app store in your local currency.</p>
   <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
 </article>
 <style>
@@ -43,4 +42,5 @@ const localeLabel = locale === "SE" ? "Sweden" : "Rest of EU";
   .pc__incl{list-style:none;display:grid;gap:6px;font-size:14px;color:var(--charcoal-2)}
   .pc__incl li::before{content:"— ";color:var(--gold);font-weight:500}
   .pc__not{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.55}
+  .pc__bill{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.4;margin-top:-14px}
 </style>

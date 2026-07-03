@@ -7,18 +7,17 @@ import { product } from "../lib/schema";
 ---
 <Page
   title="Pricing — BURS"
-  description="BURS Premium: 109 kr/mo or 799 kr/yr (Sweden), €9.99/mo or €69.99/yr (rest of EU). No free tier. No ads. Cancel anytime."
+  description="BURS Premium: €9.99/month or €79.99/year. No free tier. No ads. Cancel anytime."
   path="/pricing"
   eyebrow="Pricing"
   headline="One subscription. <em>Your</em> closet."
-  lede="A single tier. Prices below in Swedish kronor and Euros. Annual saves about a third."
+  lede="A single tier, priced in euros. Annual saves about a third. Your app store bills in your local currency."
 >
   <Schema slot="head" json={product()} />
 
   <div class="pricing">
     <div class="pricing__cards">
-      <PriceCard locale="SE" />
-      <PriceCard locale="EU" />
+      <PriceCard />
     </div>
 
     <section class="pricing__not">
@@ -52,8 +51,7 @@ import { product } from "../lib/schema";
 
 <style>
   .pricing{display:grid;gap:80px;max-width:980px}
-  .pricing__cards{display:grid;grid-template-columns:1fr 1fr;gap:28px}
-  @media (max-width:780px){.pricing__cards{grid-template-columns:1fr}}
+  .pricing__cards{display:grid;grid-template-columns:1fr;justify-items:start}
   .pricing__not{display:grid;gap:18px}
   .pricing__honest{font-size:13px;opacity:.55;font-style:italic;margin-top:14px;max-width:54ch}
 </style>
