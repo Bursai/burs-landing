@@ -1,5 +1,6 @@
 ---
 // src/components/Nav.astro
+import { APP_STORE_URL } from "../lib/links";
 const links = [
   { href: "/manifesto", label: "Manifesto" },
   { href: "/method",    label: "Method" },
@@ -18,10 +19,10 @@ const links = [
       {links.map(l => (<li><a href={l.href}>{l.label}</a></li>))}
     </ul>
     <div class="nav__cta-wrap">
-      <a href="https://apps.apple.com/app/burs" class="cta cta--cream nav__cta nav__cta--full" aria-label="Download BURS">
+      <a href={APP_STORE_URL} class="cta cta--cream nav__cta nav__cta--full" aria-label="Download BURS">
         Get the app <span class="cta__arrow" aria-hidden="true">→</span>
       </a>
-      <a href="https://apps.apple.com/app/burs" class="nav__cta--mini" aria-label="Download BURS">
+      <a href={APP_STORE_URL} class="nav__cta--mini" aria-label="Download BURS">
         <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M5 12h14M13 5l7 7-7 7"/>
         </svg>
@@ -36,7 +37,7 @@ const links = [
 <div class="drawer" id="nav-drawer" aria-hidden="true" data-nav-drawer>
   <ul role="list">
     {links.map(l => (<li><a href={l.href}>{l.label}</a></li>))}
-    <li><a href="https://apps.apple.com/app/burs" class="cta">Get the app <span class="cta__arrow">→</span></a></li>
+    <li><a href={APP_STORE_URL} class="cta">Get the app <span class="cta__arrow">→</span></a></li>
   </ul>
 </div>
 

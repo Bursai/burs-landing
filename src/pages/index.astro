@@ -7,6 +7,7 @@ import StitchThread from "../components/StitchThread.astro";
 import Reveal from "../components/Reveal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
+import { APP_STORE_URL } from "../lib/links";
 ---
 <Base
   title="BURS — Your wardrobe, intelligently styled."
@@ -53,7 +54,7 @@ import { softwareApplication, product } from "../lib/schema";
         <h2 class="pteaser__h2">Every morning, <em>answered</em>.</h2>
         <p class="lede pteaser__lede">One subscription, one price everywhere — less per month than the next impulse buy you'll never wear. No free tier. No ads. Cancel anytime.</p>
         <div class="pteaser__cta">
-          <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
+          <a class="cta" href={APP_STORE_URL}>Get the app <span class="cta__arrow">→</span></a>
           <a class="cta cta--ghost" href="/pricing">See full pricing <span class="cta__arrow">→</span></a>
         </div>
         <p class="pteaser__assure">Set up in one evening · Your photos stay yours · Cancel in two taps</p>
