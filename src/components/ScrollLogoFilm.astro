@@ -8,6 +8,8 @@
 //   • It resolves on the clean formed mark with the install CTA (upper-right).
 // Falls back to a static poster frame under reduced motion / no-JS.
 
+import { APP_STORE_URL } from "../lib/links";
+
 const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_095006_fd4e35b8-e575-4e10-9226-e211d064d80c.mp4";
 
 // FRAME_V busts browser/CDN caches when the frames are re-rendered.
@@ -53,7 +55,7 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
       >And answers in <em>one outfit</em>.</h2>
 
       <a class="cta cta--ink film__download" data-overlay data-in="0.89,0.97"
-        href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
+        href={APP_STORE_URL}>Get the app <span class="cta__arrow">→</span></a>
     </div>
 
     <!-- Opening scroll cue over the video -->

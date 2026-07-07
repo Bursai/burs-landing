@@ -1,5 +1,6 @@
 ---
 import { PRICES, format, annualSavingsPct } from "../lib/prices";
+import { APP_STORE_URL } from "../lib/links";
 interface Props { emphasize?: "month" | "year"; }
 const { emphasize = "year" } = Astro.props;
 const savings = annualSavingsPct();
@@ -28,7 +29,7 @@ const savings = annualSavingsPct();
   </ul>
   <p class="pc__not">No free tier. No ads. Cancel anytime from account settings.</p>
   <p class="pc__bill">Billed by your app store in your local currency.</p>
-  <a class="cta" href="https://apps.apple.com/app/burs">Get the app <span class="cta__arrow">→</span></a>
+  <a class="cta" href={APP_STORE_URL}>Get the app <span class="cta__arrow">→</span></a>
 </article>
 <style>
   .pc{background:var(--cream-paper);border:1px solid rgba(28,25,23,.1);padding:40px 36px;max-width:520px;display:grid;gap:22px}
