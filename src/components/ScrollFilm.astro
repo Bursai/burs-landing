@@ -82,11 +82,12 @@ const FILM       = `/assets/launch-film.mp4`;   // playable fallback, with audio
   .reel{
     position: relative;
     /* Scroll runway — the whole 45s film plays out over this. Taller = slower,
-       more cinematic. Runs from the hero down to the footer. */
-    height: 560vh;
+       more slow-motion. This length gives a deliberate, cinematic crawl from
+       the hero down to the footer. */
+    height: 900vh;
     background: var(--ink);
   }
-  @media (max-width: 800px){ .reel{ height: 440vh } }
+  @media (max-width: 800px){ .reel{ height: 640vh } }
 
   .reel__stage{
     position: sticky;
@@ -199,12 +200,14 @@ const FILM       = `/assets/launch-film.mp4`;   // playable fallback, with audio
     const CTA = { x0: 0.33, y0: 0.745, w: 0.34, h: 0.215 };
     const AR = 16 / 9;
     const START_T = 0.45;          // skip the pure-black lead-in
-    const EASE = 0.2;              // playhead catch-up per frame (silky, not sticky)
+    const EASE = 0.12;             // gentler catch-up = smoother, floatier glide
+    const SEEK_EPS = 0.02;         // skip sub-frame seeks that wouldn't change the frame
 
     let duration = 0;
     let ready = false;
     let targetT = START_T;
     let curT = START_T;
+    let lastSeek = -1;
     let rafId = 0;
 
     // Load the seek-optimised source (kept out of the network until now via
@@ -243,16 +246,20 @@ const FILM       = `/assets/launch-film.mp4`;   // playable fallback, with audio
     // Ease the playhead toward the scroll target. Setting currentTime once per
     // animation frame (not once per scroll event) keeps seeking decoupled from
     // scroll cadence, so it stays smooth however the wheel/trackpad fires.
+    const seek = (t: number) => {
+      if (Math.abs(t - lastSeek) < SEEK_EPS) return;   // sub-frame → no visible change
+      try { video!.currentTime = t; lastSeek = t; } catch {}
+    };
     function tick() {
       const d = targetT - curT;
       if (Math.abs(d) < 0.01) {
         curT = targetT;
-        try { video!.currentTime = curT; } catch {}
+        seek(curT);
         rafId = 0;
         return;
       }
       curT += d * EASE;
-      try { video!.currentTime = curT; } catch {}
+      seek(curT);
       rafId = requestAnimationFrame(tick);
     }
 
