@@ -2,6 +2,7 @@
 import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
 import ScrollFilm from "../components/ScrollFilm.astro";
+import WeekReel from "../components/WeekReel.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
 ---
@@ -33,6 +34,10 @@ import { softwareApplication, product } from "../lib/schema";
 
   <!-- THE FILM — the launch film, scrubbed by scroll. Every scroll advances it;
        it opens from black, tells the story, and closes on its own "Get dressed"
-       CTA card that dissolves into the (ink) footer. -->
+       CTA card. -->
   <ScrollFilm />
+
+  <!-- THE WEEK — a scroll-driven week; the days glide by and each one's outfit
+       draws itself in, closing on the App Store CTA before the footer. -->
+  <WeekReel />
 </Base>
