@@ -1,7 +1,12 @@
 ---
-import Page from "../layouts/Page.astro";
+import Base from "../layouts/Base.astro";
 import Schema from "../components/Schema.astro";
-import { howTo } from "../lib/schema";
+import ActsPlates from "../components/ActsPlates.astro";
+import DesireBeat from "../components/DesireBeat.astro";
+import PricingTeaser from "../components/PricingTeaser.astro";
+import StitchThread from "../components/StitchThread.astro";
+import Reveal from "../components/Reveal.astro";
+import { howTo, product } from "../lib/schema";
 
 const steps = [
   { name: "The scan",            text: "Point a phone camera at your clothes. BURS uses computer vision to catalogue every piece — colour, fabric, silhouette, formality — in under ten minutes. No manual tagging." },
@@ -12,30 +17,60 @@ const steps = [
   { name: "Week & travel",       text: "Sync your calendar and BURS drafts outfits for every event. Tell it where you're going and for how long, and it builds a minimum-viable capsule from your wardrobe." }
 ];
 ---
-<Page
+<Base
   title="Method — BURS"
   description="How BURS reads a closet, the day, and a trip — without ever asking you to shop."
   path="/method"
-  eyebrow="Method"
-  headline="How BURS <em>reads</em> a closet."
-  lede="Six steps. No manual tagging, no styling questionnaire, no shopping list. Just your closet, finally working."
 >
-  <Schema slot="head" json={howTo({ name: "How BURS works", description: "From the wardrobe scan to a packed travel capsule.", steps })} />
+  <Schema slot="head" json={[howTo({ name: "How BURS works", description: "From the wardrobe scan to a packed travel capsule.", steps }), product()]} />
 
-  <ol class="method" role="list">
-    {steps.map((s, i) => (
-      <li class="method__step">
-        <span class="method__num">0{i+1}</span>
-        <div class="method__copy">
-          <h3>{s.name}</h3>
-          <p>{s.text}</p>
-        </div>
-      </li>
-    ))}
-  </ol>
-</Page>
+  <!-- Written method — the six steps -->
+  <header class="phead">
+    <div class="wrap">
+      <p class="eyebrow">Method</p>
+      <h1 set:html={"How BURS <em>reads</em> a closet."} />
+      <p class="lede phead__lede">Six steps. No manual tagging, no styling questionnaire, no shopping list. Just your closet, finally working.</p>
+    </div>
+  </header>
+
+  <section class="pbody">
+    <div class="wrap">
+      <ol class="method" role="list">
+        {steps.map((s, i) => (
+          <li class="method__step">
+            <span class="method__num">0{i+1}</span>
+            <div class="method__copy">
+              <h3>{s.name}</h3>
+              <p>{s.text}</p>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+
+  <!-- Shown — the app in five acts (screens as editorial plates) -->
+  <ActsPlates />
+
+  <!-- What changes -->
+  <DesireBeat />
+
+  <!-- The ask — pricing, hung from the stitched seam -->
+  <PricingTeaser />
+
+  <!-- The seam that meanders past the acts, hangs the price tag, ties off at the footer -->
+  <StitchThread />
+
+  <Reveal />
+</Base>
 
 <style>
+  .phead{background:var(--cream);padding-block:clamp(120px,18vh,200px) clamp(40px,7vh,80px)}
+  .phead h1{font-size:clamp(48px,8vw,128px);font-weight:200;letter-spacing:-.04em;line-height:.9;margin-top:14px;text-wrap:balance}
+  .phead h1 :global(em){font-style:italic;color:var(--gold);font-weight:300}
+  .phead__lede{margin-top:24px;max-width:54ch}
+  .pbody{background:var(--cream);padding-block:clamp(24px,4vh,56px) clamp(48px,8vh,120px)}
+
   .method{list-style:none;display:grid;gap:48px;max-width:880px}
   .method__step{display:grid;grid-template-columns:120px 1fr;gap:32px;padding-bottom:48px;border-bottom:1px solid rgba(28,25,23,.12)}
   .method__num{font-family:var(--mono);font-size:13px;letter-spacing:.22em;color:var(--gold-deep)}
