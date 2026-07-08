@@ -13,6 +13,21 @@ import { softwareApplication, product } from "../lib/schema";
 >
   <Schema slot="head" json={[softwareApplication(), product()]} />
 
+  <!-- The page is a film; this keeps a real heading + crawlable synopsis for
+       search engines and assistive tech (the visuals stay film-only). -->
+  <div class="sr-only">
+    <h1>BURS — your wardrobe, intelligently styled</h1>
+    <p>
+      BURS is an AI wardrobe stylist. It scans the clothes you already own,
+      reads the weather, your calendar and your day, and answers with one
+      outfit — no shopping, no manual tagging. It refines in plain language,
+      drafts a look for every event in your week, and packs a minimum-viable
+      travel capsule from your wardrobe. One subscription, one price
+      everywhere; no free tier, no ads, cancel anytime. See how it works on
+      the <a href="/method">method</a> page or the full <a href="/pricing">pricing</a>.
+    </p>
+  </div>
+
   <!-- ATTENTION — the film plays, then the mark makes itself from loose thread -->
   <ScrollLogoFilm />
 

@@ -92,6 +92,7 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
     position: sticky;
     top: 0;
     height: 100vh;
+    height: 100svh;          /* track the visible viewport on iOS (address bar) */
     overflow: hidden;
     background: var(--ink);
     display: flex;
@@ -210,16 +211,22 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
     const START = 3;
     const END = FRAME_COUNT - 1;
 
-    // Coarse-first loading: a sparse grid gives every scroll position *some*
-    // frame within ~1s, then the gaps fill in, prioritised around wherever
-    // the viewer currently is.
-    const STRIDE = 12;
+    // Coarse-first, bounded loading. A sparse grid (~46 frames) is always
+    // resident so every scroll position has *some* frame; dense detail is
+    // only fetched within a WINDOW of the viewer, only once the section nears
+    // the viewport (so '/' doesn't pull 5MB the visitor may never scroll to),
+    // and frames far outside the window are evicted to cap memory.
+    const STRIDE = 12;          // sparse keyframe every 12th frame (~46 total)
     const MAX_INFLIGHT = 8;
+    const WINDOW = 64;          // dense radius (frames) around the viewer
+    const EVICT = 140;          // release non-sparse frames beyond this radius
+    const isSparse = (i: number) => i % STRIDE === 0 || i === START || i === END;
 
     const frames: (HTMLImageElement | undefined)[] = new Array(FRAME_COUNT);
     const requested: boolean[] = new Array(FRAME_COUNT).fill(false);
     let inflight = 0;
     let ready = false;
+    let dense = false;          // dense-window loading armed near the viewport
     let targetIdx = START;
 
     const ramp = (p: number, a: number, b: number) =>
@@ -276,16 +283,45 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
       ctx.strokeRect(dx + 0.5, dy + 0.5, dw - 1, dh - 1);
     }
 
+    // Coalesce repaints: many frames can finish loading in one tick, but the
+    // canvas only needs to be redrawn once per animation frame.
+    let paintScheduled = false;
+    function schedulePaint() {
+      if (paintScheduled) return;
+      paintScheduled = true;
+      requestAnimationFrame(() => { paintScheduled = false; paint(); });
+    }
+
     // ---- Progressive loader ---------------------------------------------
     function nextFrame(): number {
       let best = -1, bestScore = Infinity;
       for (let i = 0; i < FRAME_COUNT; i++) {
         if (requested[i]) continue;
-        const sparse = i % STRIDE === 0 || i === START || i === END;
-        const score = Math.abs(i - targetIdx) + (sparse ? 0 : 1e6);
+        const sparse = isSparse(i);
+        if (!sparse) {
+          if (!dense) continue;                          // sparse-only until armed
+          if (Math.abs(i - targetIdx) > WINDOW) continue; // dense only near viewer
+        }
+        const score = Math.abs(i - targetIdx) + (sparse ? 0 : 1e5);
         if (score < bestScore) { bestScore = score; best = i; }
       }
       return best;
+    }
+
+    // Free loaded, non-sparse frames far from the viewer so resident memory
+    // stays O(window + sparse), not O(540). nearestLoaded() degrades to the
+    // coarse grid for evicted spans and they re-fetch on return.
+    function evict() {
+      for (let i = 0; i < FRAME_COUNT; i++) {
+        if (!requested[i] || isSparse(i)) continue;
+        if (Math.abs(i - targetIdx) <= EVICT) continue;
+        if (!isLoaded(frames[i])) continue;              // never touch in-flight
+        const img = frames[i]!;
+        img.onload = img.onerror = null;
+        img.src = '';
+        frames[i] = undefined;
+        requested[i] = false;
+      }
     }
 
     function pump() {
@@ -303,8 +339,8 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
             ready = true;
             reel!.setAttribute('data-ready', '');
           }
-          // A freshly-arrived frame may be a better match for the current view
-          paint();
+          // A freshly-arrived frame may improve the current view; coalesced.
+          schedulePaint();
           pump();
         };
         img.onload = done;
@@ -330,6 +366,7 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
         cue.style.transform = `translateX(-50%) translateY(${(1 - c) * 10}px)`;
       }
       pump();
+      evict();
       paint();
       // Track the painted end-card CTA and switch the link on as it lands.
       if (endcta) {
@@ -354,7 +391,7 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
     }
 
     resize();
-    // Prime the loader (frames download before the section is even reached)
+    // Prime the poster frame so the stage is ready the instant it's reached.
     requested[START] = true;
     (() => {
       const img = new Image();
@@ -364,11 +401,28 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
       const done = () => {
         inflight--;
         if (!ready && isLoaded(img)) { ready = true; reel!.setAttribute('data-ready', ''); }
-        paint(); pump();
+        schedulePaint(); pump();
       };
       img.onload = done; img.onerror = done;
       img.src = url(START);
     })();
+
+    // Arm dense-window loading once the film nears the viewport, so the
+    // landing doesn't fetch the whole sequence for a visitor who never
+    // scrolls to it. (Falls back to eager if IO is unavailable.)
+    if ('IntersectionObserver' in window) {
+      const io = new IntersectionObserver((entries) => {
+        if (entries.some(e => e.isIntersecting)) {
+          dense = true;
+          io.disconnect();
+          pump();
+        }
+      }, { rootMargin: '150% 0px' });
+      io.observe(reel);
+    } else {
+      dense = true;
+    }
+
     pump();
     update();
 
