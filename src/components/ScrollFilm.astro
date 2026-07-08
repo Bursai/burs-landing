@@ -1,36 +1,40 @@
 ---
 // src/components/ScrollFilm.astro
-// The launch film, scrubbed by scroll. A pinned cinema stage on ink: as you
-// scroll its tall runway, a 540-frame WebP sequence of the film scrubs on a
-// <canvas>, frame-accurate at any scroll speed (the same technique the hero
-// uses for the mark). The frames are contain-fit and centered so the film's
-// own typography and App Store badge are never cropped, on any viewport; the
-// ink stage reads as a darkened room with the film projected in it. The film
-// opens from black and closes on its own dark "Get dressed" CTA card, which
-// dissolves straight into the (already ink) footer.
+// The launch film, scrubbed by scroll — hardware-decoded <video>, not a frame
+// sequence. A pinned "cinema on ink" stage: as you scroll the tall runway,
+// the film's playhead is eased toward a scroll-mapped time, so the video
+// plays forward/back with the scroll but stays smooth even when the scroll is
+// chunky. The film is contain-fit (its typography and App Store badge are
+// never cropped), opens from black and closes on its own "Get dressed / App
+// Store" card that dissolves into the (already ink) footer.
 //
-// Falls back to a real <video controls> — playable, with sound — under
-// reduced-motion and no-JS.
+// The scrub source is encoded with dense keyframes for fast seeking and has
+// no audio. Under reduced-motion / no-JS the runway collapses and a real,
+// playable <video controls> (with sound) is shown instead.
 import { APP_STORE_URL } from "../lib/links";
 
-const POSTER = `/assets/launch-poster.jpg`;
-const FILM_MP4 = `/assets/launch-film.mp4`;
+const POSTER     = `/assets/launch-poster.jpg`;
+const SCRUB_WEBM = `/assets/launch-scrub.webm`; // VP9, seek-optimised, silent
+const SCRUB_MP4  = `/assets/launch-scrub.mp4`;  // H.264 fallback (Safari < 16)
+const FILM       = `/assets/launch-film.mp4`;   // playable fallback, with audio
 ---
 <section class="reel" data-reel aria-labelledby="reel-title">
   <div class="reel__stage">
-    <!-- No-JS / pre-paint still: a frame from the film -->
-    <img class="reel__poster" src={POSTER} alt="" aria-hidden="true" decoding="async" />
-
-    <!-- The scrubbed film -->
-    <canvas class="reel__canvas" data-reel-canvas aria-hidden="true"></canvas>
+    <!-- The scrubbed film. Poster shows until the first frame is decoded. -->
+    <video
+      class="reel__video" data-reel-video
+      muted playsinline preload="none" poster={POSTER}
+      tabindex="-1" aria-hidden="true" disablepictureinpicture
+    >
+      <source src={SCRUB_WEBM} type="video/webm" />
+      <source src={SCRUB_MP4} type="video/mp4" />
+    </video>
 
     <!-- Projection ambience -->
     <div class="reel__vignette" aria-hidden="true"></div>
 
-    <!-- The film's closing frames paint a "Get dressed / App Store" card onto
-         the (aria-hidden) canvas. This real link is positioned over that
-         painted CTA and switched on as the film reaches its end, so the
-         closing card is actually tappable — not just pixels. -->
+    <!-- Real, tappable link over the painted "Get dressed / App Store" card,
+         switched on as the film reaches its close. -->
     <a class="reel__endcta" data-reel-endcta href={APP_STORE_URL}
        aria-label="Get BURS on the App Store" tabindex="-1"></a>
 
@@ -50,14 +54,11 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
     <!-- Fallback: a real, playable film (reduced-motion / no-JS) -->
     <div class="reel__fallback">
       <video
-        class="reel__video"
-        controls
-        playsinline
-        preload="none"
-        poster={POSTER}
+        class="reel__fallback-video"
+        controls playsinline preload="none" poster={POSTER}
         aria-label="The BURS launch film"
       >
-        <source src={FILM_MP4} type="video/mp4" />
+        <source src={FILM} type="video/mp4" />
       </video>
       <a class="cta cta--cream reel__fallback-cta" href={APP_STORE_URL}>
         Get the app <span class="cta__arrow">→</span>
@@ -71,7 +72,7 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
          viewer the real, playable film instead of a wall of empty scroll. */
       .reel { height: auto !important; }
       .reel .reel__stage { position: static !important; height: auto !important; min-height: 0 !important; overflow: visible !important; }
-      .reel .reel__canvas, .reel .reel__poster, .reel .reel__cue, .reel .reel__vignette { display: none !important; }
+      .reel .reel__video, .reel .reel__cue, .reel .reel__vignette, .reel .reel__endcta { display: none !important; }
       .reel .reel__fallback { display: flex !important; }
     </style>
   </noscript>
@@ -81,8 +82,7 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
   .reel{
     position: relative;
     /* Scroll runway — the whole 45s film plays out over this. Taller = slower,
-       more cinematic. Runs from the hero down to the footer. ~9px of scroll
-       per frame here: frame-accurate and smooth at any speed. */
+       more cinematic. Runs from the hero down to the footer. */
     height: 560vh;
     background: var(--ink);
   }
@@ -100,22 +100,18 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
     justify-content: center;
   }
 
-  .reel__poster,
-  .reel__canvas{
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+  .reel__video{
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: contain;      /* never crop the film's type / badge */
+    background: var(--ink);
+    z-index: 0;
   }
-  .reel__poster{ object-fit: contain; z-index: 0; background: var(--ink) }
-  /* Once the canvas owns a frame, retire the poster so it never double-exposes */
-  .reel[data-ready] .reel__poster{ opacity: 0 }
-  .reel__canvas{ display: block; z-index: 1 }
 
   /* Projection: soft edge fall-off deepens the "darkened room" and blends the
      letterbox into the ink stage. Pointer-transparent. */
   .reel__vignette{
-    position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
     box-shadow:
       inset 0 0 160px rgba(0,0,0,.55),
       inset 0 0 60px rgba(0,0,0,.35);
@@ -123,23 +119,11 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
       radial-gradient(120% 80% at 50% 50%, transparent 62%, rgba(0,0,0,.34) 100%);
   }
 
-  /* Opening cue — fades out as soon as the film starts moving */
-  .reel__cue{
-    position: absolute; z-index: 3;
-    bottom: clamp(34px, 7vh, 72px); left: 50%;
-    transform: translateX(-50%);
-    display: flex; flex-direction: column; align-items: center; gap: 12px;
-    font-family: var(--mono); font-size: 9px; letter-spacing: .3em;
-    text-transform: uppercase; color: rgba(245,240,232,.68);
-    pointer-events: none;               /* never intercept the end-card click */
-    will-change: opacity, transform;
-  }
-
-  /* Real, tappable link over the painted end-card CTA. Invisible (the frame
-     is the visual); JS positions it over the button + badge and switches
+  /* Real, tappable link over the painted end-card CTA. Invisible (the frame is
+     the visual); JS positions it over the button + badge and switches
      pointer-events on only once the film reaches its close. */
   .reel__endcta{
-    position: absolute; z-index: 3;
+    position: absolute; z-index: 2;
     display: block; opacity: 0; pointer-events: none;
     border-radius: 999px;
     font-size: 0; color: transparent; text-decoration: none;
@@ -149,6 +133,18 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
     opacity: 1;
     outline: 2px solid var(--gold-bright);
     outline-offset: 6px;
+  }
+
+  /* Opening cue — fades out as soon as the film starts moving */
+  .reel__cue{
+    position: absolute; z-index: 2;
+    bottom: clamp(34px, 7vh, 72px); left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 9px; letter-spacing: .3em;
+    text-transform: uppercase; color: rgba(245,240,232,.68);
+    pointer-events: none;
+    will-change: opacity, transform;
   }
   .reel__cue-line{
     width: 1px; height: 42px;
@@ -166,11 +162,11 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
   /* Fallback film — only shown under reduced-motion / no-JS */
   .reel__fallback{
     display: none;
-    position: relative; z-index: 4;
+    position: relative; z-index: 3;
     flex-direction: column; align-items: center; gap: 24px;
     width: min(1100px, 92vw);
   }
-  .reel__video{
+  .reel__fallback-video{
     width: 100%; height: auto; max-height: 82vh;
     aspect-ratio: 16 / 9;
     background: #000;
@@ -185,199 +181,105 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
       overflow: visible;
       padding-block: clamp(64px, 12vh, 140px);
     }
-    .reel__canvas, .reel__poster, .reel__cue, .reel__vignette{ display: none }
+    .reel__video, .reel__cue, .reel__vignette, .reel__endcta{ display: none }
     .reel__fallback{ display: flex }
   }
 </style>
 
 <script>
   const reel   = document.querySelector<HTMLElement>('[data-reel]');
-  const canvas = document.querySelector<HTMLCanvasElement>('[data-reel-canvas]');
+  const video  = document.querySelector<HTMLVideoElement>('[data-reel-video]');
   const cue    = document.querySelector<HTMLElement>('[data-reel-cue]');
   const endcta = document.querySelector<HTMLAnchorElement>('[data-reel-endcta]');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (reel && canvas && !reduced) {
-    const ctx = canvas.getContext('2d', { alpha: false });
-
-    const FRAME_COUNT = 540;
-    const FRAME_V = '1';
-    const BASE = '/assets/launch-seq/frame_';
-    const pad = (n: number) => String(n).padStart(4, '0');
-    const url = (i: number) => `${BASE}${pad(i + 1)}.webp?v=${FRAME_V}`;
-
-    // Trim the deepest black of the fade-in so the runway opens on motion,
-    // not a dead frame; hold the closing CTA card at the very end.
-    const START = 3;
-    const END = FRAME_COUNT - 1;
-
-    // Coarse-first, bounded loading. A sparse grid (~46 frames) is always
-    // resident so every scroll position has *some* frame; dense detail is
-    // only fetched within a WINDOW of the viewer, only once the section nears
-    // the viewport (so '/' doesn't pull 5MB the visitor may never scroll to),
-    // and frames far outside the window are evicted to cap memory.
-    const STRIDE = 12;          // sparse keyframe every 12th frame (~46 total)
-    const MAX_INFLIGHT = 8;
-    const WINDOW = 64;          // dense radius (frames) around the viewer
-    const EVICT = 140;          // release non-sparse frames beyond this radius
-    const isSparse = (i: number) => i % STRIDE === 0 || i === START || i === END;
-
-    const frames: (HTMLImageElement | undefined)[] = new Array(FRAME_COUNT);
-    const requested: boolean[] = new Array(FRAME_COUNT).fill(false);
-    let inflight = 0;
-    let ready = false;
-    let dense = false;          // dense-window loading armed near the viewport
-    let targetIdx = START;
-
-    const ramp = (p: number, a: number, b: number) =>
-      Math.min(1, Math.max(0, (p - a) / (b - a)));
-    // The painted "Get dressed / App Store" card sits here within the frame
-    // (measured from the closing frame): button centred at ~50%/80%, badge
-    // just below. This box covers both for a comfortable tap target.
+  if (reel && video && !reduced) {
+    // The painted "Get dressed / App Store" card sits here within the frame:
+    // button centred ~50%/80%, badge just below. This box covers both.
     const CTA = { x0: 0.33, y0: 0.745, w: 0.34, h: 0.215 };
-    // Client-space rect of the last drawn frame, so the link can track it.
-    let lastRect = { dx: 0, dy: 0, dw: 0, dh: 0 };
+    const AR = 16 / 9;
+    const START_T = 0.45;          // skip the pure-black lead-in
+    const EASE = 0.2;              // playhead catch-up per frame (silky, not sticky)
 
-    // ---- Canvas sizing (device-pixel-accurate) --------------------------
-    let dpr = 1, cw = 0, chh = 0;
-    function resize() {
-      dpr = Math.min(window.devicePixelRatio || 1, 2);
-      cw = canvas!.clientWidth;
-      chh = canvas!.clientHeight;
-      canvas!.width = Math.round(cw * dpr);
-      canvas!.height = Math.round(chh * dpr);
-    }
+    let duration = 0;
+    let ready = false;
+    let targetT = START_T;
+    let curT = START_T;
+    let rafId = 0;
 
-    const isLoaded = (img?: HTMLImageElement) =>
-      !!img && img.complete && img.naturalWidth > 0;
+    // Load the seek-optimised source (kept out of the network until now via
+    // preload="none", so the page isn't heavier for a visitor who bounces).
+    video.preload = 'auto';
+    video.load();
 
-    function nearestLoaded(i: number): HTMLImageElement | null {
-      if (isLoaded(frames[i])) return frames[i]!;
-      for (let d = 1; d < FRAME_COUNT; d++) {
-        if (isLoaded(frames[i - d])) return frames[i - d]!;
-        if (isLoaded(frames[i + d])) return frames[i + d]!;
-      }
-      return null;
-    }
+    video.addEventListener('loadedmetadata', () => {
+      duration = video.duration || 45;
+    });
 
-    // Contain-fit: the whole 16:9 frame, centered, letterboxed by the ink
-    // stage — the film's type and badges are never cropped.
-    function paint() {
-      if (!ctx) return;
-      const img = nearestLoaded(Math.min(END, Math.max(0, targetIdx)));
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      ctx.fillStyle = '#0E0D0C';
-      ctx.fillRect(0, 0, cw, chh);
-      if (!img) return;
-      const ir = img.naturalWidth / img.naturalHeight;
-      const cr = cw / chh;
-      let dw: number, dh: number;
-      if (cr > ir) { dh = chh; dw = chh * ir; }   // pillarbox
-      else { dw = cw; dh = cw / ir; }             // letterbox
-      const dx = (cw - dw) / 2, dy = (chh - dh) / 2;
-      lastRect = { dx, dy, dw, dh };
-      ctx.drawImage(img, dx, dy, dw, dh);
-      // Faint frame edge so the "screen" reads against the ink during dark beats
-      ctx.strokeStyle = 'rgba(245,240,232,.05)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(dx + 0.5, dy + 0.5, dw - 1, dh - 1);
-    }
+    // Prime the decoder with a muted play→pause so seeked frames actually
+    // render (some engines won't paint a seek on a never-played video), then
+    // hand control to the scrubber.
+    video.addEventListener('loadeddata', () => {
+      ready = true;
+      const start = () => { try { video.currentTime = START_T; } catch {} update(); };
+      const p = video.play();
+      if (p && typeof p.then === 'function') {
+        p.then(() => { video.pause(); start(); }).catch(start);
+      } else { start(); }
+    }, { once: true });
 
-    // Coalesce repaints: many frames can finish loading in one tick, but the
-    // canvas only needs to be redrawn once per animation frame.
-    let paintScheduled = false;
-    function schedulePaint() {
-      if (paintScheduled) return;
-      paintScheduled = true;
-      requestAnimationFrame(() => { paintScheduled = false; paint(); });
-    }
-
-    // ---- Progressive loader ---------------------------------------------
-    function nextFrame(): number {
-      let best = -1, bestScore = Infinity;
-      for (let i = 0; i < FRAME_COUNT; i++) {
-        if (requested[i]) continue;
-        const sparse = isSparse(i);
-        if (!sparse) {
-          if (!dense) continue;                          // sparse-only until armed
-          if (Math.abs(i - targetIdx) > WINDOW) continue; // dense only near viewer
-        }
-        const score = Math.abs(i - targetIdx) + (sparse ? 0 : 1e5);
-        if (score < bestScore) { bestScore = score; best = i; }
-      }
-      return best;
-    }
-
-    // Free loaded, non-sparse frames far from the viewer so resident memory
-    // stays O(window + sparse), not O(540). nearestLoaded() degrades to the
-    // coarse grid for evicted spans and they re-fetch on return.
-    function evict() {
-      for (let i = 0; i < FRAME_COUNT; i++) {
-        if (!requested[i] || isSparse(i)) continue;
-        if (Math.abs(i - targetIdx) <= EVICT) continue;
-        if (!isLoaded(frames[i])) continue;              // never touch in-flight
-        const img = frames[i]!;
-        img.onload = img.onerror = null;
-        img.src = '';
-        frames[i] = undefined;
-        requested[i] = false;
-      }
-    }
-
-    function pump() {
-      while (inflight < MAX_INFLIGHT) {
-        const i = nextFrame();
-        if (i < 0) break;
-        requested[i] = true;
-        const img = new Image();
-        img.decoding = 'async';
-        frames[i] = img;
-        inflight++;
-        const done = () => {
-          inflight--;
-          if (!ready && i === START && isLoaded(img)) {
-            ready = true;
-            reel!.setAttribute('data-ready', '');
-          }
-          // A freshly-arrived frame may improve the current view; coalesced.
-          schedulePaint();
-          pump();
-        };
-        img.onload = done;
-        img.onerror = done;
-        img.src = url(i);
-      }
-    }
-
-    // ---- Scroll → progress ----------------------------------------------
-    function computeProgress() {
+    // ---- Scroll → time --------------------------------------------------
+    function progress() {
       const rect = reel!.getBoundingClientRect();
       const total = reel!.offsetHeight - window.innerHeight;
       const scrolled = Math.min(Math.max(-rect.top, 0), total);
       return total > 0 ? scrolled / total : 0;
     }
+    const timeFor = (p: number) => {
+      const d = duration || 45;
+      return START_T + p * (d - START_T);
+    };
+
+    // Ease the playhead toward the scroll target. Setting currentTime once per
+    // animation frame (not once per scroll event) keeps seeking decoupled from
+    // scroll cadence, so it stays smooth however the wheel/trackpad fires.
+    function tick() {
+      const d = targetT - curT;
+      if (Math.abs(d) < 0.01) {
+        curT = targetT;
+        try { video!.currentTime = curT; } catch {}
+        rafId = 0;
+        return;
+      }
+      curT += d * EASE;
+      try { video!.currentTime = curT; } catch {}
+      rafId = requestAnimationFrame(tick);
+    }
+
+    function positionCta() {
+      const W = video!.clientWidth, H = video!.clientHeight;
+      let dw: number, dh: number;
+      if (W / H > AR) { dh = H; dw = H * AR; } else { dw = W; dh = W / AR; }
+      const dx = (W - dw) / 2, dy = (H - dh) / 2;
+      endcta!.style.left = `${dx + dw * CTA.x0}px`;
+      endcta!.style.top = `${dy + dh * CTA.y0}px`;
+      endcta!.style.width = `${dw * CTA.w}px`;
+      endcta!.style.height = `${dh * CTA.h}px`;
+    }
 
     function update() {
-      const p = computeProgress();
-      targetIdx = Math.round(START + p * (END - START));
+      const p = progress();
+      targetT = timeFor(p);
+      if (ready && !rafId) rafId = requestAnimationFrame(tick);
+
       if (cue) {
         const c = Math.max(0, 1 - p / 0.04);   // gone after ~4% of the runway
         cue.style.opacity = String(c);
         cue.style.transform = `translateX(-50%) translateY(${(1 - c) * 10}px)`;
       }
-      pump();
-      evict();
-      paint();
-      // Track the painted end-card CTA and switch the link on as it lands.
       if (endcta) {
-        const live = ramp(p, 0.9, 0.965) > 0.02 && lastRect.dw > 0;
-        if (live) {
-          const { dx, dy, dw, dh } = lastRect;
-          endcta.style.left = `${dx + dw * CTA.x0}px`;
-          endcta.style.top = `${dy + dh * CTA.y0}px`;
-          endcta.style.width = `${dw * CTA.w}px`;
-          endcta.style.height = `${dh * CTA.h}px`;
-        }
+        const live = p >= 0.9;
+        if (live) positionCta();
         endcta.classList.toggle('is-live', live);
         endcta.tabIndex = live ? 0 : -1;
       }
@@ -390,43 +292,8 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
       requestAnimationFrame(() => { ticking = false; update(); });
     }
 
-    resize();
-    // Prime the poster frame so the stage is ready the instant it's reached.
-    requested[START] = true;
-    (() => {
-      const img = new Image();
-      img.decoding = 'async';
-      frames[START] = img;
-      inflight++;
-      const done = () => {
-        inflight--;
-        if (!ready && isLoaded(img)) { ready = true; reel!.setAttribute('data-ready', ''); }
-        schedulePaint(); pump();
-      };
-      img.onload = done; img.onerror = done;
-      img.src = url(START);
-    })();
-
-    // Arm dense-window loading once the film nears the viewport, so the
-    // landing doesn't fetch the whole sequence for a visitor who never
-    // scrolls to it. (Falls back to eager if IO is unavailable.)
-    if ('IntersectionObserver' in window) {
-      const io = new IntersectionObserver((entries) => {
-        if (entries.some(e => e.isIntersecting)) {
-          dense = true;
-          io.disconnect();
-          pump();
-        }
-      }, { rootMargin: '150% 0px' });
-      io.observe(reel);
-    } else {
-      dense = true;
-    }
-
-    pump();
     update();
-
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { resize(); update(); }, { passive: true });
+    window.addEventListener('resize', () => { update(); }, { passive: true });
   }
 </script>
