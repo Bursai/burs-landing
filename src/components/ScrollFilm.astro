@@ -27,6 +27,13 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
     <!-- Projection ambience -->
     <div class="reel__vignette" aria-hidden="true"></div>
 
+    <!-- The film's closing frames paint a "Get dressed / App Store" card onto
+         the (aria-hidden) canvas. This real link is positioned over that
+         painted CTA and switched on as the film reaches its end, so the
+         closing card is actually tappable — not just pixels. -->
+    <a class="reel__endcta" data-reel-endcta href={APP_STORE_URL}
+       aria-label="Get BURS on the App Store" tabindex="-1"></a>
+
     <!-- Accessible summary of the film (it carries the page's story) -->
     <h2 id="reel-title" class="reel__sr">
       The BURS film. An AI wardrobe stylist reads the clothes you already own,
@@ -123,7 +130,24 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
     display: flex; flex-direction: column; align-items: center; gap: 12px;
     font-family: var(--mono); font-size: 9px; letter-spacing: .3em;
     text-transform: uppercase; color: rgba(245,240,232,.68);
+    pointer-events: none;               /* never intercept the end-card click */
     will-change: opacity, transform;
+  }
+
+  /* Real, tappable link over the painted end-card CTA. Invisible (the frame
+     is the visual); JS positions it over the button + badge and switches
+     pointer-events on only once the film reaches its close. */
+  .reel__endcta{
+    position: absolute; z-index: 3;
+    display: block; opacity: 0; pointer-events: none;
+    border-radius: 999px;
+    font-size: 0; color: transparent; text-decoration: none;
+  }
+  .reel__endcta.is-live{ pointer-events: auto; cursor: pointer }
+  .reel__endcta:focus-visible{
+    opacity: 1;
+    outline: 2px solid var(--gold-bright);
+    outline-offset: 6px;
   }
   .reel__cue-line{
     width: 1px; height: 42px;
@@ -169,6 +193,7 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
   const reel   = document.querySelector<HTMLElement>('[data-reel]');
   const canvas = document.querySelector<HTMLCanvasElement>('[data-reel-canvas]');
   const cue    = document.querySelector<HTMLElement>('[data-reel-cue]');
+  const endcta = document.querySelector<HTMLAnchorElement>('[data-reel-endcta]');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (reel && canvas && !reduced) {
@@ -196,6 +221,15 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
     let inflight = 0;
     let ready = false;
     let targetIdx = START;
+
+    const ramp = (p: number, a: number, b: number) =>
+      Math.min(1, Math.max(0, (p - a) / (b - a)));
+    // The painted "Get dressed / App Store" card sits here within the frame
+    // (measured from the closing frame): button centred at ~50%/80%, badge
+    // just below. This box covers both for a comfortable tap target.
+    const CTA = { x0: 0.33, y0: 0.745, w: 0.34, h: 0.215 };
+    // Client-space rect of the last drawn frame, so the link can track it.
+    let lastRect = { dx: 0, dy: 0, dw: 0, dh: 0 };
 
     // ---- Canvas sizing (device-pixel-accurate) --------------------------
     let dpr = 1, cw = 0, chh = 0;
@@ -234,6 +268,7 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
       if (cr > ir) { dh = chh; dw = chh * ir; }   // pillarbox
       else { dw = cw; dh = cw / ir; }             // letterbox
       const dx = (cw - dw) / 2, dy = (chh - dh) / 2;
+      lastRect = { dx, dy, dw, dh };
       ctx.drawImage(img, dx, dy, dw, dh);
       // Faint frame edge so the "screen" reads against the ink during dark beats
       ctx.strokeStyle = 'rgba(245,240,232,.05)';
@@ -296,6 +331,19 @@ const FILM_MP4 = `/assets/launch-film.mp4`;
       }
       pump();
       paint();
+      // Track the painted end-card CTA and switch the link on as it lands.
+      if (endcta) {
+        const live = ramp(p, 0.9, 0.965) > 0.02 && lastRect.dw > 0;
+        if (live) {
+          const { dx, dy, dw, dh } = lastRect;
+          endcta.style.left = `${dx + dw * CTA.x0}px`;
+          endcta.style.top = `${dy + dh * CTA.y0}px`;
+          endcta.style.width = `${dw * CTA.w}px`;
+          endcta.style.height = `${dh * CTA.h}px`;
+        }
+        endcta.classList.toggle('is-live', live);
+        endcta.tabIndex = live ? 0 : -1;
+      }
     }
 
     let ticking = false;
