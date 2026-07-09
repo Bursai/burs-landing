@@ -1,0 +1,65 @@
+---
+// src/components/MetaPixel.astro
+// Meta measurement foundation (Week 0 of the paid plan): domain-verification
+// tag + Meta Pixel, rendered inside <head>. The verification tag must be in
+// the static HTML (Meta's crawler ignores JS-injected tags).
+//
+// Events: PageView everywhere; ViewContent on ad-landing pages that pass the
+// prop; InitiateAppStore (custom) via a delegated listener on any App Store
+// link, with the /go?src= token when present.
+//
+// PIXEL_ID = dataset "BURS Web Pixel" in the BURS AI Business Portfolio.
+interface Props {
+  /** Fire ViewContent too — used on /go, the paid-traffic landing. */
+  viewContent?: boolean;
+}
+const { viewContent = false } = Astro.props;
+const PIXEL_ID = "1349632843260427";
+---
+<meta name="facebook-domain-verification" content="mdel2htzygoexvhi6cp2ytouka4kw4" />
+<script is:inline define:vars={{ PIXEL_ID, viewContent }}>
+  !(function (f, b, e, v, n, t, s) {
+    if (f.fbq) return;
+    n = f.fbq = function () {
+      n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+    };
+    if (!f._fbq) f._fbq = n;
+    n.push = n;
+    n.loaded = !0;
+    n.version = "2.0";
+    n.queue = [];
+    t = b.createElement(e);
+    t.async = !0;
+    t.src = v;
+    s = b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t, s);
+  })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");
+
+  fbq("init", PIXEL_ID);
+  fbq("track", "PageView");
+  if (viewContent) {
+    fbq("track", "ViewContent", { content_name: window.location.pathname });
+  }
+
+  // Any click through to the App Store, on any page, becomes a custom
+  // InitiateAppStore event — the top-of-funnel signal the click-optimized
+  // campaigns read. Carries the /go?src= bio token when present.
+  document.addEventListener("click", function (e) {
+    var a = e.target && e.target.closest && e.target.closest('a[href*="apps.apple.com"]');
+    if (!a || !window.fbq) return;
+    var src = new URLSearchParams(window.location.search).get("src") || "direct";
+    fbq("trackCustom", "InitiateAppStore", {
+      page: window.location.pathname,
+      src: src.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 32) || "direct",
+    });
+  });
+</script>
+<noscript>
+  <img
+    height="1"
+    width="1"
+    style="display:none"
+    src={`https://www.facebook.com/tr?id=${PIXEL_ID}&ev=PageView&noscript=1`}
+    alt=""
+  />
+</noscript>

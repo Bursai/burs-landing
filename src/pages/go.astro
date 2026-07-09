@@ -8,18 +8,14 @@
 // ?src=<value> (e.g. /go?src=tt or /go?src=ig) is threaded onto the App
 // Store link as Apple's campaign token (ct) + media type (mt=8) so installs
 // can be attributed back to the bio that drove them.
-//
-// NOTE: apps.apple.com/app/id6772630210 404s until BURS actually ships on
-// the App Store — expected pre-launch. The link goes live on its own the
-// moment the app is approved; nothing on this page needs to change then.
 import "../styles/tokens.css";
 import "../styles/reset.css";
 import "../styles/typography.css";
 import "../styles/utilities.css";
 import Schema from "../components/Schema.astro";
+import MetaPixel from "../components/MetaPixel.astro";
 import { organization } from "../lib/schema";
-
-const APP_STORE_URL = "https://apps.apple.com/app/id6772630210";
+import { APP_STORE_URL } from "../lib/links";
 const TITLE = "BURS — Start your free trial";
 const DESCRIPTION = "Outfits from clothes you already own. Start your 3-day free trial.";
 const CANONICAL = "https://burs.me/go";
@@ -42,6 +38,10 @@ const CANONICAL = "https://burs.me/go";
        /go intentionally doesn't extend Base.astro. -->
   <meta name="apple-itunes-app" content="app-id=6772630210" />
 
+  <!-- Meta Pixel + domain verification; ViewContent marks /go as the
+       paid-traffic landing for the click-optimized campaigns. -->
+  <MetaPixel viewContent />
+
   <meta property="og:title" content={TITLE} />
   <meta property="og:description" content={DESCRIPTION} />
   <meta property="og:url" content={CANONICAL} />
@@ -63,8 +63,6 @@ const CANONICAL = "https://burs.me/go";
       <h1 class="go__word">BURS</h1>
       <p class="go__tagline">Outfits from clothes you already own</p>
 
-      <!-- apps.apple.com/app/id6772630210 404s until BURS ships on the App
-           Store — the link goes live automatically at release. -->
       <a id="go-cta" class="cta go__cta" href={APP_STORE_URL}>
         Start your 3-day free trial <span class="cta__arrow" aria-hidden="true">→</span>
       </a>
