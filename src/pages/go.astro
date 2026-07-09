@@ -14,6 +14,7 @@ import "../styles/typography.css";
 import "../styles/utilities.css";
 import Schema from "../components/Schema.astro";
 import MetaPixel from "../components/MetaPixel.astro";
+import ConsentBanner from "../components/ConsentBanner.astro";
 import { organization } from "../lib/schema";
 import { APP_STORE_URL } from "../lib/links";
 const TITLE = "BURS — Start your free trial";
@@ -70,6 +71,8 @@ const CANONICAL = "https://burs.me/go";
       <a class="go__home" href="/">burs.me</a>
     </div>
   </main>
+
+  <ConsentBanner />
 
   <script is:inline>
     // Apple campaign-token attribution: /go?src=tt → ct=tt&mt=8 on the

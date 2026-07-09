@@ -1,0 +1,123 @@
+---
+// src/components/ConsentBanner.astro
+// Lightweight GDPR consent gate for the one tracking tool on the site (the
+// Meta Pixel — see MetaPixel.astro). Shown only while no choice is stored.
+//
+// Rules it implements: prior consent (nothing loads before "Allow"),
+// equal-prominence Allow/Decline, no pre-ticked anything, choice persisted
+// (localStorage "burs-consent-v1"), and withdrawal as easy as consent — the
+// footer's "Privacy choices" button re-opens this banner via the
+// "burs:consent-open" event. Storing the choice itself is strictly
+// necessary and needs no consent.
+---
+<aside id="consent-banner" class="consent" aria-label="Privacy consent" hidden>
+  <p class="consent__text">
+    We'd like to use one tool — the Meta Pixel — to see which ads work.
+    Nothing loads unless you allow it.
+    <a href="/privacy" class="consent__link">Privacy</a>
+  </p>
+  <div class="consent__actions">
+    <button id="consent-decline" class="consent__btn" type="button">Decline</button>
+    <button id="consent-accept" class="consent__btn consent__btn--accept" type="button">Allow</button>
+  </div>
+</aside>
+
+<script is:inline>
+  (function () {
+    var KEY = "burs-consent-v1";
+    var el = document.getElementById("consent-banner");
+    if (!el) return;
+
+    function choose(value) {
+      try {
+        localStorage.setItem(KEY, value);
+      } catch (e) {
+        /* storage blocked — the choice still applies for this page view */
+      }
+      el.hidden = true;
+      window.dispatchEvent(new CustomEvent("burs:consent", { detail: value }));
+    }
+
+    document.getElementById("consent-accept").addEventListener("click", function () {
+      choose("granted");
+    });
+    document.getElementById("consent-decline").addEventListener("click", function () {
+      choose("denied");
+    });
+
+    // Footer "Privacy choices" re-opens the banner so a visitor can change
+    // their mind at any time (withdrawal must be as easy as consent).
+    window.addEventListener("burs:consent-open", function () {
+      el.hidden = false;
+    });
+
+    var stored = null;
+    try {
+      stored = localStorage.getItem(KEY);
+    } catch (e) {
+      /* storage blocked → ask each visit */
+    }
+    if (stored !== "granted" && stored !== "denied") el.hidden = false;
+  })();
+</script>
+
+<style>
+  .consent {
+    position: fixed;
+    inset-inline: 16px;
+    bottom: 16px;
+    z-index: 60;
+    margin-inline: auto;
+    max-width: 560px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 20px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    background: var(--cream);
+    color: var(--charcoal);
+    border: 1px solid color-mix(in srgb, var(--charcoal) 18%, transparent);
+    border-radius: 10px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+  }
+  .consent[hidden] {
+    display: none;
+  }
+  .consent__text {
+    margin: 0;
+    font-size: 13.5px;
+    line-height: 1.5;
+    max-width: 34ch;
+  }
+  .consent__link {
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    color: inherit;
+  }
+  .consent__actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+  }
+  .consent__btn {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--charcoal);
+    background: transparent;
+    color: var(--charcoal);
+    cursor: pointer;
+    transition: opacity 0.25s var(--eo);
+  }
+  .consent__btn:hover {
+    opacity: 0.75;
+  }
+  .consent__btn--accept {
+    background: var(--charcoal);
+    color: var(--cream);
+  }
+</style>
