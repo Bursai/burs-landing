@@ -6,9 +6,12 @@
 // (see MarkSeal.astro).
 const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_095006_fd4e35b8-e575-4e10-9226-e211d064d80c.mp4";
 ---
-<section class="hero" aria-label="BURS — your wardrobe, intelligently styled">
+<section class="hero" data-hero aria-label="BURS — your wardrobe, intelligently styled">
+  <!-- Playback is JS-driven (no autoplay/preload in markup): reduced-motion
+       users never download the film, autoplay-refused devices (iOS Low
+       Power) fall back to the quiet ink stage instead of a dead player. -->
   <div class="hero__video" aria-hidden="true">
-    <video autoplay muted loop playsinline preload="auto">
+    <video muted loop playsinline preload="none" data-hero-video>
       <source src={HERO_VIDEO} type="video/mp4" />
     </video>
     <div class="hero__veil"></div>
@@ -23,6 +26,14 @@ const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo
     <span>SCROLL</span>
     <span class="hero__cue-line"></span>
   </div>
+
+  <!-- WCAG 2.2.2: the film auto-plays and loops, so it must be pausable.
+       Revealed by JS only once playback actually starts. -->
+  <button class="hero__toggle" type="button" data-hero-toggle
+    aria-label="Pause background film" aria-pressed="false" hidden>
+    <svg class="hero__toggle-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 2v8M8.5 2v8"/></svg>
+    <svg class="hero__toggle-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3.5 2.2 L9.8 6 L3.5 9.8 Z"/></svg>
+  </button>
 </section>
 
 <style>
@@ -74,8 +85,61 @@ const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo
     background: linear-gradient(180deg, rgba(245,240,232,.6), transparent);
   }
 
+  /* Autoplay refused → quiet ink stage, no dead-player glyph */
+  .hero.is-still .hero__video{ display: none }
+
+  .hero__toggle{
+    position: absolute; right: clamp(16px, 3vw, 40px); bottom: 36px;
+    width: 40px; height: 40px;
+    display: inline-flex; align-items: center; justify-content: center;
+    background: rgba(14,13,12,.35);
+    border: 1px solid rgba(245,240,232,.3);
+    border-radius: 999px;
+    cursor: pointer;
+    transition: border-color .3s ease, background .3s ease;
+  }
+  .hero__toggle:hover{ border-color: var(--gold-bright); background: rgba(14,13,12,.6) }
+  .hero__toggle:focus-visible{ outline: 2px solid var(--gold-bright); outline-offset: 3px }
+  .hero__toggle svg{ width: 12px; height: 12px; stroke: var(--cream); stroke-width: 1.6; fill: none }
+  .hero__toggle-play{ display: none; fill: var(--cream); stroke: none }
+  .hero__toggle[aria-pressed="true"] .hero__toggle-pause{ display: none }
+  .hero__toggle[aria-pressed="true"] .hero__toggle-play{ display: block }
+
   @media (prefers-reduced-motion: reduce){
     .hero__video{ display: none }   /* quiet ink stage; the title carries it */
     .hero__cue{ display: none }
+    .hero__toggle{ display: none }
   }
 </style>
+
+<script>
+  const hero = document.querySelector<HTMLElement>('[data-hero]');
+  const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+  const toggle = document.querySelector<HTMLButtonElement>('[data-hero-toggle]');
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (hero && video && !reduced) {
+    const still = () => hero.classList.add('is-still');
+    video.addEventListener('error', still);
+    // With <source> children a failed fetch fires 'error' on the SOURCE (the
+    // media element just waits for more candidates), so listen there too.
+    video.querySelector('source')?.addEventListener('error', still);
+    video.preload = 'auto';
+    video.load();
+    const attempt = video.play();
+    if (attempt && typeof attempt.then === 'function') {
+      attempt
+        .then(() => { if (toggle) toggle.hidden = false; })
+        .catch(still);
+    } else if (toggle) {
+      toggle.hidden = false;
+    }
+
+    toggle?.addEventListener('click', () => {
+      const paused = video.paused;
+      if (paused) { video.play().catch(still); } else { video.pause(); }
+      toggle.setAttribute('aria-pressed', String(!paused));
+      toggle.setAttribute('aria-label', paused ? 'Pause background film' : 'Play background film');
+    });
+  }
+</script>

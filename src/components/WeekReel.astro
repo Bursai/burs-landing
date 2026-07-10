@@ -61,6 +61,23 @@ const days: Day[] = [
   </div>
 </section>
 
+<noscript>
+  <style>
+    /* Without JS the glide can't run — lay the week out as a static wrapped
+       grid with every outfit fully drawn (same shape as reduced-motion). */
+    .week { height: auto !important; }
+    .week .week__stage { position: static !important; height: auto !important; overflow: visible !important; padding-block: clamp(56px, 10vh, 120px); }
+    .week .week__track {
+      flex-wrap: wrap; justify-content: center; width: auto !important;
+      padding-inline: var(--gutter) !important; transform: none !important;
+      margin-top: clamp(80px, 14vh, 140px);
+    }
+    .week .day__card { transform: none !important; opacity: 1 !important; }
+    .week .garment .gl { stroke-dashoffset: 0 !important; opacity: 1 !important; }
+    .week .day__worn { display: none !important; }
+  </style>
+</noscript>
+
 <section class="week-close section--ink">
   <div class="wrap week-close__inner">
     <p class="eyebrow">— EVERY MORNING, ALREADY DECIDED</p>
@@ -129,15 +146,19 @@ const days: Day[] = [
     display: flex; align-items: baseline; justify-content: space-between;
     font-family: var(--mono); font-size: 12px; letter-spacing: .28em; color: var(--cream);
   }
-  .day__date{ color: rgba(245,240,232,.4); font-size: 11px }
+  .day__date{ color: rgba(245,240,232,.58); font-size: 11px }
 
   .day__art{ width: 100%; aspect-ratio: 3/4; display: grid; place-items: center; margin: 6px 0 4px }
   .day__svg{ width: 72%; height: 100%; overflow: visible }
   .hanger path{ stroke: rgba(245,240,232,.55); stroke-width: 1.4; fill: none }
+  /* px calc: Gecko rejects unitless calc() for stroke-dashoffset (with
+     pathLength=1, 1px == the whole path). The opacity ramp hides Blink's
+     stray round-cap dot on the zero-length dash at --draw: 0. */
   .garment .gl{
     stroke: var(--cream); stroke-width: 1.6; fill: none;
     stroke-dasharray: 1;
-    stroke-dashoffset: calc(1 - var(--draw, 0));
+    stroke-dashoffset: calc((1 - var(--draw, 0)) * 1px);
+    opacity: clamp(0, calc(var(--draw, 0) * 20), 1);
   }
   .garment .gl--gold{ stroke: var(--gold); stroke-width: 1.5 }
 
@@ -184,7 +205,7 @@ const days: Day[] = [
     }
     .day__card{ transform: none; opacity: 1 }
     /* No scroll to drive the draw — show the outfits fully */
-    .garment .gl{ stroke-dashoffset: 0 }
+    .garment .gl{ stroke-dashoffset: 0; opacity: 1 }
     .day__worn{ display: none }
   }
 </style>
@@ -207,6 +228,10 @@ const days: Day[] = [
       const total = section!.offsetHeight - window.innerHeight;
       const p = total > 0 ? clamp01(-section!.getBoundingClientRect().top / total) : 0;
       const q = p * (N - 1);   // continuous "centred day" index
+      // The draw index overshoots so Sunday finishes stitching around 90% of
+      // the runway instead of on its literal last pixel (which scroll
+      // rounding / anchoring can land short of).
+      const qd = p * (N - 1 + 0.6);
 
       // Glide the track so day q sits on the centre line.
       const mid = window.innerWidth / 2;
@@ -219,7 +244,7 @@ const days: Day[] = [
       const nowActive = Math.round(q);
       dayEls.forEach((el, i) => {
         // draw the outfit in as the day approaches the centre; hold it after
-        const draw = clamp01((q - (i - 0.7)) / 0.9);
+        const draw = clamp01((qd - (i - 0.7)) / 0.7);
         el.style.setProperty('--draw', draw.toFixed(3));
         el.classList.toggle('is-active', i === nowActive);
         el.classList.toggle('is-worn', q > i + 0.4);

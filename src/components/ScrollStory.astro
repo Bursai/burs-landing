@@ -44,7 +44,10 @@ const sources = ["YOUR CLOTHES", "HOW YOU FEEL", "THE WEATHER", "THE OCCASION"];
     <div class="scan__head wrap">
       <p class="eyebrow story-eyebrow">01 — THE SCAN</p>
       <h2 id="scan-title" class="story-h">First, it <em>reads</em> your closet.</h2>
-      <p class="story-counter"><span data-scan-count>000</span> PIECES CATALOGUED</p>
+      <!-- Server-rendered at 148 so the static fallbacks (reduced-motion,
+           no-JS) agree with their fully-drawn rack; JS rewrites it from 000
+           on the very first frame of the scrub. -->
+      <p class="story-counter"><span data-scan-count>148</span> PIECES CATALOGUED</p>
     </div>
 
     <div class="scan__gate" aria-hidden="true">
@@ -143,10 +146,10 @@ const sources = ["YOUR CLOTHES", "HOW YOU FEEL", "THE WEATHER", "THE OCCASION"];
           <span class={`real__src real__src--${i}`} data-real-src={i}>{s}</span>
         ))}
         <svg class="real__lines" viewBox="0 0 100 60" preserveAspectRatio="none">
-          <path d="M8 9 C 28 18, 40 25, 49 29" pathLength="1" data-real-line="0" vector-effect="non-scaling-stroke" />
-          <path d="M92 9 C 72 18, 60 25, 51 29" pathLength="1" data-real-line="1" vector-effect="non-scaling-stroke" />
-          <path d="M8 51 C 28 43, 40 36, 49 31" pathLength="1" data-real-line="2" vector-effect="non-scaling-stroke" />
-          <path d="M92 51 C 72 43, 60 36, 51 31" pathLength="1" data-real-line="3" vector-effect="non-scaling-stroke" />
+          <path d="M8 9 C 28 18, 40 25, 49 29" data-real-line="0" vector-effect="non-scaling-stroke" />
+          <path d="M92 9 C 72 18, 60 25, 51 29" data-real-line="1" vector-effect="non-scaling-stroke" />
+          <path d="M8 51 C 28 43, 40 36, 49 31" data-real-line="2" vector-effect="non-scaling-stroke" />
+          <path d="M92 51 C 72 43, 60 36, 51 31" data-real-line="3" vector-effect="non-scaling-stroke" />
         </svg>
         <figure class="real__fit" data-real-fit>
           <svg viewBox="0 0 120 175" fill="none" stroke-linecap="round" stroke-linejoin="round">
@@ -188,7 +191,7 @@ const sources = ["YOUR CLOTHES", "HOW YOU FEEL", "THE WEATHER", "THE OCCASION"];
     .scan__head, .scan__lede { position: static !important; transform: none !important; }
     .scan__track { flex-wrap: wrap; justify-content: center; width: auto !important; padding-inline: 5vw !important; transform: none !important; margin-top: 40px; }
     .scan__gate { display: none !important; }
-    .gl { stroke-dashoffset: 0 !important; }
+    .gl { stroke-dashoffset: 0 !important; opacity: 1 !important; }
     .scanit__card, .chip, .bubble { opacity: 1 !important; transform: none !important; }
     .scanit__tags, .scanit__tick { opacity: 1 !important; }
     .bubble__txt { clip-path: none !important; }
@@ -215,12 +218,18 @@ const sources = ["YOUR CLOTHES", "HOW YOU FEEL", "THE WEATHER", "THE OCCASION"];
   }
   .story-counter span{ color: var(--gold-bright) }
 
-  /* garment strokes (shared) */
+  /* garment strokes (shared).
+     The offset is a calc in px (with pathLength=1, 1px == the whole path) —
+     Gecko rejects unitless calc() for stroke-dashoffset, which would leave
+     every garment fully drawn from the start in Firefox. The opacity ramp
+     hides the zero-length dash that Blink paints as a stray round-cap dot
+     when --draw is 0. */
   .hanger path{ stroke: rgba(245,240,232,.5); stroke-width: 1.4; fill: none }
   .gl{
     stroke: var(--cream); stroke-width: 1.6; fill: none;
     stroke-dasharray: 1;
-    stroke-dashoffset: calc(1 - var(--draw, 0));
+    stroke-dashoffset: calc((1 - var(--draw, 0)) * 1px);
+    opacity: clamp(0, calc(var(--draw, 0) * 20), 1);
   }
   .gl--gold{ stroke: var(--gold); stroke-width: 1.5 }
 
@@ -489,7 +498,7 @@ const sources = ["YOUR CLOTHES", "HOW YOU FEEL", "THE WEATHER", "THE OCCASION"];
       padding-inline: var(--gutter); margin-top: 36px;
       transform: none !important;
     }
-    .gl{ stroke-dashoffset: 0 }
+    .gl{ stroke-dashoffset: 0; opacity: 1 }
     .scanit__card{ transform: none }
     .scanit__tags, .scanit__tick{ opacity: 1; transform: none }
     .chip, .bubble, .talk__fit, .real__src, .real__never, .real__lede{
@@ -549,7 +558,8 @@ const sources = ["YOUR CLOTHES", "HOW YOU FEEL", "THE WEATHER", "THE OCCASION"];
       });
 
       if (scanCount) {
-        const n = Math.round(clamp01((q + 0.6) / N) * PIECES);
+        // 000 before the first card reaches the gate, 148 as the last clears it.
+        const n = Math.round(clamp01(q / (N - 0.4)) * PIECES);
         scanCount.textContent = String(n).padStart(3, '0');
       }
     }

@@ -36,7 +36,7 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
     .seal { height: auto !important; }
     .seal .seal__stage { position: static !important; height: auto !important; min-height: 100svh; }
     .seal .seal__canvas { display: none !important; }
-    .seal [data-seal-in] { opacity: 1 !important; transform: none !important; }
+    .seal [data-seal-in] { opacity: 1 !important; transform: none !important; visibility: visible !important; }
   </style>
 </noscript>
 
@@ -87,14 +87,16 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
   .cta--ink{ background: var(--ink); color: var(--cream); border-color: var(--ink) }
   .cta--ink:hover{ background: var(--gold-deep); border-color: var(--gold-deep); color: var(--ink) }
 
-  [data-seal-in]{ opacity: 0; transform: translateY(14px); will-change: opacity, transform }
+  /* visibility keeps the CTA out of the tab order (and off pointers) until
+     it has actually faded in; JS flips it alongside the opacity. */
+  [data-seal-in]{ opacity: 0; transform: translateY(14px); visibility: hidden; will-change: opacity, transform }
 
   @media (prefers-reduced-motion: reduce){
     .seal{ height: auto }
     .seal__stage{ position: static; height: auto; min-height: 100svh }
     .seal__canvas{ display: none }
     .seal[data-ready] .seal__poster{ opacity: 1 }
-    [data-seal-in]{ opacity: 1; transform: none }
+    [data-seal-in]{ opacity: 1; transform: none; visibility: visible }
   }
 </style>
 
@@ -210,6 +212,7 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
         const v = ramp(p, o.a, o.b);
         o.el.style.opacity = String(v);
         o.el.style.transform = `translateY(${(1 - v) * 14}px)`;
+        o.el.style.visibility = v > 0.02 ? 'visible' : 'hidden';
       }
     }
 
