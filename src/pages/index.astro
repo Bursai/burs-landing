@@ -1,7 +1,7 @@
 ---
 import Base from "../layouts/Base.astro";
 import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
-import ScrollFilm from "../components/ScrollFilm.astro";
+import ScrollStory from "../components/ScrollStory.astro";
 import WeekReel from "../components/WeekReel.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
@@ -32,10 +32,10 @@ import { softwareApplication, product } from "../lib/schema";
   <!-- ATTENTION — the film plays, then the mark makes itself from loose thread -->
   <ScrollLogoFilm />
 
-  <!-- THE FILM — the launch film, scrubbed by scroll. Every scroll advances it;
-       it opens from black, tells the story, and closes on its own "Get dressed"
-       CTA card. -->
-  <ScrollFilm />
+  <!-- THE STORY — what the app does, scrubbed by scroll: scan once (20–30
+       minutes), then only ever say the occasion / the mood / "style me", or
+       just talk to it. The first real stylist — it never sells you anything. -->
+  <ScrollStory />
 
   <!-- THE WEEK — a scroll-driven week; the days glide by and each one's outfit
        draws itself in, closing on the App Store CTA before the footer. -->

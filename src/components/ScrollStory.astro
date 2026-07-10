@@ -1,0 +1,640 @@
+---
+// src/components/ScrollStory.astro
+// The film, remade natively — no video. Four pinned, scroll-scrubbed scenes
+// in the week-reel's vocabulary (ink stage, line-art garments drawing
+// themselves in cream + gold) that explain exactly what BURS does:
+//
+//   01 THE SCAN     — garments glide through a gold scanner gate and are
+//                     catalogued one by one. 20–30 minutes, once, ever.
+//   02 THEN NOTHING — the only input you'll ever give: the occasion, the
+//                     mood, or simply "style me".
+//   03 OR JUST TALK — a conversation; the answer draws itself on a hanger.
+//   04 THE REAL STYLIST — clothes + feel + weather + occasion converge into
+//                     one outfit. "Buy this / buy that" get struck through:
+//                     it never sells you anything.
+//
+// Everything is real DOM text (crawlable, screen-reader-visible); the SVGs
+// are decorative. Reduced-motion / no-JS collapse the runways and show every
+// scene fully drawn as a static page.
+import { HANGER, GARMENTS } from "../lib/garments";
+
+interface ScanItem { garment: string; tags: string }
+const SCAN_ITEMS: ScanItem[] = [
+  { garment: "blazer",   tags: "WOOL · NAVY · SHARP" },
+  { garment: "knit",     tags: "MERINO · OAT · SOFT" },
+  { garment: "dress",    tags: "SILK · BLACK · EVENING" },
+  { garment: "shirt",    tags: "COTTON · IVORY · CRISP" },
+  { garment: "coat",     tags: "WOOL · CAMEL · WARM" },
+  { garment: "tee",      tags: "JERSEY · WHITE · EASY" },
+  { garment: "cardigan", tags: "LAMBSWOOL · GREY · LONG" },
+];
+
+const chips = [
+  { k: "THE OCCASION", v: "“Dinner at eight.”" },
+  { k: "THE MOOD",     v: "“Quietly sharp.”" },
+  { k: "OR SIMPLY",    v: "“Style me.”" },
+];
+
+const sources = ["YOUR CLOTHES", "HOW YOU FEEL", "THE WEATHER", "THE OCCASION"];
+---
+
+<!-- ============ 01 · THE SCAN ============ -->
+<section class="scan" data-scene="scan" aria-labelledby="scan-title">
+  <div class="scan__stage">
+    <div class="scan__head wrap">
+      <p class="eyebrow story-eyebrow">01 — THE SCAN</p>
+      <h2 id="scan-title" class="story-h">First, it <em>reads</em> your closet.</h2>
+      <p class="story-counter"><span data-scan-count>000</span> PIECES CATALOGUED</p>
+    </div>
+
+    <div class="scan__gate" aria-hidden="true">
+      <span class="scan__gate-line"></span>
+    </div>
+
+    <div class="scan__track" data-scan-track aria-hidden="true">
+      {SCAN_ITEMS.map((it, i) => (
+        <figure class="scanit" data-scanit={i}>
+          <div class="scanit__card">
+            <svg viewBox="0 0 120 175" class="scanit__svg" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <g class="hanger">
+                {HANGER.map(p => <path d={p} />)}
+              </g>
+              <g class="garment">
+                {GARMENTS[it.garment].line.map(p => <path class="gl" d={p} pathLength="1" />)}
+                {GARMENTS[it.garment].gold.map(p => <path class="gl gl--gold" d={p} pathLength="1" />)}
+              </g>
+            </svg>
+            <p class="scanit__tags">{it.tags}</p>
+            <span class="scanit__tick">
+              <svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5 L6.5 12 L13 4" /></svg>
+              CATALOGUED
+            </span>
+          </div>
+        </figure>
+      ))}
+    </div>
+
+    <p class="scan__lede lede">
+      Point your camera along the rail. Twenty to thirty minutes,
+      even for a big wardrobe — <em>then never again</em>.
+    </p>
+  </div>
+</section>
+
+<!-- ============ 02 · THEN, NOTHING ============ -->
+<section class="ask" data-scene="ask" aria-labelledby="ask-title">
+  <div class="ask__stage">
+    <div class="wrap ask__inner">
+      <p class="eyebrow story-eyebrow">02 — THEN, NOTHING</p>
+      <h2 id="ask-title" class="story-h">That was the work. <em>All of it.</em></h2>
+      <p class="lede ask__lede">From here on, you give it one sentence — or none.</p>
+      <div class="ask__chips">
+        {chips.map((c, i) => (
+          <div class="chip" data-ask-chip={i}>
+            <span class="chip__k">{c.k}</span>
+            <span class="chip__v">{c.v}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 03 · OR JUST TALK ============ -->
+<section class="talk" data-scene="talk" aria-labelledby="talk-title">
+  <div class="talk__stage">
+    <div class="wrap talk__inner">
+      <p class="eyebrow story-eyebrow">03 — OR JUST TALK</p>
+      <h2 id="talk-title" class="story-h">No menus. A <em>conversation</em>.</h2>
+
+      <div class="talk__thread">
+        <div class="bubble bubble--you" data-bubble="0">
+          <span class="bubble__txt">Friday. I want to look like I tried — without trying.</span>
+        </div>
+        <div class="bubble bubble--burs" data-bubble="1">
+          <span class="bubble__txt">Your overcoat over the roll-neck. The straight trouser. Done.</span>
+        </div>
+        <figure class="talk__fit" data-talk-fit aria-hidden="true">
+          <svg viewBox="0 0 120 175" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <g class="hanger">
+              {HANGER.map(p => <path d={p} />)}
+            </g>
+            <g class="garment">
+              {GARMENTS.coat.line.map(p => <path class="gl" d={p} pathLength="1" />)}
+              {GARMENTS.coat.gold.map(p => <path class="gl gl--gold" d={p} pathLength="1" />)}
+            </g>
+          </svg>
+          <figcaption class="talk__fit-cap">FRI — THE OFF-SITE</figcaption>
+        </figure>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 04 · THE REAL STYLIST ============ -->
+<section class="real" data-scene="real" aria-labelledby="real-title">
+  <div class="real__stage">
+    <div class="wrap real__inner">
+      <p class="eyebrow story-eyebrow">04 — THE REAL STYLIST</p>
+      <h2 id="real-title" class="story-h">The <em>first</em> of its kind.</h2>
+
+      <div class="real__box" aria-hidden="true">
+        {sources.map((s, i) => (
+          <span class={`real__src real__src--${i}`} data-real-src={i}>{s}</span>
+        ))}
+        <svg class="real__lines" viewBox="0 0 100 60" preserveAspectRatio="none">
+          <path d="M8 9 C 28 18, 40 25, 49 29" pathLength="1" data-real-line="0" vector-effect="non-scaling-stroke" />
+          <path d="M92 9 C 72 18, 60 25, 51 29" pathLength="1" data-real-line="1" vector-effect="non-scaling-stroke" />
+          <path d="M8 51 C 28 43, 40 36, 49 31" pathLength="1" data-real-line="2" vector-effect="non-scaling-stroke" />
+          <path d="M92 51 C 72 43, 60 36, 51 31" pathLength="1" data-real-line="3" vector-effect="non-scaling-stroke" />
+        </svg>
+        <figure class="real__fit" data-real-fit>
+          <svg viewBox="0 0 120 175" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <g class="hanger">
+              {HANGER.map(p => <path d={p} />)}
+            </g>
+            <g class="garment">
+              {GARMENTS.dress.line.map(p => <path class="gl" d={p} pathLength="1" />)}
+              {GARMENTS.dress.gold.map(p => <path class="gl gl--gold" d={p} pathLength="1" />)}
+            </g>
+          </svg>
+        </figure>
+      </div>
+
+      <div class="real__vow">
+        <p class="real__no">
+          <span class="strike" data-strike="0">“Buy this.”</span>
+          <span class="strike" data-strike="1">“Buy that.”</span>
+          <span class="real__never" data-real-never>— never.</span>
+        </p>
+        <p class="lede real__lede" data-real-lede>
+          It reads what you own, how you feel, the weather and the day —
+          and answers with <em>real style</em>. Nothing to shop. Nothing to decide.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<noscript>
+  <style>
+    /* Without JS the scrub can't run — collapse the runways and lay the
+       story out as a plain page with everything fully drawn. */
+    .scan, .ask, .talk, .real { height: auto !important; }
+    .scan__stage, .ask__stage, .talk__stage, .real__stage {
+      position: static !important; height: auto !important; overflow: visible !important;
+      padding-block: 72px;
+    }
+    .scan__head, .scan__lede { position: static !important; transform: none !important; }
+    .scan__track { flex-wrap: wrap; justify-content: center; width: auto !important; padding-inline: 5vw !important; transform: none !important; margin-top: 40px; }
+    .scan__gate { display: none !important; }
+    .gl { stroke-dashoffset: 0 !important; }
+    .scanit__card, .chip, .bubble { opacity: 1 !important; transform: none !important; }
+    .scanit__tags, .scanit__tick { opacity: 1 !important; }
+    .bubble__txt { clip-path: none !important; }
+    .talk__fit, .real__fit, .real__src, .real__never, .real__lede { opacity: 1 !important; transform: none !important; }
+    .real__lines path { opacity: 1 !important; }
+    .strike::after { transform: scaleX(1) !important; }
+    .strike { color: rgba(245,240,232,.35) !important; }
+  </style>
+</noscript>
+
+<style>
+  /* ---------- shared story type ---------- */
+  .story-eyebrow{ color: var(--gold-bright); opacity: 1 }
+  .story-h{
+    margin: 6px 0 0; font-family: var(--display); font-weight: 200;
+    letter-spacing: -.03em; line-height: 1.02;
+    font-size: clamp(30px, 4.4vw, 60px); color: var(--cream); text-wrap: balance;
+  }
+  .story-h :global(em){ font-style: italic; color: var(--gold); font-weight: 300 }
+  .story-counter{
+    margin-top: 10px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .3em;
+    color: rgba(245,240,232,.5);
+  }
+  .story-counter span{ color: var(--gold-bright) }
+
+  /* garment strokes (shared) */
+  .hanger path{ stroke: rgba(245,240,232,.5); stroke-width: 1.4; fill: none }
+  .gl{
+    stroke: var(--cream); stroke-width: 1.6; fill: none;
+    stroke-dasharray: 1;
+    stroke-dashoffset: calc(1 - var(--draw, 0));
+  }
+  .gl--gold{ stroke: var(--gold); stroke-width: 1.5 }
+
+  /* ============ 01 · THE SCAN ============ */
+  .scan{ position: relative; height: 420vh; background: var(--ink) }
+  .scan__stage{
+    position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
+    display: flex; flex-direction: column; justify-content: center;
+    color: var(--cream);
+  }
+  .scan__head{
+    /* clear the fixed nav (84px) so the eyebrow never hides behind the pill */
+    position: absolute; top: clamp(88px, 12vh, 128px); left: 0; right: 0;
+    display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px;
+  }
+  .scan__lede{
+    position: absolute; bottom: clamp(22px, 6vh, 64px); left: 50%;
+    transform: translateX(-50%);
+    width: min(56ch, 88vw); text-align: center;
+    color: rgba(245,240,232,.6);
+  }
+  .scan__lede :global(em){ color: var(--gold-bright) }
+
+  /* the scanner gate — a still, gold beam the rack glides through */
+  .scan__gate{
+    position: absolute; left: 50%; top: 52%;
+    transform: translate(-50%, -50%);
+    height: min(44svh, 400px);
+    display: flex; flex-direction: column; align-items: center;
+    z-index: 2; pointer-events: none;
+  }
+  .scan__gate-line{
+    flex: 1; width: 1px;
+    background: linear-gradient(180deg, transparent, var(--gold-bright) 18%, var(--gold-bright) 82%, transparent);
+    box-shadow: 0 0 18px rgba(224,189,125,.5), 0 0 44px rgba(224,189,125,.22);
+  }
+
+  .scan__track{
+    display: flex; align-items: center;
+    gap: clamp(18px, 2.6vw, 44px);
+    padding-inline: 50vw;
+    width: max-content;
+    will-change: transform;
+  }
+  .scanit{ margin: 0 }
+  .scanit__card{
+    width: clamp(150px, 15vw, 200px);
+    background: rgba(245,240,232,.03);
+    border: 1px solid rgba(245,240,232,.1);
+    border-radius: 3px;
+    padding: clamp(12px, 1.3vw, 18px);
+    display: flex; flex-direction: column; align-items: center;
+    transition: border-color .5s var(--eo), transform .5s var(--eo), background .5s var(--eo);
+    transform: scale(.94);
+  }
+  .scanit.is-hot .scanit__card{
+    transform: scale(1.02);
+    border-color: rgba(224,189,125,.55);
+    background: rgba(245,240,232,.05);
+  }
+  .scanit.is-scanned .scanit__card{ border-color: rgba(245,240,232,.22) }
+  .scanit__svg{ width: 78%; aspect-ratio: 120/175; overflow: visible }
+  .scanit__tags{
+    margin-top: 8px;
+    font-family: var(--mono); font-size: 8px; letter-spacing: .18em;
+    color: rgba(245,240,232,.55);
+    opacity: 0; transition: opacity .45s var(--eo);
+    white-space: nowrap;
+  }
+  .scanit__tick{
+    display: inline-flex; align-items: center; gap: 5px; margin-top: 7px;
+    font-family: var(--mono); font-size: 8px; letter-spacing: .22em;
+    color: var(--gold-bright);
+    opacity: 0; transform: translateY(3px);
+    transition: opacity .4s var(--eo), transform .4s var(--eo);
+  }
+  .scanit__tick svg{ width: 12px; height: 12px; stroke: var(--gold-bright); stroke-width: 1.8; fill: none }
+  .scanit.is-scanned .scanit__tags{ opacity: 1 }
+  .scanit.is-scanned .scanit__tick{ opacity: 1; transform: none }
+
+  /* ============ 02 · THEN, NOTHING ============ */
+  .ask{ position: relative; height: 260vh; background: var(--ink) }
+  .ask__stage{
+    position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
+    display: flex; align-items: center;
+    color: var(--cream);
+  }
+  .ask__inner{ display: flex; flex-direction: column; align-items: center; text-align: center; width: 100% }
+  .ask__lede{ margin-top: 16px; color: rgba(245,240,232,.6) }
+  .ask__chips{
+    margin-top: clamp(34px, 6vh, 64px);
+    display: flex; gap: clamp(12px, 2vw, 24px); flex-wrap: wrap; justify-content: center;
+  }
+  .chip{
+    display: flex; flex-direction: column; gap: 8px; align-items: flex-start;
+    min-width: 210px;
+    padding: 18px 24px;
+    background: rgba(245,240,232,.03);
+    border: 1px solid rgba(245,240,232,.14);
+    border-radius: 3px;
+    opacity: 0; transform: translateY(18px);
+    transition: opacity .6s var(--eo), transform .6s var(--eo), border-color .6s var(--eo);
+  }
+  .chip.in{ opacity: 1; transform: none; border-color: rgba(201,168,108,.45) }
+  .chip__k{
+    font-family: var(--mono); font-size: 9px; letter-spacing: .28em;
+    color: var(--gold-bright);
+  }
+  .chip__v{
+    font-family: var(--serif); font-style: italic; font-size: clamp(17px, 1.6vw, 21px);
+    color: var(--cream);
+  }
+
+  /* ============ 03 · OR JUST TALK ============ */
+  .talk{ position: relative; height: 340vh; background: var(--ink) }
+  .talk__stage{
+    position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
+    display: flex; align-items: center;
+    color: var(--cream);
+  }
+  .talk__inner{ display: flex; flex-direction: column; align-items: center; text-align: center; width: 100% }
+  .talk__thread{
+    margin-top: clamp(30px, 5vh, 56px);
+    width: min(620px, 92vw);
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .bubble{
+    max-width: 46ch;
+    padding: 14px 20px;
+    border-radius: 16px;
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(15px, 1.5vw, 18px); line-height: 1.45;
+    text-align: left;
+    opacity: 0; transform: translateY(14px);
+    transition: opacity .5s var(--eo), transform .5s var(--eo);
+  }
+  .bubble.in{ opacity: 1; transform: none }
+  .bubble__txt{
+    display: inline-block;
+    clip-path: inset(-6px calc((1 - var(--t, 0)) * 100%) -6px -6px);
+  }
+  .bubble--you{
+    align-self: flex-end;
+    background: var(--cream); color: var(--charcoal);
+    border-bottom-right-radius: 4px;
+  }
+  .bubble--burs{
+    align-self: flex-start;
+    background: rgba(245,240,232,.05);
+    border: 1px solid rgba(201,168,108,.4);
+    color: var(--cream);
+    border-bottom-left-radius: 4px;
+  }
+  .talk__fit{
+    margin: 10px auto 0;
+    width: clamp(120px, 13vw, 160px);
+    opacity: 0; transform: translateY(12px);
+    transition: opacity .6s var(--eo), transform .6s var(--eo);
+  }
+  .talk__fit.in{ opacity: 1; transform: none }
+  .talk__fit svg{ width: 100%; overflow: visible }
+  .talk__fit-cap{
+    margin-top: 8px;
+    font-family: var(--mono); font-size: 8px; letter-spacing: .26em;
+    color: rgba(245,240,232,.5); text-align: center;
+  }
+
+  /* ============ 04 · THE REAL STYLIST ============ */
+  .real{ position: relative; height: 380vh; background: var(--ink) }
+  .real__stage{
+    position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
+    display: flex; align-items: center;
+    color: var(--cream);
+  }
+  .real__inner{ display: flex; flex-direction: column; align-items: center; text-align: center; width: 100% }
+
+  .real__box{
+    position: relative;
+    margin-top: clamp(20px, 4vh, 44px);
+    width: min(760px, 92vw);
+    height: clamp(240px, 38svh, 350px);
+  }
+  .real__src{
+    position: absolute;
+    font-family: var(--mono); font-size: clamp(8px, .8vw, 10px); letter-spacing: .26em;
+    color: rgba(245,240,232,.55);
+    opacity: 0; transform: translateY(8px);
+    transition: opacity .55s var(--eo), transform .55s var(--eo), color .55s var(--eo);
+  }
+  .real__src.in{ opacity: 1; transform: none; color: var(--gold-bright) }
+  .real__src--0{ top: 6%; left: 0 }
+  .real__src--1{ top: 6%; right: 0 }
+  .real__src--2{ bottom: 6%; left: 0 }
+  .real__src--3{ bottom: 6%; right: 0 }
+
+  .real__lines{ position: absolute; inset: 0; width: 100%; height: 100% }
+  /* Under vector-effect the dash pattern is screen-space (a stitched look,
+     echoing the seam motif), so the draw-in is done with opacity instead of
+     dashoffset — each thread fades in as its source lights up. */
+  .real__lines path{
+    stroke: rgba(201,168,108,.6); stroke-width: 1; fill: none;
+    stroke-dasharray: 6 5;
+    opacity: var(--draw, 0);
+  }
+
+  .real__fit{
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: clamp(110px, 12vw, 150px);
+    margin: 0;
+  }
+  .real__fit svg{ width: 100%; overflow: visible }
+
+  .real__vow{ margin-top: clamp(18px, 3.5vh, 36px) }
+  .real__no{
+    font-family: var(--display); font-weight: 300; font-style: italic;
+    font-size: clamp(20px, 2.4vw, 30px);
+    color: rgba(245,240,232,.75);
+    display: flex; gap: 18px; justify-content: center; flex-wrap: wrap; align-items: baseline;
+  }
+  .strike{ position: relative; transition: color .5s var(--eo) }
+  .strike::after{
+    content: ""; position: absolute; left: -3%; right: -3%; top: 54%;
+    height: 1.5px; background: var(--gold);
+    transform: scaleX(var(--sx, 0)); transform-origin: left center;
+  }
+  .strike.is-dead{ color: rgba(245,240,232,.3) }
+  .real__never{
+    color: var(--gold-bright); font-style: italic;
+    opacity: 0; transform: translateY(6px);
+    transition: opacity .5s var(--eo), transform .5s var(--eo);
+  }
+  .real__never.in{ opacity: 1; transform: none }
+  .real__lede{
+    margin: 18px auto 0; width: min(56ch, 88vw);
+    color: rgba(245,240,232,.6);
+    opacity: 0; transform: translateY(10px);
+    transition: opacity .6s var(--eo), transform .6s var(--eo);
+  }
+  .real__lede.in{ opacity: 1; transform: none }
+  .real__lede :global(em){ color: var(--gold-bright) }
+
+  /* ---------- mobile ---------- */
+  @media (max-width: 800px){
+    .scan{ height: 340vh }
+    .ask{ height: 220vh }
+    .talk{ height: 280vh }
+    .real{ height: 320vh }
+    .scanit__card{ width: 150px }
+    .chip{ min-width: 0; width: min(320px, 84vw) }
+    .real__box{ height: 230px }
+  }
+
+  /* ---------- reduced motion: a static, fully-drawn page ---------- */
+  @media (prefers-reduced-motion: reduce){
+    .scan, .ask, .talk, .real{ height: auto }
+    .scan__stage, .ask__stage, .talk__stage, .real__stage{
+      position: static; height: auto; overflow: visible;
+      padding-block: clamp(56px, 9vh, 110px);
+    }
+    .scan__head, .scan__lede{ position: static; transform: none }
+    .scan__lede{ margin: 28px auto 0 }
+    .scan__gate{ display: none }
+    .scan__track{
+      flex-wrap: wrap; justify-content: center; width: auto;
+      padding-inline: var(--gutter); margin-top: 36px;
+      transform: none !important;
+    }
+    .gl{ stroke-dashoffset: 0 }
+    .scanit__card{ transform: none }
+    .scanit__tags, .scanit__tick{ opacity: 1; transform: none }
+    .chip, .bubble, .talk__fit, .real__src, .real__never, .real__lede{
+      opacity: 1; transform: none;
+    }
+    .real__src.in, .chip.in{ transform: none }
+    .bubble__txt{ clip-path: none }
+    .real__lines path{ opacity: 1 }
+    .strike::after{ transform: scaleX(1) }
+    .strike{ color: rgba(245,240,232,.3) }
+  }
+</style>
+
+<script>
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!reduced) {
+    const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
+    const ramp = (p: number, a: number, b: number) => clamp01((p - a) / (b - a));
+
+    // Progress of a pinned section's own runway: 0 when its top hits the
+    // viewport top, 1 when its bottom leaves.
+    const progressOf = (el: HTMLElement) => {
+      const total = el.offsetHeight - window.innerHeight;
+      return total > 0 ? clamp01(-el.getBoundingClientRect().top / total) : 0;
+    };
+
+    // ---- 01 · THE SCAN --------------------------------------------------
+    const scan = document.querySelector<HTMLElement>('[data-scene="scan"]');
+    const scanTrack = document.querySelector<HTMLElement>('[data-scan-track]');
+    const scanItems = [...document.querySelectorAll<HTMLElement>('[data-scanit]')];
+    const scanCount = document.querySelector<HTMLElement>('[data-scan-count]');
+    const PIECES = 148;
+
+    function renderScan() {
+      if (!scan || !scanTrack || !scanItems.length) return;
+      const p = progressOf(scan);
+      const N = scanItems.length;
+      // The scan index overshoots past the last card so the final garment
+      // finishes drawing + cataloguing; the track's glide clamps at the end.
+      const q = ramp(p, 0.06, 0.94) * (N - 1 + 0.9);
+      const qTrack = Math.min(q, N - 1);
+
+      const mid = window.innerWidth / 2;
+      const first = scanItems[0], last = scanItems[N - 1];
+      const c0 = first.offsetLeft + first.offsetWidth / 2;
+      const c1 = last.offsetLeft + last.offsetWidth / 2;
+      const x = c0 + (c1 - c0) * (qTrack / (N - 1)) - mid;
+      scanTrack.style.transform = `translate3d(${-x}px,0,0)`;
+
+      scanItems.forEach((el, i) => {
+        // each garment draws in as it crosses the gate
+        const draw = clamp01((q - (i - 0.55)) / 0.7);
+        el.style.setProperty('--draw', draw.toFixed(3));
+        el.classList.toggle('is-hot', Math.abs(i - q) < 0.45);
+        el.classList.toggle('is-scanned', q > i + 0.35);
+      });
+
+      if (scanCount) {
+        const n = Math.round(clamp01((q + 0.6) / N) * PIECES);
+        scanCount.textContent = String(n).padStart(3, '0');
+      }
+    }
+
+    // ---- 02 · THEN, NOTHING ---------------------------------------------
+    const ask = document.querySelector<HTMLElement>('[data-scene="ask"]');
+    const askChips = [...document.querySelectorAll<HTMLElement>('[data-ask-chip]')];
+
+    function renderAsk() {
+      if (!ask) return;
+      const p = progressOf(ask);
+      askChips.forEach((el, i) => {
+        el.classList.toggle('in', p > 0.22 + i * 0.18);
+      });
+    }
+
+    // ---- 03 · OR JUST TALK ----------------------------------------------
+    const talk = document.querySelector<HTMLElement>('[data-scene="talk"]');
+    const bubbles = [...document.querySelectorAll<HTMLElement>('[data-bubble]')];
+    const talkFit = document.querySelector<HTMLElement>('[data-talk-fit]');
+
+    // [bubble-in start, text-wipe start, text-wipe end]
+    const BUBLINES: [number, number, number][] = [
+      [0.14, 0.18, 0.38],
+      [0.44, 0.48, 0.68],
+    ];
+
+    function renderTalk() {
+      if (!talk) return;
+      const p = progressOf(talk);
+      bubbles.forEach((el, i) => {
+        const [a, t0, t1] = BUBLINES[i] ?? [0, 0, 1];
+        el.classList.toggle('in', p > a);
+        const txt = el.querySelector<HTMLElement>('.bubble__txt');
+        if (txt) txt.style.setProperty('--t', ramp(p, t0, t1).toFixed(3));
+      });
+      if (talkFit) {
+        talkFit.classList.toggle('in', p > 0.66);
+        talkFit.style.setProperty('--draw', ramp(p, 0.68, 0.88).toFixed(3));
+      }
+    }
+
+    // ---- 04 · THE REAL STYLIST -------------------------------------------
+    const real = document.querySelector<HTMLElement>('[data-scene="real"]');
+    const realSrcs = [...document.querySelectorAll<HTMLElement>('[data-real-src]')];
+    const realLines = [...document.querySelectorAll<SVGPathElement>('[data-real-line]')];
+    const realFit = document.querySelector<HTMLElement>('[data-real-fit]');
+    const strikes = [...document.querySelectorAll<HTMLElement>('[data-strike]')];
+    const realNever = document.querySelector<HTMLElement>('[data-real-never]');
+    const realLede = document.querySelector<HTMLElement>('[data-real-lede]');
+
+    function renderReal() {
+      if (!real) return;
+      const p = progressOf(real);
+      realSrcs.forEach((el, i) => el.classList.toggle('in', p > 0.1 + i * 0.06));
+      realLines.forEach((el, i) => {
+        el.style.setProperty('--draw', ramp(p, 0.16 + i * 0.07, 0.36 + i * 0.07).toFixed(3));
+      });
+      if (realFit) realFit.style.setProperty('--draw', ramp(p, 0.42, 0.66).toFixed(3));
+      strikes.forEach((el, i) => {
+        const sx = ramp(p, 0.66 + i * 0.09, 0.74 + i * 0.09);
+        el.style.setProperty('--sx', sx.toFixed(3));
+        el.classList.toggle('is-dead', sx >= 1);
+      });
+      if (realNever) realNever.classList.toggle('in', p > 0.84);
+      if (realLede) realLede.classList.toggle('in', p > 0.88);
+    }
+
+    // ---- one rAF-throttled listener for the whole story -------------------
+    function renderAll() {
+      renderScan();
+      renderAsk();
+      renderTalk();
+      renderReal();
+    }
+
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => { ticking = false; renderAll(); });
+    };
+
+    renderAll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+  }
+</script>
