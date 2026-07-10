@@ -3,17 +3,20 @@
 // Every path carries pathLength="1" at the call site so it can be "drawn"
 // by scroll via stroke-dashoffset — the same vocabulary as the hero's mark.
 
-// The hanger IS the BURS mark: a "B" whose stem is the hanger's long
-// diagonal, its top bowl curling like a hook, its lower bowl resting on the
-// bar; the right arm tucks against the bowl as a chevron. Three strokes:
-export const HANGER = [
-  // left corner → diagonal stem → top bowl curling over
-  "M31 45 Q26 43 29 39 L61 10 C62 4 70 2 73 8 C75 13 68 19 60 17",
-  // bar → rounded right corner → right arm → chevron tip against the bowl
-  "M31 45 L85 45 Q91 45 88 40 L74 27 Q72 25 69.5 27.5",
-  // the B's lower bowl, closing on the bar
-  "M50 22 C66 19 75 26 75 32 C75 39 67 44 54 44.5",
-];
+// The hanger IS the BURS mark — the actual logo asset, not a redrawing, so
+// it is pixel-identical to the brand mark everywhere it hangs a garment.
+// Placement maps the logo's alpha bounding box (x 23.4–76.6%, y 31.3–67.6%
+// of its square 256px canvas, measured from the file) into the shared
+// 120×175 garment viewBox: the mark renders 64 units wide, centred on
+// x=60, with the bar's bottom edge at y=46 — one unit above the garment
+// shoulders (y=47), so every piece hangs exactly off the bar.
+export const MARK_HANGER = {
+  href: "/logo-512.png",
+  x: -0.2,
+  y: -35.3,
+  w: 120.3,
+  h: 120.3,
+};
 
 export interface Garment {
   line: string[];

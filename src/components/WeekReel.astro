@@ -9,7 +9,7 @@
 // Dark on purpose: it flows out of the (ink) film and into the (ink) footer,
 // and keeps the fixed cream nav legible the whole way down.
 import { APP_STORE_URL } from "../lib/links";
-import { HANGER, GARMENTS } from "../lib/garments";
+import { MARK_HANGER, GARMENTS } from "../lib/garments";
 
 interface Day { dow: string; date: string; occasion: string; outfit: string; garment: string }
 const days: Day[] = [
@@ -39,9 +39,7 @@ const days: Day[] = [
             <p class="day__dow">{d.dow}<span class="day__date">{d.date}</span></p>
             <div class="day__art" aria-hidden="true">
               <svg viewBox="0 0 120 175" class="day__svg" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                <g class="hanger">
-                  {HANGER.map(p => <path d={p} />)}
-                </g>
+                <image class="hanger-mark" href={MARK_HANGER.href} x={MARK_HANGER.x} y={MARK_HANGER.y} width={MARK_HANGER.w} height={MARK_HANGER.h} />
                 <g class="garment">
                   {GARMENTS[d.garment].line.map(p => <path class="gl" d={p} pathLength="1" />)}
                   {GARMENTS[d.garment].gold.map(p => <path class="gl gl--gold" d={p} pathLength="1" />)}
@@ -150,7 +148,9 @@ const days: Day[] = [
 
   .day__art{ width: 100%; aspect-ratio: 3/4; display: grid; place-items: center; margin: 6px 0 4px }
   .day__svg{ width: 72%; height: 100%; overflow: visible }
-  .hanger path{ stroke: rgba(245,240,232,.55); stroke-width: 1.4; fill: none }
+  /* The hanger is the actual logo asset (dark mark on alpha) — invert to
+     cream for the ink stage, slightly quiet so the garment stays the star. */
+  .hanger-mark{ filter: invert(1); opacity: .8 }
   /* px calc: Gecko rejects unitless calc() for stroke-dashoffset (with
      pathLength=1, 1px == the whole path). The opacity ramp hides Blink's
      stray round-cap dot on the zero-length dash at --draw: 0. */
