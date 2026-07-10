@@ -4,7 +4,7 @@
 
 ## Definitions
 
-- **Wardrobe scan** — pointing a phone camera at your clothes; BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes. No manual tagging.
+- **Wardrobe scan** — pointing a phone camera at your clothes; BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes — twenty to thirty for a big wardrobe. No manual tagging.
 - **The unworn 80%** — the share of a typical wardrobe that never gets worn. BURS is built for this 80%.
 - **Context-aware styling** — outfit recommendations that read weather, calendar, location, and yesterday's outfit before suggesting anything.
 - **Capsule wardrobe** — a small set of pieces (often ~12) that combine into many outfits. BURS builds capsules from clothes you already own, never recommended to buy.
@@ -24,7 +24,7 @@
 
 ## What BURS does
 
-- **Wardrobe scanner.** Computer vision catalogues every piece in under ten minutes.
+- **Wardrobe scanner.** Computer vision catalogues every piece in under ten minutes — twenty to thirty for a big wardrobe.
 - **Context-aware outfit of the day.** Reads weather, calendar, location, yesterday's outfit, returns one confident recommendation.
 - **Conversational AI stylist.** Refines outfits in plain language ("make this warmer", "softer palette", "something for 7pm dinner").
 - **Week planner.** Drafts outfits for every event on your calendar.
@@ -68,7 +68,7 @@ Wardrobe photos stay private to your account. BURS does not sell user data and d
 BURS is an AI wardrobe stylist. It scans clothes you already own, reads the weather and your calendar, and recommends the perfect outfit for every day.
 
 ### How does the wardrobe scan work?
-You point a phone camera at your clothes. BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes. No manual tagging.
+You point a phone camera at your clothes. BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes — twenty to thirty for a big wardrobe. No manual tagging.
 
 ### Is BURS free?
 No. BURS is a premium app — €9.99/mo or €79.99/yr, billed by the app stores in your local currency. No free tier, no ads. Cancel anytime.

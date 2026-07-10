@@ -15,8 +15,9 @@ import { softwareApplication, product } from "../lib/schema";
 >
   <Schema slot="head" json={[softwareApplication(), product()]} />
 
-  <!-- The page is a film; this keeps a real heading + crawlable synopsis for
-       search engines and assistive tech (the visuals stay film-only). -->
+  <!-- The page's story is told scene by scene as you scroll; this compact
+       synopsis gives search engines and assistive tech the whole arc up
+       front, with a real h1. -->
   <div class="sr-only">
     <h1>BURS — your wardrobe, intelligently styled</h1>
     <p>
@@ -34,9 +35,10 @@ import { softwareApplication, product } from "../lib/schema";
   <!-- ATTENTION — the opening film, one full-viewport beat -->
   <HeroFilm />
 
-  <!-- THE STORY — what the app does, scrubbed by scroll: scan once (20–30
-       minutes), then only ever say the occasion / the mood / "style me", or
-       just talk to it. The first real stylist — it never sells you anything. -->
+  <!-- THE STORY — what the app does, scrubbed by scroll: scan once (under
+       ten minutes; twenty to thirty for a big wardrobe), then only ever say
+       the occasion / the mood / "style me", or just talk to it. The first
+       real stylist — it never sells you anything. -->
   <ScrollStory />
 
   <!-- THE WEEK — a scroll-driven week; the days glide by and each one's outfit
