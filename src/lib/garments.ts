@@ -3,21 +3,19 @@
 // Every path carries pathLength="1" at the call site so it can be "drawn"
 // by scroll via stroke-dashoffset — the same vocabulary as the hero's mark.
 
-// The hanger IS the BURS mark — the actual logo asset, not a redrawing, so
-// it is pixel-identical to the brand mark everywhere it hangs a garment.
-// Placement maps the logo's alpha bounding box (x 23.4–76.6%, y 31.3–67.6%
-// of its square 256px canvas, measured from the file) into the shared
-// 120×175 garment viewBox: the mark renders 54 units wide (the span of the
-// garment shoulders plus a hanger's overhang), centred on x=60, with the
-// bar's bottom edge at y=46 — one unit above the garment shoulders (y=47),
-// so every piece hangs exactly off the bar.
-export const MARK_HANGER = {
-  href: "/logo-512.png",
-  x: 9.2,
-  y: -22.6,
-  w: 101.5,
-  h: 101.5,
-};
+// A real wire hanger, drawn in the same line weight as the garments:
+// an open swan-neck hook, a small twist where the wire wraps the neck,
+// and a closed triangle with rounded wire bends and a straight bottom bar
+// at y≈46 — one unit above the garment shoulders (y=47), so every piece
+// hangs exactly off the bar.
+export const HANGER = [
+  // hook — stem rising from the neck, curling over and opening down-left
+  "M60 27 C60 20.5 60 17.5 62 15.5 C64.5 13 64 8 60.5 7.5 C57.2 7 55.2 9.5 55.7 12.5",
+  // the wire twist at the neck
+  "M58.4 23.4 L61.6 25.2 M61.6 23.4 L58.4 25.2",
+  // arms + bar — one closed run of wire with rounded bends at the corners
+  "M60 27 L31.5 45 Q29.5 46.2 32 46.2 L88 46.2 Q90.5 46.2 88.5 45 Z",
+];
 
 export interface Garment {
   line: string[];
