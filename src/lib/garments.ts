@@ -7,15 +7,16 @@
 // it is pixel-identical to the brand mark everywhere it hangs a garment.
 // Placement maps the logo's alpha bounding box (x 23.4–76.6%, y 31.3–67.6%
 // of its square 256px canvas, measured from the file) into the shared
-// 120×175 garment viewBox: the mark renders 64 units wide, centred on
-// x=60, with the bar's bottom edge at y=46 — one unit above the garment
-// shoulders (y=47), so every piece hangs exactly off the bar.
+// 120×175 garment viewBox: the mark renders 54 units wide (the span of the
+// garment shoulders plus a hanger's overhang), centred on x=60, with the
+// bar's bottom edge at y=46 — one unit above the garment shoulders (y=47),
+// so every piece hangs exactly off the bar.
 export const MARK_HANGER = {
   href: "/logo-512.png",
-  x: -0.2,
-  y: -35.3,
-  w: 120.3,
-  h: 120.3,
+  x: 9.2,
+  y: -22.6,
+  w: 101.5,
+  h: 101.5,
 };
 
 export interface Garment {
