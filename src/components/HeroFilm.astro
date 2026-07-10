@@ -1,0 +1,81 @@
+---
+// src/components/HeroFilm.astro
+// The opening film — one full-viewport beat. The cinematic hero video plays
+// at rest under the title; scrolling releases straight into the story. The
+// mark-drawing animation that used to live here now closes the page instead
+// (see MarkSeal.astro).
+const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo7HCGecTiT/hf_20260503_095006_fd4e35b8-e575-4e10-9226-e211d064d80c.mp4";
+---
+<section class="hero" aria-label="BURS — your wardrobe, intelligently styled">
+  <div class="hero__video" aria-hidden="true">
+    <video autoplay muted loop playsinline preload="auto">
+      <source src={HERO_VIDEO} type="video/mp4" />
+    </video>
+    <div class="hero__veil"></div>
+  </div>
+
+  <div class="hero__copy">
+    <p class="hero__eyebrow">An AI wardrobe stylist</p>
+    <h2 class="hero__title">Your wardrobe, <em>intelligently styled</em>.</h2>
+  </div>
+
+  <div class="hero__cue" aria-hidden="true">
+    <span>SCROLL</span>
+    <span class="hero__cue-line"></span>
+  </div>
+</section>
+
+<style>
+  .hero{
+    position: relative;
+    height: 100vh; height: 100svh;
+    overflow: hidden;
+    background: var(--ink);
+  }
+
+  .hero__video{ position: absolute; inset: 0 }
+  .hero__video video{
+    width: 100%; height: 100%; object-fit: cover;
+    filter: contrast(1.02) saturate(.96);
+  }
+  .hero__veil{
+    position: absolute; inset: 0; pointer-events: none;
+    background: linear-gradient(180deg,
+      rgba(14,13,12,.5) 0%, rgba(14,13,12,.12) 32%,
+      rgba(14,13,12,.18) 64%, rgba(14,13,12,.6) 100%);
+  }
+
+  .hero__copy{
+    position: absolute; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    width: min(960px, 92vw);
+    text-align: center;
+  }
+  .hero__eyebrow{
+    font-family: var(--mono); font-size: 11px; letter-spacing: .3em;
+    text-transform: uppercase; color: var(--gold-bright); margin-bottom: 20px;
+  }
+  .hero__title{
+    margin: 0; font-family: var(--display); font-weight: 200;
+    letter-spacing: -.04em; line-height: .92;
+    font-size: clamp(44px, 8vw, 120px); color: var(--cream); text-wrap: balance;
+  }
+  .hero__title em{ font-style: italic; color: var(--gold-bright); font-weight: 300 }
+
+  .hero__cue{
+    position: absolute; bottom: 40px; left: 50%;
+    transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 12px;
+    font-family: var(--mono); font-size: 9px; letter-spacing: .3em;
+    color: rgba(245,240,232,.75); text-transform: uppercase;
+  }
+  .hero__cue-line{
+    width: 1px; height: 44px;
+    background: linear-gradient(180deg, rgba(245,240,232,.6), transparent);
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .hero__video{ display: none }   /* quiet ink stage; the title carries it */
+    .hero__cue{ display: none }
+  }
+</style>

@@ -3,9 +3,16 @@
 // Every path carries pathLength="1" at the call site so it can be "drawn"
 // by scroll via stroke-dashoffset — the same vocabulary as the hero's mark.
 
+// The hanger IS the BURS mark: a "B" whose stem is the hanger's long
+// diagonal, its top bowl curling like a hook, its lower bowl resting on the
+// bar; the right arm tucks against the bowl as a chevron. Three strokes:
 export const HANGER = [
-  "M60 22c0-7-3-12 3-14 5-1.6 9 2 7.5 6.5",     // hook
-  "M60 22 L33 47 Q60 56 87 47 Z",                // triangle bar
+  // left corner → diagonal stem → top bowl curling over
+  "M31 45 Q26 43 29 39 L61 10 C62 4 70 2 73 8 C75 13 68 19 60 17",
+  // bar → rounded right corner → right arm → chevron tip against the bowl
+  "M31 45 L85 45 Q91 45 88 40 L74 27 Q72 25 69.5 27.5",
+  // the B's lower bowl, closing on the bar
+  "M50 22 C66 19 75 26 75 32 C75 39 67 44 54 44.5",
 ];
 
 export interface Garment {

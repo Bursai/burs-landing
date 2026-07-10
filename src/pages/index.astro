@@ -1,8 +1,9 @@
 ---
 import Base from "../layouts/Base.astro";
-import ScrollLogoFilm from "../components/ScrollLogoFilm.astro";
+import HeroFilm from "../components/HeroFilm.astro";
 import ScrollStory from "../components/ScrollStory.astro";
 import WeekReel from "../components/WeekReel.astro";
+import MarkSeal from "../components/MarkSeal.astro";
 import Schema from "../components/Schema.astro";
 import { softwareApplication, product } from "../lib/schema";
 ---
@@ -29,8 +30,8 @@ import { softwareApplication, product } from "../lib/schema";
     </p>
   </div>
 
-  <!-- ATTENTION — the film plays, then the mark makes itself from loose thread -->
-  <ScrollLogoFilm />
+  <!-- ATTENTION — the opening film, one full-viewport beat -->
+  <HeroFilm />
 
   <!-- THE STORY — what the app does, scrubbed by scroll: scan once (20–30
        minutes), then only ever say the occasion / the mood / "style me", or
@@ -38,6 +39,10 @@ import { softwareApplication, product } from "../lib/schema";
   <ScrollStory />
 
   <!-- THE WEEK — a scroll-driven week; the days glide by and each one's outfit
-       draws itself in, closing on the App Store CTA before the footer. -->
+       draws itself in, closing on the App Store CTA. -->
   <WeekReel />
+
+  <!-- THE SIGNATURE — the mark stitches itself from loose thread, the page's
+       closing seal before the footer. -->
+  <MarkSeal />
 </Base>
