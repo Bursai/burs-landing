@@ -1,5 +1,5 @@
 // src/lib/schema.ts
-export const SITE = "https://burs.me";
+export const SITE = "https://www.burs.me";
 export const BRAND = "BURS";
 
 const ORG = {

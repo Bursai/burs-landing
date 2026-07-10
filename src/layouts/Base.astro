@@ -56,6 +56,7 @@ const seo = buildSeo({ title, description, path, ogImage, type });
   <meta property="og:description" content={seo.description} />
   <meta property="og:url" content={seo.canonical} />
   <meta property="og:image" content={seo.ogImage} />
+  <meta property="og:image:alt" content={seo.title} />
   <meta property="og:type" content={seo.type} />
   <meta name="twitter:card" content={ogVideo ? "player" : "summary_large_image"} />
   <meta name="twitter:title" content={seo.title} />

@@ -4,7 +4,7 @@ import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
 export default defineConfig({
-  site: 'https://burs.me',
+  site: 'https://www.burs.me',
   trailingSlash: 'never',
   build: {
     format: 'directory',

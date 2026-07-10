@@ -19,7 +19,7 @@ import { organization } from "../lib/schema";
 import { APP_STORE_URL } from "../lib/links";
 const TITLE = "BURS — Start your free trial";
 const DESCRIPTION = "Outfits from clothes you already own. Start your 3-day free trial.";
-const CANONICAL = "https://burs.me/go";
+const CANONICAL = "https://www.burs.me/go";
 ---
 <!doctype html>
 <html lang="en">
@@ -46,7 +46,8 @@ const CANONICAL = "https://burs.me/go";
   <meta property="og:title" content={TITLE} />
   <meta property="og:description" content={DESCRIPTION} />
   <meta property="og:url" content={CANONICAL} />
-  <meta property="og:image" content="https://burs.me/og-image.png" />
+  <meta property="og:image" content="https://www.burs.me/og-image.png" />
+  <meta property="og:image:alt" content={TITLE} />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content={TITLE} />
