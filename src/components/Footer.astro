@@ -38,6 +38,7 @@ const year = new Date().getFullYear();
         <li><a href="/privacy">Privacy</a></li>
         <li><a href="/terms">Terms</a></li>
         <li><a href="/delete-account">Delete account</a></li>
+        <li><button id="privacy-choices" class="foot__choices" type="button">Privacy choices</button></li>
       </ul>
       <p class="label" style="margin-top:18px">Contact</p>
       <ul role="list">
@@ -52,8 +53,18 @@ const year = new Date().getFullYear();
   </div>
 </footer>
 
+<script is:inline>
+  // Withdrawal must be as easy as consent: re-open the consent banner
+  // (ConsentBanner.astro) so the visitor can change their pixel choice.
+  document.getElementById("privacy-choices").addEventListener("click", function () {
+    window.dispatchEvent(new CustomEvent("burs:consent-open"));
+  });
+</script>
+
 <style>
   .foot{padding-block:clamp(60px,9vh,120px) 28px;color:var(--cream)}
+  .foot__choices{background:none;border:0;padding:0;font-size:14px;font-family:inherit;color:rgba(245,240,232,.85);cursor:pointer}
+  .foot__choices:hover{color:var(--gold-bright)}
   .foot__grid{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:48px;padding-bottom:60px;border-bottom:1px solid rgba(245,240,232,.12)}
   .foot__col ul{list-style:none;display:grid;gap:8px;margin-top:14px}
   .foot__col a{font-size:14px;color:rgba(245,240,232,.85)}

@@ -7,7 +7,7 @@ export interface SeoInput {
   type?: "website" | "article";
 }
 
-export const SITE_URL = "https://burs.me";
+export const SITE_URL = "https://www.burs.me";
 export const DEFAULT_OG = "/og-image.png";
 
 export function buildSeo(input: SeoInput) {

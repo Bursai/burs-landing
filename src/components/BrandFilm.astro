@@ -1,0 +1,50 @@
+---
+// src/components/BrandFilm.astro
+// A quiet intermission between the ATTENTION hero (ScrollLogoFilm) and the
+// INTEREST acts (ActsPlates): the finished 9:16 brand film, contained in an
+// editorial "plate" — same border/shadow treatment as ActsPlates — rather
+// than a skeuomorphic device frame. Deliberately does not repeat copy the
+// film already carries (it ends on its own "BURS · burs.me" card), so this
+// stays a single eyebrow + line, not a competing narrative beat.
+---
+<section class="reel" aria-label="Watch the BURS brand film">
+  <div class="wrap reel__inner reveal">
+    <p class="eyebrow">— THE FILM</p>
+    <h2 class="reel__h2">Your wardrobe, <em>in motion</em>.</h2>
+    <div class="reel__plate">
+      <video
+        class="reel__video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        poster="/assets/brand-film-poster.jpg"
+        aria-label="BURS brand film"
+      >
+        <source src="/assets/brand-film.mp4" type="video/mp4" />
+      </video>
+    </div>
+  </div>
+</section>
+
+<style>
+  .reel{ background: var(--cream); padding-block: clamp(72px, 11vh, 140px) }
+  .reel__inner{ display: flex; flex-direction: column; align-items: center; text-align: center }
+  .reel__h2{
+    font-weight: 200; letter-spacing: -.03em; line-height: 1;
+    font-size: clamp(32px, 5vw, 56px); color: var(--charcoal); margin-top: 14px;
+  }
+  .reel__h2 :global(em){ font-style: italic; color: var(--gold); font-weight: 300 }
+
+  .reel__plate{
+    margin-top: clamp(36px, 6vh, 64px);
+    width: min(320px, 78vw);
+    aspect-ratio: 9 / 16;
+    background: var(--cream-paper);
+    border: 1px solid rgba(28,25,23,.18);
+    box-shadow: 0 30px 60px -28px rgba(14,13,12,.4);
+    overflow: hidden;
+  }
+  .reel__video{ width: 100%; height: 100%; object-fit: cover; display: block }
+</style>

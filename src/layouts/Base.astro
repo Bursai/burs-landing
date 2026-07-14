@@ -7,6 +7,8 @@ import "../styles/utilities.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Schema from "../components/Schema.astro";
+import MetaPixel from "../components/MetaPixel.astro";
+import ConsentBanner from "../components/ConsentBanner.astro";
 import { buildSeo } from "../lib/seo";
 import { organization, website } from "../lib/schema";
 
@@ -40,6 +42,13 @@ const seo = buildSeo({ title, description, path, ogImage, type });
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <link rel="manifest" href="/manifest.json" />
 
+  <!-- Smart App Banner (iOS Safari) — prompts Safari visitors to open/get
+       the app from the live BURS AI listing. -->
+  <meta name="apple-itunes-app" content="app-id=6772630210" />
+
+  <!-- Meta Pixel + facebook-domain-verification (paid-acquisition measurement). -->
+  <MetaPixel />
+
   <link rel="preload" href="/fonts/fraunces-variable.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="preload" href="/fonts/inter-tight-variable.woff2" as="font" type="font/woff2" crossorigin />
 
@@ -47,6 +56,7 @@ const seo = buildSeo({ title, description, path, ogImage, type });
   <meta property="og:description" content={seo.description} />
   <meta property="og:url" content={seo.canonical} />
   <meta property="og:image" content={seo.ogImage} />
+  <meta property="og:image:alt" content={seo.title} />
   <meta property="og:type" content={seo.type} />
   <meta name="twitter:card" content={ogVideo ? "player" : "summary_large_image"} />
   <meta name="twitter:title" content={seo.title} />
@@ -78,5 +88,6 @@ const seo = buildSeo({ title, description, path, ogImage, type });
   <Nav />
   <main id="main"><slot /></main>
   <Footer />
+  <ConsentBanner />
 </body>
 </html>

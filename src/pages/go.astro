@@ -1,0 +1,138 @@
+---
+// src/pages/go.astro
+// Link-in-bio landing page — the single link used in TikTok / Instagram bios
+// during launch. Deliberately does NOT extend Base.astro: no nav, no footer,
+// no distractions. Same brand tokens/fonts/reset as every other page, just a
+// bare <html> so there is truly nothing here but the ask.
+//
+// ?src=<value> (e.g. /go?src=tt or /go?src=ig) is threaded onto the App
+// Store link as Apple's campaign token (ct) + media type (mt=8) so installs
+// can be attributed back to the bio that drove them.
+import "../styles/tokens.css";
+import "../styles/reset.css";
+import "../styles/typography.css";
+import "../styles/utilities.css";
+import Schema from "../components/Schema.astro";
+import MetaPixel from "../components/MetaPixel.astro";
+import ConsentBanner from "../components/ConsentBanner.astro";
+import { organization } from "../lib/schema";
+import { APP_STORE_URL } from "../lib/links";
+const TITLE = "BURS — Start your free trial";
+const DESCRIPTION = "Outfits from clothes you already own. Start your 3-day free trial.";
+const CANONICAL = "https://www.burs.me/go";
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>{TITLE}</title>
+  <meta name="description" content={DESCRIPTION} />
+  <link rel="canonical" href={CANONICAL} />
+  <meta name="theme-color" content="#F5F0E8" />
+
+  <link rel="icon" href="/favicon.ico" sizes="any" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+  <!-- Smart App Banner — same tag as the shared layout; repeated here since
+       /go intentionally doesn't extend Base.astro. -->
+  <meta name="apple-itunes-app" content="app-id=6772630210" />
+
+  <!-- Meta Pixel + domain verification; ViewContent marks /go as the
+       paid-traffic landing for the click-optimized campaigns. -->
+  <MetaPixel viewContent />
+
+  <meta property="og:title" content={TITLE} />
+  <meta property="og:description" content={DESCRIPTION} />
+  <meta property="og:url" content={CANONICAL} />
+  <meta property="og:image" content="https://www.burs.me/og-image.png" />
+  <meta property="og:image:alt" content={TITLE} />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content={TITLE} />
+  <meta name="twitter:description" content={DESCRIPTION} />
+
+  <link rel="preload" href="/fonts/fraunces-variable.woff2" as="font" type="font/woff2" crossorigin />
+
+  <Schema json={organization()} />
+</head>
+<body class="go-body">
+  <div class="grain" aria-hidden="true"></div>
+  <main class="go">
+    <div class="go__inner wrap">
+      <img src="/logo-256.png" width="256" height="256" alt="" class="go__mark" />
+      <h1 class="go__word">BURS</h1>
+      <p class="go__tagline">Outfits from clothes you already own</p>
+
+      <a id="go-cta" class="cta go__cta" href={APP_STORE_URL}>
+        Start your 3-day free trial <span class="cta__arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="go__home" href="/">burs.me</a>
+    </div>
+  </main>
+
+  <ConsentBanner />
+
+  <script is:inline>
+    // Apple campaign-token attribution: /go?src=tt → ct=tt&mt=8 on the
+    // install link, so TikTok vs Instagram bio traffic is distinguishable
+    // in App Store Connect / App Analytics.
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var src = params.get('src');
+      if (!src) return;
+      var safe = src.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 32);
+      if (!safe) return;
+      var link = document.getElementById('go-cta');
+      if (!link) return;
+      var sep = link.href.indexOf('?') === -1 ? '?' : '&';
+      link.href = link.href + sep + 'ct=' + encodeURIComponent(safe) + '&mt=8';
+    })();
+  </script>
+</body>
+</html>
+
+<style>
+  .go-body{ min-height: 100dvh }
+  .go{
+    min-height: 100dvh;
+    display: flex; align-items: center; justify-content: center;
+    background: var(--cream);
+    padding-block: 48px;
+  }
+  .go__inner{
+    max-width: 420px;
+    display: flex; flex-direction: column; align-items: center;
+    text-align: center;
+  }
+  .go__mark{ width: 56px; height: 56px; margin-bottom: 20px }
+  .go__word{
+    font-size: clamp(48px, 14vw, 72px);
+    margin: 0;
+    color: var(--charcoal);
+  }
+  .go__tagline{
+    font-family: var(--serif); font-style: italic;
+    color: var(--charcoal-2);
+    font-size: clamp(17px, 4.4vw, 20px);
+    line-height: 1.45;
+    margin-top: 14px;
+    max-width: 26ch;
+  }
+  .go__cta{
+    margin-top: 40px;
+    width: 100%; max-width: 340px;
+    justify-content: center;
+    font-size: 15px;
+    padding: 18px 30px;
+  }
+  .go__home{
+    margin-top: 24px;
+    font-family: var(--mono); font-size: 11px; letter-spacing: .24em; text-transform: uppercase;
+    color: var(--charcoal); opacity: .55;
+    transition: opacity .3s var(--eo), color .3s var(--eo);
+  }
+  .go__home:hover{ opacity: 1; color: var(--gold-deep) }
+</style>
