@@ -58,16 +58,21 @@
       const action = document.querySelector('[data-action]');
       const tagThread = document.querySelector('.ptag__thread');
       const foot = document.querySelector('footer');
-      if (!film || !plates) { samples = []; return; }
+      // The seam needs a run of stitched sections to trace. The hero film is
+      // its natural head when present (landing); on the method page it starts
+      // just above the acts instead.
+      if (!plates) { samples = []; return; }
 
       const g = Math.max(24, Math.min(0.07 * vw, 96)); // ≈ wrap gutter
       const rightX = vw - g * 0.5;
 
-      const filmEnd = docTop(film) + (film as HTMLElement).offsetHeight;
       const pTop = docTop(plates), pH = (plates as HTMLElement).offsetHeight;
+      const startY = film
+        ? docTop(film) + (film as HTMLElement).offsetHeight - vh * 0.12
+        : pTop - vh * 0.18;
 
       const pts: Pt[] = [
-        { x: vw * 0.5, y: filmEnd - vh * 0.12 },
+        { x: vw * 0.5, y: startY },
         { x: rightX - g * 0.2, y: pTop + pH * 0.16 },
         { x: rightX + g * 0.15, y: pTop + pH * 0.42 },
         { x: rightX - g * 0.25, y: pTop + pH * 0.7 },

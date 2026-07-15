@@ -29,3 +29,6 @@
 /* Reveal-on-scroll */
 .reveal{opacity:0;transform:translateY(20px);transition:opacity .9s var(--eo),transform .9s var(--eo)}
 .reveal.in{opacity:1;transform:none}
+
+/* Visually hidden, but present for assistive tech and search engines */
+.sr-only{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;clip:rect(0 0 0 0);clip-path:inset(50%);overflow:hidden;white-space:nowrap}

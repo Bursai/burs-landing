@@ -1,0 +1,39 @@
+---
+// src/components/PricingTeaser.astro
+// ACTION — the page's one ask. The stitched thread hangs the price tag here.
+import PriceHangTag from "./PriceHangTag.astro";
+import { APP_STORE_URL } from "../lib/links";
+---
+<section class="pteaser" data-action aria-label="Pricing">
+  <div class="wrap pteaser__grid">
+    <div class="reveal">
+      <p class="eyebrow">— THE DECISION</p>
+      <h2 class="pteaser__h2">Every morning, <em>answered</em>.</h2>
+      <p class="lede pteaser__lede">One subscription, one price everywhere — less per month than the next impulse buy you'll never wear. No free tier. No ads. Cancel anytime.</p>
+      <div class="pteaser__cta">
+        <a class="cta" href={APP_STORE_URL}>Get the app <span class="cta__arrow">→</span></a>
+        <a class="cta cta--ghost" href="/pricing">See full pricing <span class="cta__arrow">→</span></a>
+      </div>
+      <p class="pteaser__assure">Set up in one evening · Your photos stay yours · Cancel in two taps</p>
+    </div>
+    <div>
+      <PriceHangTag />
+    </div>
+  </div>
+</section>
+
+<style>
+  /* Action — pricing carries the page's one ask */
+  .pteaser{background:var(--cream-paper);padding-block:clamp(96px,15vh,190px)}
+  .pteaser__grid{display:grid;grid-template-columns:1.2fr 1fr;gap:64px;align-items:center}
+  .pteaser__h2{font-weight:200;letter-spacing:-.025em;line-height:.95;font-size:clamp(40px,6vw,80px);margin-top:14px;color:var(--charcoal)}
+  .pteaser__h2 em{font-style:italic;color:var(--gold);font-weight:300}
+  .pteaser__lede{max-width:42ch;margin-top:18px}
+  .pteaser__cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:28px}
+  .pteaser__assure{
+    margin-top:22px;
+    font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+    color:rgba(28,25,23,.5);
+  }
+  @media (max-width:900px){.pteaser__grid{grid-template-columns:1fr;gap:32px}}
+</style>
