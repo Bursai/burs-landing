@@ -579,15 +579,60 @@ const sources = ["YOUR CLOTHES", "HOW YOU FEEL", "THE WEATHER", "THE OCCASION"];
     .ask{ height: 220vh }
     .talk{ height: 280vh }
     .real{ height: 320vh }
-    .scan__scan{ flex-direction: column; gap: clamp(14px, 2.6vh, 24px) }
-    .scan__phone{ height: min(34svh, 300px) }
-    .detail-wrap{ width: min(340px, 88vw); height: 128px; text-align: center }
-    .detail__rule{ margin-inline: auto }
-    .detail__specs{ align-items: center }
+
+    /* Stack head → phone+details → closet+lede from the top with real gaps.
+       (The desktop `space-between` distributed NEGATIVE space on short
+       phones, overlapping the heading, phone and closet.) */
+    .scan__stage{
+      justify-content: flex-start;
+      gap: clamp(10px, 2vh, 20px);
+      /* clear the 84px fixed nav */
+      padding: clamp(76px, 10vh, 90px) var(--gutter) clamp(14px, 2.5vh, 28px);
+    }
+    .scan__head{ gap: 4px }
+    .story-h{ font-size: clamp(25px, 7vw, 40px) }
+    .story-counter{ margin-top: 6px }
+
+    .scan__scan{ flex: 0 0 auto; flex-direction: column; gap: clamp(8px, 1.6vh, 16px); width: 100% }
+    .scan__phone{ height: clamp(150px, 31svh, 250px) }
+
+    /* one compact caption under the phone: name · specs (inline) · added —
+       only the active piece is in flow, so nothing overlaps */
+    .detail-wrap{ width: min(360px, 90vw); height: auto; min-height: clamp(70px, 13vh, 88px); text-align: center }
+    .detail{ position: static; transform: none; display: none }
+    .detail.show{ display: block }
+    .detail__rule{ margin: 0 auto 8px }
+    .detail__name{ font-size: clamp(18px, 5vw, 24px) }
+    .detail__specs{ flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 3px 9px; margin-top: 8px }
+    .detail__k{ display: none }
     .detail__row{ justify-content: center }
-    .added__slot{ width: clamp(30px, 7vw, 44px) }
+    .detail__row + .detail__row::before{ content: "·"; color: var(--gold); opacity: .7; margin-right: 9px }
+    .detail__v{ font-size: clamp(14px, 3.8vw, 17px) }
+    .detail__added{ margin-top: 10px; font-size: 9.5px }
+
+    .scan__foot{ gap: clamp(8px, 1.6vh, 14px) }
+    .added__label{ font-size: 9px }
+    .added__slot{ width: clamp(30px, 7.5vw, 44px) }
+    .scan__lede{ font-size: clamp(12.5px, 3.4vw, 15px); width: min(42ch, 90vw) }
+
     .chip{ min-width: 0; width: min(320px, 84vw) }
     .real__box{ height: 230px }
+  }
+
+  /* Short viewports — small phones once the browser's address bar has eaten
+     into the height. Shrink the phone and drop the supporting lede so the
+     core scan (phone + details + closet) always fits without cropping. */
+  @media (max-width: 800px) and (max-height: 640px){
+    .scan__stage{ padding-top: clamp(70px, 9vh, 80px); gap: clamp(8px, 1.4vh, 15px) }
+    .scan__phone{ height: clamp(132px, 27svh, 200px) }
+  }
+  @media (max-width: 800px) and (max-height: 560px){
+    .scan__stage{ padding-top: clamp(66px, 8vh, 74px); gap: clamp(7px, 1.2vh, 12px) }
+    .scan__phone{ height: clamp(118px, 24svh, 168px) }
+  }
+  /* only the very shortest phones drop the supporting lede */
+  @media (max-width: 800px) and (max-height: 520px){
+    .scan__lede{ display: none }
   }
 
   /* ---------- reduced motion: a static, fully-scanned page ---------- */
