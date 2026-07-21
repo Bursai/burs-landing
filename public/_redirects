@@ -1,5 +1,6 @@
 /app                https://app.burs.me            301
 /auth               https://app.burs.me/auth        301
 /download           https://apps.apple.com/se/app/burs-ai/id6772630210?ct=meta-m1-se&mt=8  302
+/download/          https://apps.apple.com/se/app/burs-ai/id6772630210?ct=meta-m1-se&mt=8  302
 /features           /method                         301
 /features/          /method                         301

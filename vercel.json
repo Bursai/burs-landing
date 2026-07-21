@@ -5,6 +5,11 @@
       "source": "/download",
       "destination": "https://apps.apple.com/se/app/burs-ai/id6772630210?ct=meta-m1-se&mt=8",
       "statusCode": 302
+    },
+    {
+      "source": "/download/",
+      "destination": "https://apps.apple.com/se/app/burs-ai/id6772630210?ct=meta-m1-se&mt=8",
+      "statusCode": 302
     }
   ]
 }
