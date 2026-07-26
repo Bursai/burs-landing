@@ -7,11 +7,11 @@ import { product } from "../lib/schema";
 ---
 <Page
   title="Pricing — BURS"
-  description="BURS Premium: €9.99/month or €79.99/year. No free tier. No ads. Cancel anytime."
+  description="Your wardrobe is free, forever. BURS Premium — the AI stylist — is €9.99/month or €79.99/year. No ads. Cancel anytime."
   path="/pricing"
   eyebrow="Pricing"
-  headline="One subscription. <em>Your</em> closet."
-  lede="A single tier, priced in euros. Annual saves about a third. Your app store bills in your local currency."
+  headline="Your wardrobe is <em>free</em>."
+  lede="Scanning and organising your closet costs nothing, forever. The stylist — the outfit of the day, the chat, the week, the packing — is the subscription. Annual saves about a third; your app store bills in your local currency."
 >
   <Schema slot="head" json={product()} />
 
@@ -23,7 +23,6 @@ import { product } from "../lib/schema";
     <section class="pricing__not">
       <p class="eyebrow">— What's not included</p>
       <ul class="anti" style="color:var(--charcoal)" role="list">
-        <li>No free tier.</li>
         <li>No ads.</li>
         <li>No shopping. We never recommend pieces you don't own.</li>
         <li>No data sale. No training on your wardrobe.</li>
@@ -40,7 +39,7 @@ import { product } from "../lib/schema";
           { feature: "Reads weather + calendar",    burs: true,  b: false, c: false },
           { feature: "Conversational refinement",   burs: true,  b: false, c: false },
           { feature: "Travel capsule builder",      burs: true,  b: "partial", c: false },
-          { feature: "Free tier",                   burs: false, b: true,  c: true  },
+          { feature: "Free wardrobe, no subscription", burs: true, b: true,  c: true  },
           { feature: "Ads",                         burs: false, b: false, c: true  }
         ]}
       />
