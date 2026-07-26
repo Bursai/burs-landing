@@ -8,6 +8,21 @@
 // ?src=<value> (e.g. /go?src=tt or /go?src=ig) is threaded onto the App
 // Store link as Apple's campaign token (ct) + media type (mt=8) so installs
 // can be attributed back to the bio that drove them.
+//
+// ⚠️ THIS PAGE IS ONLY REACHED BY *ORGANIC* TRAFFIC (bio links, direct).
+// PAID ad clicks never render it: `vercel.json` holds a 302 for /go that
+// matches `?utm_campaign=<live campaign>` at the edge and sends those
+// straight to the App Store, so an ad click costs zero extra taps. That
+// redirect's destination MUST stay byte-identical to what the #go-cta
+// button below produces for the same campaign — i.e. APP_STORE_URL plus
+// `&ct=<campaign>&mt=8` — or paid and organic installs land under
+// different tokens in App Store Connect. `src/lib/links.test.ts` asserts
+// exactly that, so changing APP_STORE_URL fails the build until
+// vercel.json is updated to match.
+//
+// LAUNCHING A NEW CAMPAIGN? Add a matching /go rule to vercel.json, or the
+// clicks quietly fall back to this interstitial. That fallback is safe —
+// the script below still applies the right ct token — it just costs a tap.
 import "../styles/tokens.css";
 import "../styles/reset.css";
 import "../styles/typography.css";

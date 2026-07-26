@@ -10,6 +10,22 @@
       "source": "/download/",
       "destination": "https://apps.apple.com/se/app/burs-ai/id6772630210?ct=meta-m1-se&mt=8",
       "statusCode": 302
+    },
+    {
+      "source": "/go",
+      "has": [
+        { "type": "query", "key": "utm_campaign", "value": "meta-m1-se" }
+      ],
+      "destination": "https://apps.apple.com/se/app/burs-ai/id6772630210?l=en-GB&ct=meta-m1-se&mt=8",
+      "statusCode": 302
+    },
+    {
+      "source": "/go/",
+      "has": [
+        { "type": "query", "key": "utm_campaign", "value": "meta-m1-se" }
+      ],
+      "destination": "https://apps.apple.com/se/app/burs-ai/id6772630210?l=en-GB&ct=meta-m1-se&mt=8",
+      "statusCode": 302
     }
   ]
 }
