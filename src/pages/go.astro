@@ -79,9 +79,20 @@ const CANONICAL = "https://www.burs.me/go";
     // Apple campaign-token attribution: /go?src=tt → ct=tt&mt=8 on the
     // install link, so TikTok vs Instagram bio traffic is distinguishable
     // in App Store Connect / App Analytics.
+    //
+    // 2026-07-26: `src` alone silently dropped every PAID click. The Meta
+    // campaign sends `?utm_source=meta&utm_campaign=meta-m1-se&...` and never
+    // a `src`, so this returned early and the install link went to Apple with
+    // NO `ct` token — 377 paid clicks (789 SEK) landed unattributed and were
+    // indistinguishable from organic in App Store Connect. Fall back to the
+    // utm_* pair that ad platforms actually send. `utm_campaign` is preferred
+    // because it already carries the campaign-scoped value (`meta-m1-se`) that
+    // /download hardcodes, so both entry points report the SAME token.
     (function () {
       var params = new URLSearchParams(window.location.search);
-      var src = params.get('src');
+      var src = params.get('src')
+        || params.get('utm_campaign')
+        || params.get('utm_source');
       if (!src) return;
       var safe = src.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 32);
       if (!safe) return;
