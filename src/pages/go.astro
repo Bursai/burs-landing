@@ -13,12 +13,19 @@
 // PAID ad clicks never render it: `vercel.json` holds a 302 for /go that
 // matches `?utm_campaign=<live campaign>` at the edge and sends those
 // straight to the App Store, so an ad click costs zero extra taps. That
-// redirect's destination MUST stay byte-identical to what the #go-cta
-// button below produces for the same campaign — i.e. APP_STORE_URL plus
-// `&ct=<campaign>&mt=8` — or paid and organic installs land under
+// redirect's CONFIGURED destination MUST stay in lockstep with what the
+// #go-cta button below produces for the same campaign — i.e. APP_STORE_URL
+// plus `&ct=<campaign>&mt=8` — or paid and organic installs land under
 // different tokens in App Store Connect. `src/lib/links.test.ts` asserts
 // exactly that, so changing APP_STORE_URL fails the build until
 // vercel.json is updated to match.
+//
+// Verified on production 2026-07-26: Vercel also FORWARDS the inbound query
+// string onto the destination, so a real ad click actually arrives at
+// `…id6772630210?utm_source=meta&…&l=en-GB&ct=meta-m1-se&mt=8`. The utm_*
+// pairs are inert — Apple ignores unknown params and reads only ct/mt — so
+// attribution is correct, but don't be surprised the live URL is longer
+// than the string configured in vercel.json.
 //
 // LAUNCHING A NEW CAMPAIGN? Add a matching /go rule to vercel.json, or the
 // clicks quietly fall back to this interstitial. That fallback is safe —
