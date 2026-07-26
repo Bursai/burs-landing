@@ -10,7 +10,13 @@
 // If those two ever disagree, paid and organic installs land under DIFFERENT
 // campaign tokens in App Store Connect and the ad spend becomes unreadable —
 // silently, with nothing failing. That is exactly the bug this suite exists
-// to prevent, so it asserts the two produce a byte-identical URL.
+// to prevent, so it pins the two to the same configured URL.
+//
+// Scope note: this compares the vercel.json destination as CONFIGURED. At
+// runtime Vercel additionally forwards the inbound query string, so a live ad
+// click lands on that URL with the utm_* pairs prepended. They are inert
+// (Apple reads only ct/mt), so the token still matches — but that is why this
+// says "same configured URL" rather than "same URL the visitor sees".
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
