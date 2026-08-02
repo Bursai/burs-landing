@@ -11,7 +11,7 @@
 //
 // ⚠️ THIS PAGE IS ONLY REACHED BY *ORGANIC* TRAFFIC (bio links, direct).
 // PAID ad clicks never render it: `vercel.json` holds a 302 for /go that
-// matches `?utm_campaign=<live campaign>` at the edge and sends those
+// matches `?utm_campaign=<any token-safe value>` at the edge and sends those
 // straight to the App Store, so an ad click costs zero extra taps. That
 // redirect's destination MUST stay byte-identical to what the #go-cta
 // button below produces for the same campaign — i.e. APP_STORE_URL plus
@@ -20,9 +20,13 @@
 // exactly that, so changing APP_STORE_URL fails the build until
 // vercel.json is updated to match.
 //
-// LAUNCHING A NEW CAMPAIGN? Add a matching /go rule to vercel.json, or the
-// clicks quietly fall back to this interstitial. That fallback is safe —
-// the script below still applies the right ct token — it just costs a tap.
+// LAUNCHING A NEW CAMPAIGN? Nothing to do — the /go rule captures any
+// `utm_campaign` of [a-zA-Z0-9_-]{1,32} and forwards it as the ct token, so
+// no site deploy is needed. (Until 2026-08-02 the rule hardcoded
+// `meta-m1-se`; M3 shipped with a different token and every click silently
+// fell back to this interstitial.) Anything outside that charset still falls
+// back here, which is safe — the script below applies the same sanitised ct
+// token — it just costs a tap.
 import "../styles/tokens.css";
 import "../styles/reset.css";
 import "../styles/typography.css";
