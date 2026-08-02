@@ -14,17 +14,17 @@
     {
       "source": "/go",
       "has": [
-        { "type": "query", "key": "utm_campaign", "value": "meta-m1-se" }
+        { "type": "query", "key": "utm_campaign", "value": "(?<campaign>[a-zA-Z0-9_-]{1,32})" }
       ],
-      "destination": "https://apps.apple.com/se/app/burs-ai/id6772630210?l=en-GB&ct=meta-m1-se&mt=8",
+      "destination": "https://apps.apple.com/se/app/burs-ai/id6772630210?l=en-GB&ct=:campaign&mt=8",
       "statusCode": 302
     },
     {
       "source": "/go/",
       "has": [
-        { "type": "query", "key": "utm_campaign", "value": "meta-m1-se" }
+        { "type": "query", "key": "utm_campaign", "value": "(?<campaign>[a-zA-Z0-9_-]{1,32})" }
       ],
-      "destination": "https://apps.apple.com/se/app/burs-ai/id6772630210?l=en-GB&ct=meta-m1-se&mt=8",
+      "destination": "https://apps.apple.com/se/app/burs-ai/id6772630210?l=en-GB&ct=:campaign&mt=8",
       "statusCode": 302
     }
   ]

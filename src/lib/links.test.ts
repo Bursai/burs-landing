@@ -11,6 +11,15 @@
 // campaign tokens in App Store Connect and the ad spend becomes unreadable —
 // silently, with nothing failing. That is exactly the bug this suite exists
 // to prevent, so it asserts the two produce a byte-identical URL.
+//
+// 2026-08-02: the rule used to hardcode `meta-m1-se`, so the very first ad
+// that shipped with a different utm_campaign (M3) silently fell through to
+// the interstitial. Worse, an M3 ad pointed straight at apps.apple.com to
+// dodge the interstitial entirely — and Meta hard-rejects an App Store URL
+// under a Traffic objective ("App-url stöds enbart av målsättningen
+// Appinstallationer"), so the ad never served a single impression. The rule
+// now captures ANY token-safe campaign and forwards it as the ct token, so
+// launching a campaign no longer requires a site deploy.
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -39,6 +48,27 @@ const ctaUrlFor = (campaign: string) => {
 
 const goRedirects = vercelConfig.redirects.filter((r) => r.source.replace(/\/$/, '') === '/go');
 
+const campaignPattern = (rule: Redirect) =>
+  rule.has?.find((h) => h.type === 'query' && h.key === 'utm_campaign')?.value;
+
+/** Re-implements Vercel's edge behaviour: match the `has` value as a regex,
+ *  then substitute its named capture groups into `destination` as `:name`.
+ *  Returns null when the rule would not fire at all.
+ *
+ *  `anchored` mirrors Vercel matching the whole query value. The unanchored
+ *  form is the pessimistic case used by the injection test below, so the
+ *  suite holds regardless of which one Vercel actually applies. */
+const resolveDestination = (rule: Redirect, campaign: string, anchored = true) => {
+  const pattern = campaignPattern(rule);
+  if (!pattern) return null;
+  const match = new RegExp(anchored ? `^(?:${pattern})$` : pattern).exec(campaign);
+  if (!match) return null;
+  return Object.entries(match.groups ?? {}).reduce(
+    (url, [name, value]) => url.split(`:${name}`).join(value ?? ''),
+    rule.destination,
+  );
+};
+
 describe('paid /go redirect ↔ organic /go CTA', () => {
   it('defines an edge redirect for /go so paid clicks skip the interstitial', () => {
     expect(goRedirects.length).toBeGreaterThan(0);
@@ -52,10 +82,37 @@ describe('paid /go redirect ↔ organic /go CTA', () => {
   it.each(goRedirects.map((r) => [r.source, r] as const))(
     '%s sends the exact URL the CTA button would have produced',
     (_source, rule) => {
-      const campaign = rule.has?.find((h) => h.type === 'query' && h.key === 'utm_campaign')?.value;
-      expect(campaign, 'rule must key off utm_campaign').toBeTruthy();
-      // The whole point: identical token, identical destination, paid or organic.
-      expect(rule.destination).toBe(ctaUrlFor(campaign!));
+      expect(campaignPattern(rule), 'rule must key off utm_campaign').toBeTruthy();
+      // The whole point: identical token, identical destination, paid or
+      // organic — for every campaign, not just the one live when it was written.
+      for (const campaign of ['meta-m1-se', 'meta-m3-se', 'meta_m10_se', 'tt', 'x']) {
+        expect(resolveDestination(rule, campaign), campaign).toBe(ctaUrlFor(campaign));
+      }
+    },
+  );
+
+  it.each(goRedirects.map((r) => [r.source, r] as const))(
+    '%s fires for any campaign, not just the one hardcoded at M1 launch',
+    (_source, rule) => {
+      // The M3 regression: a new campaign must not need a site deploy to work.
+      expect(resolveDestination(rule, 'meta-m3-se')).toBeTruthy();
+    },
+  );
+
+  it.each(goRedirects.map((r) => [r.source, r] as const))(
+    '%s cannot be used to inject extra params into the App Store URL',
+    (_source, rule) => {
+      // Worst case: assume Vercel matches unanchored, so a hostile value can
+      // still fire the rule on its safe prefix. The captured token must never
+      // carry the injected tail into Apple's URL.
+      for (const hostile of ['evil&ct=stolen', 'evil?x=1', 'evil#frag', 'a/../../b']) {
+        const dest = resolveDestination(rule, hostile, false) ?? '';
+        expect(dest, hostile).not.toContain('stolen');
+        expect(dest, hostile).toMatch(/^https:\/\/apps\.apple\.com\/se\/app\/burs-ai\/id6772630210\?l=en-GB&ct=[a-zA-Z0-9_-]*&mt=8$/);
+      }
+      // An empty utm_campaign must fall through to the interstitial, not
+      // redirect to Apple with a blank ct token.
+      expect(resolveDestination(rule, '')).toBeNull();
     },
   );
 
