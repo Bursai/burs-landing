@@ -8,7 +8,9 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
+    "pretest": "astro build",
     "test": "vitest run",
+    "pretest:watch": "astro build",
     "test:watch": "vitest",
     "test:a11y": "playwright test",
     "test:lh": "lhci autorun"

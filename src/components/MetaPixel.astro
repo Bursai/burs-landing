@@ -17,7 +17,9 @@
 //
 // Events once consented: PageView everywhere; ViewContent on pages passing
 // the prop; InitiateAppStore (custom) via a delegated listener on any App
-// Store link, carrying the /go?src= token when present.
+// Store link, carrying the campaign token resolved by CampaignToken.astro
+// (window.__bursCampaign) — which must therefore render ahead of this
+// component in <head>.
 //
 // PIXEL_ID = dataset "BURS Web Pixel" in the BURS AI Business Portfolio.
 interface Props {
@@ -62,13 +64,23 @@ const PIXEL_ID = "1349632843260427";
 
       // Any click through to the App Store becomes a custom InitiateAppStore
       // event — the top-of-funnel signal the click-optimized campaigns read.
+      //
+      // The token comes from CampaignToken.astro (window.__bursCampaign), the
+      // single resolver, NOT from a second read of the query string here. This
+      // listener used to look at `src` alone and strip invalid characters out
+      // of whatever it found, while /go resolved src → utm_campaign →
+      // utm_source and rejected invalid values whole. A consented Meta visitor
+      // who tapped the CTA before the 700ms handoff — or any Android visitor,
+      // who gets no handoff at all — therefore reported src:"direct" and had
+      // their paid conversion counted as organic. One resolver, one regex, one
+      // fallback: the duplicate precedence logic is what caused the drift, so
+      // do not reintroduce a local read of location.search.
       document.addEventListener("click", function (e) {
         var a = e.target && e.target.closest && e.target.closest('a[href*="apps.apple.com"]');
         if (!a || !window.fbq) return;
-        var src = new URLSearchParams(window.location.search).get("src") || "direct";
         fbq("trackCustom", "InitiateAppStore", {
           page: window.location.pathname,
-          src: src.replace(/[^a-zA-Z0-9_-]/g, "").slice(0, 32) || "direct",
+          src: window.__bursCampaign || "direct",
         });
       });
     }

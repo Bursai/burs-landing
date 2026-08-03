@@ -29,7 +29,14 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { APP_STORE_URL, CAMPAIGN_PARAM_KEYS, buildAppStoreUrl, resolveCampaign } from './links';
+import {
+  APP_STORE_URL,
+  CAMPAIGN_FALLBACK,
+  CAMPAIGN_PARAM_KEYS,
+  CAMPAIGN_RE_SOURCE,
+  buildAppStoreUrl,
+  resolveCampaign,
+} from './links';
 
 const root = new URL('../../', import.meta.url);
 const readRepoFile = (rel: string) => readFileSync(fileURLToPath(new URL(rel, root)), 'utf8');
@@ -43,6 +50,18 @@ interface Redirect {
 
 const vercelConfig: { redirects: Redirect[] } = JSON.parse(readRepoFile('vercel.json'));
 const goAstro = readRepoFile('src/pages/go.astro');
+const campaignToken = readRepoFile('src/components/CampaignToken.astro');
+const metaPixel = readRepoFile('src/components/MetaPixel.astro');
+const baseLayout = readRepoFile('src/layouts/Base.astro');
+
+/**
+ * Source with whole-line `//` comments removed. These files are heavily
+ * commented, and the comments name the very identifiers asserted on below — so
+ * without this a "must not contain" check could fail on prose that explains why
+ * the thing is absent, and a "must contain" check could pass on a mention of
+ * code that no longer exists.
+ */
+const codeOnly = (source: string) => source.replace(/^[ \t]*\/\/.*$/gm, '');
 
 const goRedirects = vercelConfig.redirects.filter((r) => r.source.replace(/\/$/, '') === '/go');
 
@@ -82,37 +101,74 @@ describe('/go must render, not redirect at the edge', () => {
   });
 });
 
-describe('go.astro client script ↔ links.ts', () => {
-  // The script is `is:inline` and cannot import from src/lib, so it mirrors
-  // resolveCampaign + buildAppStoreUrl by hand. These assertions keep the copy
-  // honest; if you rewrite the script, update them deliberately.
+describe('one browser-side campaign resolver', () => {
+  // The browser can't import from src/lib at runtime (the scripts are
+  // `is:inline`, and the query string only exists in the browser because this
+  // is a static build). CampaignToken.astro closes that gap with `define:vars`
+  // instead of a hand-written copy, so the key order, the charset and the
+  // fallback exist exactly once. These assertions exist because the DUPLICATE
+  // is what broke: /go resolved all three keys while MetaPixel's click
+  // listener read `src` alone, so a Meta visitor who tapped the CTA before the
+  // handoff — or any Android visitor, who never gets a handoff — filed a paid
+  // conversion as organic.
   it('reads every campaign param an ad platform might send, in the same order', () => {
     // `src` = TikTok/IG bio links. `utm_campaign` = the Meta campaign token
     // (it carries the campaign-scoped value). `utm_source` = last resort.
     // Dropping utm_campaign is the 2026-07-26 bug that silently discarded
     // every paid click's token.
     expect(CAMPAIGN_PARAM_KEYS).toEqual(['src', 'utm_campaign', 'utm_source']);
-    const literal = CAMPAIGN_PARAM_KEYS.map((k) => `'${k}'`).join(', ');
-    expect(goAstro).toContain(`var CAMPAIGN_KEYS = [${literal}];`);
+    expect(CAMPAIGN_RE_SOURCE).toBe('^[a-zA-Z0-9_-]{1,32}$');
+    expect(CAMPAIGN_FALLBACK).toBe('direct');
   });
 
-  it('validates the whole token and falls back, never strips characters', () => {
-    // Reject-whole-value semantics, identical to CAMPAIGN_RE in links.ts. The
-    // old script stripped invalid characters instead, which turned a hostile
-    // value into a plausible-looking partial token rather than rejecting it.
-    expect(goAstro).toContain('/^[a-zA-Z0-9_-]{1,32}$/');
-    expect(goAstro).toContain('CAMPAIGN_RE.test(candidate)');
-    expect(goAstro).toContain("var ct = 'direct';");
+  it('feeds the inline resolver from links.ts rather than restating it', () => {
+    expect(campaignToken).toMatch(
+      /import \{[\s\S]*?CAMPAIGN_PARAM_KEYS[\s\S]*?CAMPAIGN_RE_SOURCE[\s\S]*?CAMPAIGN_FALLBACK[\s\S]*?\} from "\.\.\/lib\/links"/,
+    );
+    expect(campaignToken).toContain('define:vars=');
+    // No second copy of the charset or the key names anywhere in the resolver:
+    // if either is spelled out here, links.ts has stopped being the source.
+    const code = codeOnly(campaignToken);
+    expect(code).not.toContain('a-zA-Z0-9_-');
+    for (const key of CAMPAIGN_PARAM_KEYS) expect(code, key).not.toContain(`"${key}"`);
   });
 
   it('takes the first VALID param, not merely the first present', () => {
-    // The mirror of resolveCampaign's fall-through loop. A `break` only on a
+    // resolveCampaign's fall-through loop, in the browser. Returning only on a
     // passing candidate is what stops one malformed value (Meta's
-    // {{campaign.name}} macro with a space in it) from burying a good token
-    // in a later param and reporting the click as organic.
-    expect(goAstro).toMatch(
-      /for \(var i = 0; i < CAMPAIGN_KEYS\.length; i\+\+\) \{[\s\S]*?CAMPAIGN_RE\.test\(candidate\)[\s\S]*?break;/,
+    // {{campaign.name}} macro with a space in it) from burying a good token in
+    // a later param and reporting the click as organic.
+    expect(codeOnly(campaignToken)).toMatch(
+      /for \(var i = 0; i < CAMPAIGN_KEYS\.length; i\+\+\) \{[\s\S]*?re\.test\(candidate\)[\s\S]*?return candidate;/,
     );
+    expect(campaignToken).toContain('return CAMPAIGN_FALLBACK;');
+  });
+
+  it('publishes the token once, ahead of every consumer', () => {
+    expect(campaignToken).toContain('window.__bursCampaign =');
+    // <head>, before MetaPixel, on BOTH placements — /go declares its own
+    // <html> and never reaches Base.astro, so neither can cover the other.
+    for (const [name, source] of [
+      ['go.astro', goAstro],
+      ['Base.astro', baseLayout],
+    ] as const) {
+      expect(source, name).toContain('<CampaignToken />');
+      expect(source.indexOf('<CampaignToken />'), `${name}: must precede MetaPixel`).toBeLessThan(
+        source.indexOf('<MetaPixel'),
+      );
+    }
+  });
+
+  it('is the only thing the consumers read — no second resolution', () => {
+    // THE regression guard for the mislabelled-conversion bug. Both consumers
+    // must read the shared token; neither may re-derive one from the URL.
+    expect(codeOnly(metaPixel)).toContain('window.__bursCampaign || "direct"');
+    expect(codeOnly(goAstro)).toContain("var ct = window.__bursCampaign || 'direct';");
+    expect(codeOnly(metaPixel)).not.toContain('location.search');
+    expect(codeOnly(goAstro)).not.toContain('location.search');
+    // ...and nobody may strip characters out of a token. Reject-whole-value is
+    // the rule: stripping turns a hostile value into a plausible partial one.
+    expect(codeOnly(metaPixel)).not.toMatch(/replace\(\/\[\^a-zA-Z0-9/);
   });
 
   it('builds the same URL shape buildAppStoreUrl produces', () => {
@@ -166,6 +222,36 @@ describe('go.astro client script ↔ links.ts', () => {
     // Otherwise the timer overrides the link the visitor actually tapped, and
     // InitiateAppStore fires twice (once from MetaPixel's click listener).
     expect(goAstro).toContain('clearTimeout(handoff)');
+  });
+
+  it('gives an early tap the same beacon grace, bounded so it cannot be felt', () => {
+    // Cancelling the timer used to be the ENTIRE click handler, which opted a
+    // fast tap out of the readiness wait: tap inside the first ~700ms, or tap
+    // at all on Android (no timer there), and the page unloaded with the
+    // insights script still downloading, so no beacon was ever issued. Same
+    // unmeasurable paid click, different route.
+    const code = codeOnly(goAstro);
+    expect(code).toContain('var CLICK_GRACE_MS = 300;');
+    // Skipped outright once the beacon is out — keepalive carries it across
+    // the unload — so the common case costs a real tap exactly nothing.
+    expect(code).toMatch(/if \(beaconFlushed\(\)\) return;/);
+    // Bounded twice: by the grace period AND by the page-wide budget, so a
+    // late tap waits less and a tap past the budget waits not at all.
+    expect(code).toContain(
+      'var deadline = Math.min(Date.now() + CLICK_GRACE_MS, startedAt + MAX_WAIT_MS);',
+    );
+    expect(code).toContain('if (deadline <= Date.now()) return;');
+    // Every branch still ends in a navigation — nothing can strand a visitor.
+    expect(code).toContain('window.location.href = href;');
+  });
+
+  it('never hijacks a click that leaves this document alive', () => {
+    // A modified click opens a new tab/window, so the beacon is in no danger
+    // and preventDefault would break the gesture the visitor made.
+    const code = codeOnly(goAstro);
+    expect(code).toContain('if (e.defaultPrevented || e.button !== 0) return;');
+    expect(code).toContain('if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;');
+    expect(code).toContain("if (a.target && a.target !== '_self') return;");
   });
 
   it('keeps a visible CTA and a no-JS fallback', () => {

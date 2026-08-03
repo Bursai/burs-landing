@@ -7,6 +7,7 @@ import "../styles/utilities.css";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Schema from "../components/Schema.astro";
+import CampaignToken from "../components/CampaignToken.astro";
 import MetaPixel from "../components/MetaPixel.astro";
 import ConsentBanner from "../components/ConsentBanner.astro";
 import WebAnalytics from "../components/WebAnalytics.astro";
@@ -46,6 +47,10 @@ const seo = buildSeo({ title, description, path, ogImage, type });
   <!-- Smart App Banner (iOS Safari) — prompts Safari visitors to open/get
        the app from the live BURS AI listing. -->
   <meta name="apple-itunes-app" content="app-id=6772630210" />
+
+  <!-- Resolves the campaign token once, before anything reads it. MUST stay
+       ahead of MetaPixel: its click listener reports the token this defines. -->
+  <CampaignToken />
 
   <!-- Meta Pixel + facebook-domain-verification (paid-acquisition measurement). -->
   <MetaPixel />

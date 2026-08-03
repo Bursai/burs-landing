@@ -10,7 +10,19 @@ export const APP_STORE_URL =
 // paid and organic traffic — the vercel.json edge redirect that used to
 // duplicate this logic is gone.
 const APP_STORE_BASE = "https://apps.apple.com/se/app/burs-ai/id6772630210";
-const CAMPAIGN_RE = /^[a-zA-Z0-9_-]{1,32}$/;
+
+/**
+ * The campaign-token charset, as a STRING rather than a literal, so the inline
+ * browser script can rebuild the identical RegExp from it via `define:vars`
+ * (see src/components/CampaignToken.astro). A second hand-written copy of this
+ * pattern in an inline script is exactly how the two paths drift apart.
+ */
+export const CAMPAIGN_RE_SOURCE = "^[a-zA-Z0-9_-]{1,32}$";
+
+/** App Store Connect's bucket for "no usable campaign token" — i.e. organic. */
+export const CAMPAIGN_FALLBACK = "direct";
+
+const CAMPAIGN_RE = new RegExp(CAMPAIGN_RE_SOURCE);
 
 /**
  * Query params that can carry a campaign token, in precedence order.
@@ -22,9 +34,12 @@ const CAMPAIGN_RE = /^[a-zA-Z0-9_-]{1,32}$/;
  *   utm_source   — last resort ("meta"), so a paid click is at least
  *                  distinguishable from organic.
  *
- * The inline script in src/pages/go.astro mirrors this list by hand — it is
- * `is:inline` and cannot import from here (the query string only exists in the
- * browser; this is a static build). src/lib/links.test.ts keeps the two honest.
+ * src/components/CampaignToken.astro is the ONE browser-side resolver, and it
+ * is fed this array (plus CAMPAIGN_RE_SOURCE and CAMPAIGN_FALLBACK) through
+ * `define:vars` at build time. It is not a hand-written mirror: every consumer
+ * — the /go handoff and MetaPixel's delegated click listener — reads the token
+ * that component resolves, so there is one key list, one regex and one
+ * fallback across the whole site.
  */
 export const CAMPAIGN_PARAM_KEYS = ["src", "utm_campaign", "utm_source"] as const;
 
@@ -52,6 +67,6 @@ export function resolveCampaign(search: string): string | null {
 }
 
 export function buildAppStoreUrl(campaign: string | null): string {
-  const ct = campaign && CAMPAIGN_RE.test(campaign) ? campaign : "direct";
+  const ct = campaign && CAMPAIGN_RE.test(campaign) ? campaign : CAMPAIGN_FALLBACK;
   return `${APP_STORE_BASE}?l=en-GB&ct=${ct}&mt=8`;
 }

@@ -1,20 +1,29 @@
 // tests/html.smoke.ts
 // Invariants that only exist in the BUILT output, so they cannot be asserted
-// against source. Run `npm run build` first — this walks dist/.
-import { describe, it, expect } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+// against source. `npm test` builds first (pretest); running Vitest directly
+// against a clean checkout fails here with an explicit message — see
+// tests/dist.ts for why this is loaded in beforeAll rather than at module
+// scope.
+import { describe, it, expect, beforeAll } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { walkDist } from './dist';
+import { CAMPAIGN_PARAM_KEYS, CAMPAIGN_RE_SOURCE } from '../src/lib/links';
 
-function walk(dir: string, files: string[] = []) {
-  for (const f of readdirSync(dir)) {
-    const p = join(dir, f);
-    if (statSync(p).isDirectory()) walk(p, files);
-    else if (p.endsWith('.html')) files.push(p);
-  }
-  return files;
-}
+let htmls: string[] = [];
+beforeAll(() => {
+  htmls = walkDist();
+});
 
-const htmls = walk('dist');
+describe('the build under test', () => {
+  it('produced the pages every other assertion loops over', () => {
+    // Every check below is a `for (const p of htmls)` loop, which passes
+    // VACUOUSLY on an empty list. This is the guard that a missing or broken
+    // build fails loudly instead of reporting green.
+    expect(htmls.length).toBeGreaterThan(0);
+    const paths = htmls.map((p) => p.replace(/\\/g, '/'));
+    expect(paths.some((p) => p.endsWith('/go/index.html'))).toBe(true);
+  });
+});
 
 describe('robots directives in the shipped HTML', () => {
   it('only the /labs pages mention robots at all', () => {
@@ -40,6 +49,32 @@ describe('robots directives in the shipped HTML', () => {
       const head = html.slice(0, html.indexOf('</head>'));
       expect(head, p).toContain('name="robots"');
     }
+  });
+});
+
+describe('campaign token in the shipped HTML', () => {
+  // src/lib/links.test.ts proves the SOURCE has one resolver; this proves the
+  // build actually serialised links.ts into it. `define:vars` is a build-time
+  // substitution, so a wrong or stale key list would only ever be visible
+  // here — and a token that disagrees between the /go handoff and MetaPixel's
+  // click listener is how a paid install gets filed as organic.
+  it('every page defines the token before the pixel can read it', () => {
+    for (const p of htmls) {
+      const html = readFileSync(p, 'utf8');
+      const token = html.indexOf('window.__bursCampaign =');
+      const pixel = html.indexOf('facebook-domain-verification');
+      expect(token, `${p}: no campaign resolver`).toBeGreaterThan(-1);
+      expect(token, `${p}: resolver must precede the pixel`).toBeLessThan(pixel);
+    }
+  });
+
+  it('serialises the real key list and charset from links.ts', () => {
+    const go = readFileSync(
+      htmls.find((p) => p.replace(/\\/g, '/').endsWith('/go/index.html'))!,
+      'utf8',
+    );
+    expect(go).toContain(`const CAMPAIGN_KEYS = ${JSON.stringify(CAMPAIGN_PARAM_KEYS)}`);
+    expect(go).toContain(`const CAMPAIGN_RE_SOURCE = ${JSON.stringify(CAMPAIGN_RE_SOURCE)}`);
   });
 });
 

@@ -1,0 +1,62 @@
+---
+// src/components/CampaignToken.astro
+// THE campaign-token resolver for the browser. Renders one classic inline
+// script in <head> that reads window.location.search once and publishes the
+// result as `window.__bursCampaign`.
+//
+// WHY IT EXISTS: the token has three independent consumers and they must all
+// report the SAME value to App Store Connect / Meta —
+//   1. src/pages/go.astro — rewrites the CTA href and the timed handoff target
+//   2. src/components/MetaPixel.astro — the delegated InitiateAppStore click
+//      listener, which is what a MANUAL tap fires (and the only path an
+//      Android visitor has, since /go never auto-hands-off on Android)
+//   3. anything added later that needs to know which campaign drove the visit
+// Before this component, (1) resolved src → utm_campaign → utm_source while
+// (2) read `src` alone, so a consented Meta visitor who tapped the CTA before
+// the 700ms handoff logged InitiateAppStore as src:"direct" — a paid
+// conversion filed as organic. One resolver removes the drift by construction.
+//
+// NOT hand-mirrored from src/lib/links.ts. This script is `is:inline` (the
+// query string only exists in the browser; this is a static build with no SSR
+// adapter) so it cannot import at runtime — but `define:vars` serialises the
+// exports below into it at BUILD time, so the key order, the charset and the
+// fallback each exist exactly once in the repo. Keep the resolution semantics
+// identical to resolveCampaign(): first VALID param wins, whole value must
+// match or the param is skipped entirely, never a stripped/partial token.
+//
+// Consent: none needed, and none taken. This reads the URL the visitor already
+// requested and writes a string to a JS variable — no storage is written or
+// read, nothing leaves the page, so ePrivacy Art. 5(3) is not engaged. Sending
+// the token anywhere stays gated by whoever sends it (MetaPixel is).
+import {
+  CAMPAIGN_PARAM_KEYS,
+  CAMPAIGN_RE_SOURCE,
+  CAMPAIGN_FALLBACK,
+} from "../lib/links";
+---
+<script
+  is:inline
+  define:vars={{
+    CAMPAIGN_KEYS: [...CAMPAIGN_PARAM_KEYS],
+    CAMPAIGN_RE_SOURCE,
+    CAMPAIGN_FALLBACK,
+  }}
+>
+  window.__bursCampaign = (function () {
+    try {
+      var re = new RegExp(CAMPAIGN_RE_SOURCE);
+      var params = new URLSearchParams(window.location.search);
+      for (var i = 0; i < CAMPAIGN_KEYS.length; i++) {
+        var candidate = params.get(CAMPAIGN_KEYS[i]);
+        // First VALID, not first present: Meta's {{campaign.name}} macro
+        // expands to the human campaign name, so "BURS M4 SE" arrives as
+        // utm_campaign with spaces. Skipping it lets utm_source=meta still
+        // mark the click as paid instead of burying it in ct=direct.
+        if (candidate && re.test(candidate)) return candidate;
+      }
+    } catch (e) {
+      /* no URLSearchParams / hostile input → fall through to the fallback */
+    }
+    return CAMPAIGN_FALLBACK;
+  })();
+</script>
