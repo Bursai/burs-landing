@@ -52,6 +52,17 @@ const PIXEL_ID = "1349632843260427";
         t = b.createElement(e);
         t.async = !0;
         t.src = v;
+        // Ad blockers make this request fail more often than it succeeds, and
+        // a failed load means NOTHING will ever drain the queue below. /go's
+        // handoff waits for the pixel before navigating (see go.astro's
+        // pixelFlushed), so it has to be able to tell "still loading" from
+        // "never coming" — otherwise every blocked visitor is held to the cap.
+        // The handler must be attached HERE, at element creation: a blocked
+        // request errors within a few ms, long before an end-of-body script
+        // could add a listener of its own.
+        t.onerror = function () {
+          window.__bursPixelDead = true;
+        };
         s = b.getElementsByTagName(e)[0];
         s.parentNode.insertBefore(t, s);
       })(window, document, "script", "https://connect.facebook.net/en_US/fbevents.js");

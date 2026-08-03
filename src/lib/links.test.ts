@@ -194,9 +194,78 @@ describe('one browser-side campaign resolver', () => {
     // The cap is what stops a blocked or disabled beacon stranding a visitor.
     expect(goAstro).toContain("indexOf('/_vercel/insights/view')");
     expect(goAstro).toContain('var MAX_WAIT_MS = 2000;');
-    expect(goAstro).toMatch(/Date\.now\(\) - startedAt < MAX_WAIT_MS && !beaconFlushed\(\)/);
+    expect(goAstro).toMatch(/Date\.now\(\) - startedAt < MAX_WAIT_MS && !measurementFlushed\(\)/);
     // Unmeasurable must fail OPEN — never hold the visitor on an exception.
     expect(goAstro).toMatch(/catch \(e\) \{\s*\n\s*return true;/);
+  });
+
+  it('waits for the consented pixel too, because a stub-queued event is lost', () => {
+    // The beacon's "issued is enough" argument does NOT transfer to Meta.
+    // MetaPixel's snippet installs a stub that pushes init/PageView/
+    // ViewContent into an in-memory array; nothing is on the wire until
+    // fbevents.js executes, and unloading cancels that pending script, so a
+    // visitor who left on the beacon alone lost all three events plus the
+    // InitiateAppStore the handoff fires. fbevents.js assigns `callMethod`
+    // when it takes over and replays the queue — that is the only signal the
+    // events became requests, and it is the one asserted here.
+    const code = codeOnly(goAstro);
+    expect(code).toContain("typeof f.callMethod === 'function'");
+    // `fbq.loaded` and "fbq exists" are traps: the STUB sets loaded = true and
+    // IS a function, so gating on either would gate nothing at all.
+    expect(code).not.toMatch(/fbq\.loaded|f\.loaded/);
+    // Same budget, no new one. A slow or blocked pixel delays the handoff; it
+    // can never prevent it, and it never gets its own timer.
+    expect(code).toMatch(
+      /function measurementFlushed\(\)\s*\{\s*\n\s*return beaconFlushed\(\) && pixelFlushed\(\);/,
+    );
+    // The pixel did NOT get a budget of its own: these three constants are
+    // still the only clocks on the page, and every wait below is bounded by
+    // MAX_WAIT_MS. A fourth one appearing here is the regression.
+    expect((code.match(/var [A-Z_]+_MS = \d+;/g) || []).sort()).toEqual([
+      'var CLICK_GRACE_MS = 300;',
+      'var HANDOFF_MS = 700;',
+      'var MAX_WAIT_MS = 2000;',
+    ]);
+  });
+
+  it('only waits for the pixel when consent was actually granted', () => {
+    // A visitor who declined, ignored the banner, or has storage blocked never
+    // loads fbevents.js at all — holding them would be pure added latency on a
+    // paid click for a request that will never exist. The gate must mirror
+    // MetaPixel's exactly, so read the key out of the pixel and require the
+    // handoff to use the same one: drift here either stalls every
+    // non-consenting visitor to the cap or stops waiting for a real pixel.
+    const key = /var KEY = "([^"]+)"/.exec(codeOnly(metaPixel))?.[1];
+    expect(key).toBe('burs-consent-v1');
+    const code = codeOnly(goAstro);
+    expect(code).toContain(`var CONSENT_KEY = '${key}';`);
+    expect(code).toContain("localStorage.getItem(CONSENT_KEY) === 'granted'");
+    // Storage blocked → MetaPixel stays off → this must NOT wait (fail open,
+    // same as beaconFlushed's catch).
+    expect(code).toMatch(/catch \(e\) \{\s*\n\s*consented = false;/);
+    // Stored consent means MetaPixel (in <head>) already installed its stub by
+    // the time this runs. No stub → its inline script never ran → not coming.
+    expect(code).toContain("var pixelExpected = consented && typeof window.fbq === 'function';");
+    // Consent given live must still arm the wait — Android gets no timed
+    // handoff, so the click grace is the only wait that visitor ever hits.
+    expect(code).toContain("if (e && e.detail === 'granted') pixelExpected = true;");
+  });
+
+  it('does not hold a visitor for a pixel that was blocked outright', () => {
+    // connect.facebook.net is on every ad-blocker list, so this is a large
+    // slice of any paid audience, not an edge case: a blocked script errors
+    // within milliseconds and is never coming back. The flag has to be set at
+    // element CREATION — a listener added by /go's end-of-body script misses
+    // the error entirely (measured: the visitor then burned the full 2s cap).
+    const pixel = codeOnly(metaPixel);
+    expect(pixel).toMatch(/t\.onerror = function \(\) \{\s*\n\s*window\.__bursPixelDead = true;/);
+    expect(pixel.indexOf('t.onerror'), 'must be attached before insertion').toBeLessThan(
+      pixel.indexOf('insertBefore'),
+    );
+    // Same global on both sides, or /go waits for a pixel that already failed.
+    expect(codeOnly(goAstro)).toContain(
+      'if (!pixelExpected || window.__bursPixelDead) return true;',
+    );
   });
 
   it('does not auto-navigate Android visitors to an iOS-only store', () => {
@@ -224,17 +293,19 @@ describe('one browser-side campaign resolver', () => {
     expect(goAstro).toContain('clearTimeout(handoff)');
   });
 
-  it('gives an early tap the same beacon grace, bounded so it cannot be felt', () => {
+  it('gives an early tap the same measurement grace, bounded so it cannot be felt', () => {
     // Cancelling the timer used to be the ENTIRE click handler, which opted a
     // fast tap out of the readiness wait: tap inside the first ~700ms, or tap
     // at all on Android (no timer there), and the page unloaded with the
     // insights script still downloading, so no beacon was ever issued. Same
-    // unmeasurable paid click, different route.
+    // unmeasurable paid click, different route. A tap is also the only path
+    // that can lose MetaPixel's own click-fired InitiateAppStore, which lands
+    // in the stub's queue when fbevents.js is still in flight.
     const code = codeOnly(goAstro);
     expect(code).toContain('var CLICK_GRACE_MS = 300;');
-    // Skipped outright once the beacon is out — keepalive carries it across
-    // the unload — so the common case costs a real tap exactly nothing.
-    expect(code).toMatch(/if \(beaconFlushed\(\)\) return;/);
+    // Skipped outright once both signals are out — so the common case costs a
+    // real tap exactly nothing.
+    expect(code).toMatch(/if \(measurementFlushed\(\)\) return;/);
     // Bounded twice: by the grace period AND by the page-wide budget, so a
     // late tap waits less and a tap past the budget waits not at all.
     expect(code).toContain(
