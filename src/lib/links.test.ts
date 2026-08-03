@@ -29,7 +29,7 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { APP_STORE_URL, buildAppStoreUrl } from './links';
+import { APP_STORE_URL, CAMPAIGN_PARAM_KEYS, buildAppStoreUrl, resolveCampaign } from './links';
 
 const root = new URL('../../', import.meta.url);
 const readRepoFile = (rel: string) => readFileSync(fileURLToPath(new URL(rel, root)), 'utf8');
@@ -82,18 +82,18 @@ describe('/go must render, not redirect at the edge', () => {
   });
 });
 
-describe('go.astro client script ↔ buildAppStoreUrl', () => {
+describe('go.astro client script ↔ links.ts', () => {
   // The script is `is:inline` and cannot import from src/lib, so it mirrors
-  // buildAppStoreUrl's logic by hand. These assertions keep the copy honest;
-  // if you rewrite the script, update them deliberately.
-  it('reads every campaign param an ad platform might send', () => {
+  // resolveCampaign + buildAppStoreUrl by hand. These assertions keep the copy
+  // honest; if you rewrite the script, update them deliberately.
+  it('reads every campaign param an ad platform might send, in the same order', () => {
     // `src` = TikTok/IG bio links. `utm_campaign` = the Meta campaign token
-    // (preferred, it carries the campaign-scoped value). `utm_source` = last
-    // resort. Dropping utm_campaign is the 2026-07-26 bug that silently
-    // discarded every paid click's token.
-    expect(goAstro).toContain("params.get('src')");
-    expect(goAstro).toContain("params.get('utm_campaign')");
-    expect(goAstro).toContain("params.get('utm_source')");
+    // (it carries the campaign-scoped value). `utm_source` = last resort.
+    // Dropping utm_campaign is the 2026-07-26 bug that silently discarded
+    // every paid click's token.
+    expect(CAMPAIGN_PARAM_KEYS).toEqual(['src', 'utm_campaign', 'utm_source']);
+    const literal = CAMPAIGN_PARAM_KEYS.map((k) => `'${k}'`).join(', ');
+    expect(goAstro).toContain(`var CAMPAIGN_KEYS = [${literal}];`);
   });
 
   it('validates the whole token and falls back, never strips characters', () => {
@@ -101,8 +101,18 @@ describe('go.astro client script ↔ buildAppStoreUrl', () => {
     // old script stripped invalid characters instead, which turned a hostile
     // value into a plausible-looking partial token rather than rejecting it.
     expect(goAstro).toContain('/^[a-zA-Z0-9_-]{1,32}$/');
-    expect(goAstro).toContain("CAMPAIGN_RE.test(campaign)");
-    expect(goAstro).toContain("'direct'");
+    expect(goAstro).toContain('CAMPAIGN_RE.test(candidate)');
+    expect(goAstro).toContain("var ct = 'direct';");
+  });
+
+  it('takes the first VALID param, not merely the first present', () => {
+    // The mirror of resolveCampaign's fall-through loop. A `break` only on a
+    // passing candidate is what stops one malformed value (Meta's
+    // {{campaign.name}} macro with a space in it) from burying a good token
+    // in a later param and reporting the click as organic.
+    expect(goAstro).toMatch(
+      /for \(var i = 0; i < CAMPAIGN_KEYS\.length; i\+\+\) \{[\s\S]*?CAMPAIGN_RE\.test\(candidate\)[\s\S]*?break;/,
+    );
   });
 
   it('builds the same URL shape buildAppStoreUrl produces', () => {
@@ -116,7 +126,23 @@ describe('go.astro client script ↔ buildAppStoreUrl', () => {
     // A synchronous location.replace would reproduce the edge-redirect bug in
     // JavaScript: the page would render but leave before anything reported.
     expect(goAstro).toContain('window.location.replace(dest)');
-    expect(goAstro).toMatch(/setTimeout\([\s\S]{0,200}?,\s*700\)/);
+    expect(goAstro).toMatch(/setTimeout\(function \(\) \{[\s\S]*?\}, 700\);/);
+  });
+
+  it('fires InitiateAppStore in the handoff, since it pre-empts the click', () => {
+    // MetaPixel.astro emits this custom event ONLY from a delegated click
+    // listener on apps.apple.com links. The timed handoff is a
+    // location.replace, which produces no click — so on /go the signal would
+    // silently drop to zero unless the handoff fires it itself.
+    expect(goAstro).toContain("window.fbq('trackCustom', 'InitiateAppStore'");
+    // Must stay inside the consent gate: fbq only exists after consent.
+    expect(goAstro).toContain("typeof window.fbq === 'function'");
+  });
+
+  it('cancels the handoff when the visitor navigates first', () => {
+    // Otherwise the timer overrides the link the visitor actually tapped, and
+    // InitiateAppStore fires twice (once from MetaPixel's click listener).
+    expect(goAstro).toContain('clearTimeout(handoff)');
   });
 
   it('keeps a visible CTA and a no-JS fallback', () => {
@@ -124,6 +150,49 @@ describe('go.astro client script ↔ buildAppStoreUrl', () => {
     // the visitor must still be able to reach the App Store.
     expect(goAstro).toContain('id="go-cta"');
     expect(goAstro).toContain('<noscript>');
+  });
+});
+
+describe('resolveCampaign', () => {
+  it('reads the bio-link param', () => {
+    expect(resolveCampaign('?src=tt')).toBe('tt');
+  });
+
+  it('reads the Meta campaign token', () => {
+    expect(resolveCampaign('?utm_source=meta&utm_medium=paid-social&utm_campaign=meta-m3-se')).toBe(
+      'meta-m3-se',
+    );
+  });
+
+  it('falls through a malformed value to the next VALID param', () => {
+    // Meta's {{campaign.name}} macro on a campaign called "BURS M4 SE".
+    // First-present would return null here and bucket a paid click as
+    // ct=direct — the same App Store Connect bucket as organic traffic.
+    expect(resolveCampaign('?utm_source=meta&utm_campaign=BURS%20M4%20SE')).toBe('meta');
+    expect(resolveCampaign('?src=ig%20story&utm_campaign=meta-m4-se')).toBe('meta-m4-se');
+  });
+
+  it('returns null when nothing valid is present', () => {
+    expect(resolveCampaign('')).toBeNull();
+    expect(resolveCampaign('?utm_campaign=')).toBeNull();
+    expect(resolveCampaign('?utm_campaign=BURS%20M4%20SE')).toBeNull();
+  });
+
+  it('never yields a partial token from a hostile value', () => {
+    for (const hostile of ['evil&ct=stolen', 'evil#frag', 'a'.repeat(33), '../../etc']) {
+      const params = new URLSearchParams();
+      params.set('utm_campaign', hostile);
+      expect(resolveCampaign(`?${params.toString()}`), hostile).toBeNull();
+    }
+  });
+
+  it('composes with buildAppStoreUrl into a clean App Store URL', () => {
+    expect(buildAppStoreUrl(resolveCampaign('?utm_campaign=meta-m4-se'))).toBe(
+      'https://apps.apple.com/se/app/burs-ai/id6772630210?l=en-GB&ct=meta-m4-se&mt=8',
+    );
+    expect(buildAppStoreUrl(resolveCampaign('?utm_campaign=BURS%20M4%20SE'))).toContain(
+      'ct=direct',
+    );
   });
 });
 

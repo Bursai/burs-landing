@@ -1,7 +1,8 @@
 ---
 // src/components/ConsentBanner.astro
-// Lightweight GDPR consent gate for the one tracking tool on the site (the
-// Meta Pixel — see MetaPixel.astro). Shown only while no choice is stored.
+// Lightweight GDPR consent gate for the one CONSENT-REQUIRING tool on the
+// site (the Meta Pixel — see MetaPixel.astro). Shown only while no choice is
+// stored.
 //
 // Rules it implements: prior consent (nothing loads before "Allow"),
 // equal-prominence Allow/Decline, no pre-ticked anything, choice persisted
@@ -9,11 +10,21 @@
 // footer's "Privacy choices" button re-opens this banner via the
 // "burs:consent-open" event. Storing the choice itself is strictly
 // necessary and needs no consent.
+//
+// COPY ACCURACY: this banner used to say "one tool", which stopped being
+// true on 2026-08-03 when WebAnalytics.astro added a cookieless first-party
+// page counter that runs un-gated (ePrivacy Art. 5(3) doesn't bite: no
+// cookie, no storage, same-origin beacon — see that file). A visitor who
+// clicks Decline would otherwise have been told nothing else loads while a
+// second measurement tool did. The text below names both and scopes the
+// promise to the pixel it actually governs. If you add or remove a tool,
+// this sentence is part of the change.
 ---
 <aside id="consent-banner" class="consent" aria-label="Privacy consent" hidden>
   <p class="consent__text">
-    We'd like to use one tool — the Meta Pixel — to see which ads work.
-    Nothing loads unless you allow it.
+    We'd like to use the Meta Pixel to see which ads work — it loads only if
+    you allow it. Either way we count visits with a cookieless tool that
+    stores nothing on your device.
     <a href="/privacy" class="consent__link">Privacy</a>
   </p>
   <div class="consent__actions">

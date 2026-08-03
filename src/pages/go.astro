@@ -43,7 +43,7 @@ import "../styles/utilities.css";
 import Schema from "../components/Schema.astro";
 import MetaPixel from "../components/MetaPixel.astro";
 import ConsentBanner from "../components/ConsentBanner.astro";
-import Analytics from "@vercel/analytics/astro";
+import WebAnalytics from "../components/WebAnalytics.astro";
 import { organization } from "../lib/schema";
 import { buildAppStoreUrl } from "../lib/links";
 const TITLE = "BURS — Start your free trial";
@@ -119,23 +119,32 @@ const target = buildAppStoreUrl(null);
        accepted the consent banner, and a paid click is handed off to the
        App Store ~700ms after load — long before anyone answers a banner —
        so the pixel misses effectively every first-time paid visitor.
-       Vercel's beacon is cookieless and collects no personal data, so it
-       needs no consent gate and fires on every landing.
+       Vercel's beacon is cookieless and first-party, so it needs no consent
+       gate and fires on every landing. It matters most HERE, because this
+       is the page paid clicks land on: /go?…&fbclid=… is also the one URL
+       carrying a per-click identifier, which is why the component strips
+       every non-campaign query param before reporting (see
+       WebAnalytics.astro).
 
        Repeated here on purpose: /go deliberately does NOT extend
-       Base.astro (see the header comment), so the <Analytics /> in that
-       layout never reaches this page — and this is the one page where the
-       measurement matters most. Keep the two in sync.
+       Base.astro (see the header comment), so the WebAnalytics component in
+       that layout never reaches this page — and this is the one page where
+       the measurement matters most. The shared component is what keeps the
+       two placements from drifting.
 
-       Placed at the end of <body>, NOT in <head> as vercel.com/docs shows.
-       It renders a <vercel-analytics> custom element, and the HTML parser
-       closes <head> at the first unknown element — Astro appends its own
-       <link rel=stylesheet>/<style>/hoisted <script> AFTER page head
-       content, so a <head> placement relocates every stylesheet into the
-       body (verified: 2 of 2 stylesheets moved). Loading is unaffected by
-       this position: Astro hoists the component's module script into
-       <head> either way. -->
-  <Analytics />
+       Placed at the end of the body, NOT in head as vercel.com/docs shows.
+       It renders a vercel-analytics custom element, and the HTML parser
+       closes head at the first unknown element — Astro appends its own
+       stylesheet/style/hoisted script tags AFTER page head content, so a
+       head placement relocates every stylesheet into the body (verified: 2
+       of 2 stylesheets moved). Loading is unaffected by this position:
+       Astro hoists the component's module script into head either way.
+
+       No literal tags in this prose on purpose: Astro emits comments
+       verbatim, and tests/html.smoke.ts greps the built HTML to prove the
+       beacon actually shipped. A commented-out copy of the markup would
+       satisfy that grep on its own and make the check meaningless. -->
+  <WebAnalytics />
 
   <script is:inline define:vars={{ target }}>
     // Apple campaign-token attribution: /go?src=tt → ct=tt&mt=8 on the
@@ -153,18 +162,30 @@ const target = buildAppStoreUrl(null);
     // because it already carries the campaign-scoped value (`meta-m1-se`) that
     // /download hardcodes, so both entry points report the SAME token.
     //
-    // Validation mirrors buildAppStoreUrl (src/lib/links.ts): the whole
-    // campaign value must match [a-zA-Z0-9_-]{1,32} or it falls back to
-    // ct=direct entirely — never a stripped/partial token — so a hostile
-    // value can't leak anything into the App Store URL (see the injection
-    // tests in links.test.ts).
+    // Validation mirrors resolveCampaign + buildAppStoreUrl
+    // (src/lib/links.ts): the whole campaign value must match
+    // [a-zA-Z0-9_-]{1,32} or that param is skipped entirely — never a
+    // stripped/partial token — so a hostile value can't leak anything into
+    // the App Store URL (see the injection tests in links.test.ts).
+    //
+    // The params are read first-VALID, not first-present. Meta's standard
+    // `{{campaign.name}}` macro expands to the human campaign name, so a
+    // campaign named "BURS M4 SE" arrives as `utm_campaign=BURS M4 SE`;
+    // first-present would let that one malformed value bucket the click as
+    // ct=direct — indistinguishable from organic in App Store Connect —
+    // instead of falling through to `utm_source=meta`.
     (function () {
       var params = new URLSearchParams(window.location.search);
-      var campaign = params.get('src')
-        || params.get('utm_campaign')
-        || params.get('utm_source');
       var CAMPAIGN_RE = /^[a-zA-Z0-9_-]{1,32}$/;
-      var ct = campaign && CAMPAIGN_RE.test(campaign) ? campaign : 'direct';
+      var CAMPAIGN_KEYS = ['src', 'utm_campaign', 'utm_source'];
+      var ct = 'direct';
+      for (var i = 0; i < CAMPAIGN_KEYS.length; i++) {
+        var candidate = params.get(CAMPAIGN_KEYS[i]);
+        if (candidate && CAMPAIGN_RE.test(candidate)) {
+          ct = candidate;
+          break;
+        }
+      }
       var dest = target.split('?')[0] + '?l=en-GB&ct=' + encodeURIComponent(ct) + '&mt=8';
 
       var link = document.getElementById('go-cta');
@@ -180,9 +201,34 @@ const target = buildAppStoreUrl(null);
       // won't be measured on this visit — that is the GDPR trade-off, not a
       // bug — but the visible CTA link means a blocked or skipped redirect
       // still converts.
-      setTimeout(function () {
+      var handoff = setTimeout(function () {
+        handoff = null;
+        // MetaPixel.astro fires its InitiateAppStore custom event from a
+        // delegated CLICK listener on apps.apple.com links. This handoff
+        // replaces the click, so without firing it here the signal would
+        // silently drop to zero on the one page it matters most. Guarded:
+        // fbq only exists once consent was granted, so this is a no-op for
+        // everyone else and stays inside the consent gate.
+        if (typeof window.fbq === 'function') {
+          window.fbq('trackCustom', 'InitiateAppStore', {
+            page: window.location.pathname,
+            src: ct,
+          });
+        }
         window.location.replace(dest);
       }, 700);
+
+      // If the visitor acts first — taps the CTA, or the burs.me link —
+      // their navigation wins. Cancelling stops the timer from overriding
+      // where they chose to go, and stops InitiateAppStore firing twice
+      // (MetaPixel's own click listener already covers a real tap).
+      document.addEventListener('click', function (e) {
+        var a = e.target && e.target.closest && e.target.closest('a');
+        if (a && handoff !== null) {
+          clearTimeout(handoff);
+          handoff = null;
+        }
+      });
     })();
   </script>
 </body>

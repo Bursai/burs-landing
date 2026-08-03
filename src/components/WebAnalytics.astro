@@ -1,0 +1,63 @@
+---
+// src/components/WebAnalytics.astro
+// Vercel Web Analytics + the query-string allowlist that keeps its privacy
+// claim true. Rendered in TWO places — src/layouts/Base.astro (the 31 pages
+// that use the layout) and src/pages/go.astro (which declares its own <html>
+// and so never reaches the layout). It exists as a component precisely so
+// those two can't drift.
+//
+// WHY IT NEEDS NO CONSENT GATE (unlike MetaPixel.astro, which ConsentBanner
+// holds back until the visitor opts in): the gate that binds the pixel is
+// ePrivacy Art. 5(3) — storage on, or access to, the visitor's terminal
+// equipment. The pixel sets `_fbp` and ships to a third-party controller.
+// This beacon sets no cookie and touches no storage, and it POSTs to
+// /_vercel/insights/view — a RELATIVE path, i.e. the site's own origin, which
+// already logged the same request. It is a first-party page counter, not a
+// tracker, so it runs for every visitor.
+//
+// THE ALLOWLIST BELOW IS WHAT MAKES THAT TRUE. The vendor's default beacon
+// sends `location.href` verbatim, and a Meta ad click lands on
+// /go?...&fbclid=IwZXh0bgNhZW0… — a unique per-click identifier Meta can
+// rejoin to a named account. Vercel's own docs warn that "URLs and query
+// parameters can include sensitive data and personal information" and point
+// at `beforeSend` for exactly this. We do not strip the query string wholesale
+// (that would delete utm_campaign, the single dimension this whole page
+// exists to measure); we keep the campaign params and drop everything else,
+// so fbclid/gclid/msclkid and any future token never leave the page.
+//
+// `window.webAnalyticsBeforeSend` is the hook @vercel/analytics' Astro
+// component reads (node_modules/@vercel/analytics/dist/astro/index.astro
+// passes `beforeSend: window.webAnalyticsBeforeSend` into inject()). It reads
+// it inside the custom-element constructor, which runs from a hoisted
+// `type="module"` script — deferred until after parsing — so this classic
+// inline script is always defined first.
+import Analytics from "@vercel/analytics/astro";
+---
+<script is:inline>
+  window.webAnalyticsBeforeSend = function (event) {
+    try {
+      var url = new URL(event.url);
+      var kept = new URLSearchParams();
+      var ALLOWED = [
+        "src",
+        "utm_source",
+        "utm_medium",
+        "utm_campaign",
+        "utm_content",
+        "utm_term",
+      ];
+      for (var i = 0; i < ALLOWED.length; i++) {
+        var value = url.searchParams.get(ALLOWED[i]);
+        if (value) kept.set(ALLOWED[i], value);
+      }
+      url.search = kept.toString();
+      url.hash = "";
+      return Object.assign({}, event, { url: url.toString() });
+    } catch (e) {
+      // A URL we can't parse is a URL we can't sanitise — drop the event
+      // rather than send an unfiltered href.
+      return null;
+    }
+  };
+</script>
+<Analytics />
