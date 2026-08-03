@@ -9,24 +9,33 @@
 // Store link as Apple's campaign token (ct) + media type (mt=8) so installs
 // can be attributed back to the bio that drove them.
 //
-// ⚠️ THIS PAGE IS ONLY REACHED BY *ORGANIC* TRAFFIC (bio links, direct).
-// PAID ad clicks never render it: `vercel.json` holds a 302 for /go that
-// matches `?utm_campaign=<any token-safe value>` at the edge and sends those
-// straight to the App Store, so an ad click costs zero extra taps. That
-// redirect's destination MUST stay byte-identical to what the #go-cta
-// button below produces for the same campaign — i.e. APP_STORE_URL plus
-// `&ct=<campaign>&mt=8` — or paid and organic installs land under
-// different tokens in App Store Connect. `src/lib/links.test.ts` asserts
-// exactly that, so changing APP_STORE_URL fails the build until
-// vercel.json is updated to match.
+// ⚠️ 2026-08-03: THIS PAGE NOW RENDERS FOR *EVERYONE* — paid and organic.
+// Until this date, `vercel.json` held a bare 302 for /go that matched
+// `?utm_campaign=<any token-safe value>` at the edge and sent paid ad
+// clicks straight to the App Store before Astro (or the Meta pixel, or the
+// Vercel analytics beacon) ever ran. That made every paid click
+// unmeasurable — 906 SEK of Meta spend from 2026-07-26 onward left no
+// trace. The redirect is gone; this page now renders immediately for both
+// audiences, fires the beacons, then hands off to the App Store after a
+// short delay (see the inline script below) so the pixel gets a chance to
+// fire before the tab navigates away.
 //
-// LAUNCHING A NEW CAMPAIGN? Nothing to do — the /go rule captures any
-// `utm_campaign` of [a-zA-Z0-9_-]{1,32} and forwards it as the ct token, so
-// no site deploy is needed. (Until 2026-08-02 the rule hardcoded
+// This is a fully static build (no SSR adapter — see astro.config.mjs), so
+// Astro.url.searchParams is NOT available at build time; the real query
+// string only exists in the visitor's browser. The campaign token is
+// therefore still resolved client-side, exactly as it always was — see the
+// inline script. `buildAppStoreUrl` (src/lib/links.ts) is the single
+// source of truth for the URL shape + validation and is used both for the
+// server-rendered default (ct=direct, used as the pre-JS href and the
+// <noscript> fallback) and mirrored by the client script for the
+// campaign-aware rewrite.
+//
+// LAUNCHING A NEW CAMPAIGN? Nothing to do — `buildAppStoreUrl` accepts any
+// `utm_campaign`/`src`/`utm_source` of [a-zA-Z0-9_-]{1,32} and forwards it
+// as the ct token. (Until 2026-08-02 the old edge rule hardcoded
 // `meta-m1-se`; M3 shipped with a different token and every click silently
-// fell back to this interstitial.) Anything outside that charset still falls
-// back here, which is safe — the script below applies the same sanitised ct
-// token — it just costs a tap.
+// fell back to this interstitial.) Anything outside that charset — or
+// missing entirely — falls back to ct=direct.
 import "../styles/tokens.css";
 import "../styles/reset.css";
 import "../styles/typography.css";
@@ -35,10 +44,15 @@ import Schema from "../components/Schema.astro";
 import MetaPixel from "../components/MetaPixel.astro";
 import ConsentBanner from "../components/ConsentBanner.astro";
 import { organization } from "../lib/schema";
-import { APP_STORE_URL } from "../lib/links";
+import { buildAppStoreUrl } from "../lib/links";
 const TITLE = "BURS — Start your free trial";
 const DESCRIPTION = "Outfits from clothes you already own. Start your 3-day free trial.";
 const CANONICAL = "https://www.burs.me/go";
+// Static build → no per-request query string here, so this is the pre-JS /
+// no-JS default (ct=direct). The client script below resolves the real
+// campaign from window.location.search and rewrites both the link and the
+// redirect target before the 700ms handoff fires.
+const target = buildAppStoreUrl(null);
 ---
 <!doctype html>
 <html lang="en">
@@ -77,6 +91,11 @@ const CANONICAL = "https://www.burs.me/go";
   <Schema json={organization()} />
 </head>
 <body class="go-body">
+  <!-- No-JS fallback: send the visitor on with the default (ct=direct)
+       target immediately. JS-enabled visitors get the campaign-aware
+       rewrite + delayed handoff below instead, so the pixel gets a chance
+       to fire first. -->
+  <noscript><meta http-equiv="refresh" content={`0;url=${target}`} /></noscript>
   <div class="grain" aria-hidden="true"></div>
   <main class="go">
     <div class="go__inner wrap">
@@ -84,7 +103,7 @@ const CANONICAL = "https://www.burs.me/go";
       <h1 class="go__word">BURS</h1>
       <p class="go__tagline">Outfits from clothes you already own</p>
 
-      <a id="go-cta" class="cta go__cta" href={APP_STORE_URL}>
+      <a id="go-cta" class="cta go__cta" href={target}>
         Start your 3-day free trial <span class="cta__arrow" aria-hidden="true">→</span>
       </a>
 
@@ -94,10 +113,12 @@ const CANONICAL = "https://www.burs.me/go";
 
   <ConsentBanner />
 
-  <script is:inline>
+  <script is:inline define:vars={{ target }}>
     // Apple campaign-token attribution: /go?src=tt → ct=tt&mt=8 on the
     // install link, so TikTok vs Instagram bio traffic is distinguishable
-    // in App Store Connect / App Analytics.
+    // in App Store Connect / App Analytics. Resolved client-side because
+    // this is a static build (see frontmatter) — the real query string
+    // only exists in the browser, never at build time.
     //
     // 2026-07-26: `src` alone silently dropped every PAID click. The Meta
     // campaign sends `?utm_source=meta&utm_campaign=meta-m1-se&...` and never
@@ -107,18 +128,37 @@ const CANONICAL = "https://www.burs.me/go";
     // utm_* pair that ad platforms actually send. `utm_campaign` is preferred
     // because it already carries the campaign-scoped value (`meta-m1-se`) that
     // /download hardcodes, so both entry points report the SAME token.
+    //
+    // Validation mirrors buildAppStoreUrl (src/lib/links.ts): the whole
+    // campaign value must match [a-zA-Z0-9_-]{1,32} or it falls back to
+    // ct=direct entirely — never a stripped/partial token — so a hostile
+    // value can't leak anything into the App Store URL (see the injection
+    // tests in links.test.ts).
     (function () {
       var params = new URLSearchParams(window.location.search);
-      var src = params.get('src')
+      var campaign = params.get('src')
         || params.get('utm_campaign')
         || params.get('utm_source');
-      if (!src) return;
-      var safe = src.replace(/[^a-zA-Z0-9_-]/g, '').slice(0, 32);
-      if (!safe) return;
+      var CAMPAIGN_RE = /^[a-zA-Z0-9_-]{1,32}$/;
+      var ct = campaign && CAMPAIGN_RE.test(campaign) ? campaign : 'direct';
+      var dest = target.split('?')[0] + '?l=en-GB&ct=' + encodeURIComponent(ct) + '&mt=8';
+
       var link = document.getElementById('go-cta');
-      if (!link) return;
-      var sep = link.href.indexOf('?') === -1 ? '?' : '&';
-      link.href = link.href + sep + 'ct=' + encodeURIComponent(safe) + '&mt=8';
+      if (link) link.href = dest;
+
+      // 2026-08-03: this is the actual fix. Paid clicks used to 302 at the
+      // Vercel edge before this page — or the Meta pixel — ever ran, so
+      // measurement was zero. Now the page renders first: an
+      // already-consented return visitor's pixel (MetaPixel.astro, which
+      // fires ViewContent on its own once consent is granted — no need to
+      // call fbq again here) gets 700ms to fire before the tab leaves. A
+      // first-time visitor who hasn't yet answered the consent banner still
+      // won't be measured on this visit — that is the GDPR trade-off, not a
+      // bug — but the visible CTA link means a blocked or skipped redirect
+      // still converts.
+      setTimeout(function () {
+        window.location.replace(dest);
+      }, 700);
     })();
   </script>
 </body>
