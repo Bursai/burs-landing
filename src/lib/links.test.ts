@@ -126,7 +126,30 @@ describe('go.astro client script ↔ links.ts', () => {
     // A synchronous location.replace would reproduce the edge-redirect bug in
     // JavaScript: the page would render but leave before anything reported.
     expect(goAstro).toContain('window.location.replace(dest)');
-    expect(goAstro).toMatch(/setTimeout\(function \(\) \{[\s\S]*?\}, 700\);/);
+    expect(goAstro).toContain('var HANDOFF_MS = 700;');
+    expect(goAstro).toContain('setTimeout(tick, HANDOFF_MS)');
+  });
+
+  it('waits for the beacon past 700ms, but never past a hard cap', () => {
+    // 700ms is the EARLIEST departure, not a fixed deadline. On a cold mobile
+    // connection the hoisted module and /_vercel/insights/script.js can still
+    // be in flight at 700ms and location.replace() cancels them — which would
+    // silently reproduce the exact unmeasurability this PR exists to fix.
+    // The cap is what stops a blocked or disabled beacon stranding a visitor.
+    expect(goAstro).toContain("indexOf('/_vercel/insights/view')");
+    expect(goAstro).toContain('var MAX_WAIT_MS = 2000;');
+    expect(goAstro).toMatch(/Date\.now\(\) - startedAt < MAX_WAIT_MS && !beaconFlushed\(\)/);
+    // Unmeasurable must fail OPEN — never hold the visitor on an exception.
+    expect(goAstro).toMatch(/catch \(e\) \{\s*\n\s*return true;/);
+  });
+
+  it('does not auto-navigate Android visitors to an iOS-only store', () => {
+    // `dest` is apps.apple.com and there is no Play listing to send them to,
+    // so an automatic handoff drops an Android visitor in a store where they
+    // cannot install anything — with the page they came for already unloaded.
+    // They keep the rendered page and the CTA instead.
+    expect(goAstro).toContain('var isAndroid = /Android/i.test(navigator.userAgent');
+    expect(goAstro).toContain('if (!isAndroid) handoff = setTimeout(tick, HANDOFF_MS);');
   });
 
   it('fires InitiateAppStore in the handoff, since it pre-empts the click', () => {
