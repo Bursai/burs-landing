@@ -9,6 +9,7 @@ import Footer from "../components/Footer.astro";
 import Schema from "../components/Schema.astro";
 import MetaPixel from "../components/MetaPixel.astro";
 import ConsentBanner from "../components/ConsentBanner.astro";
+import Analytics from "@vercel/analytics/astro";
 import { buildSeo } from "../lib/seo";
 import { organization, website } from "../lib/schema";
 
@@ -89,5 +90,21 @@ const seo = buildSeo({ title, description, path, ogImage, type });
   <main id="main"><slot /></main>
   <Footer />
   <ConsentBanner />
+
+  <!-- Vercel Web Analytics — cookieless, collects no personal data, so it
+       runs for EVERY visitor with no consent gate (unlike MetaPixel in the
+       head, which ConsentBanner holds back until the visitor opts in).
+
+       Placed at the end of <body>, NOT in <head> as vercel.com/docs shows.
+       It renders a <vercel-analytics> custom element and the HTML parser
+       closes <head> at the first unknown element; Astro appends its own
+       <link rel=stylesheet>/<style>/hoisted <script> AFTER page head
+       content, so a <head> placement relocates every stylesheet into the
+       body, and anything from `slot="head"` that follows it too — which on
+       /labs is <meta name="robots" content="noindex,nofollow">, ignored by
+       crawlers once it lands in the body. Loading is unaffected by this
+       position: Astro hoists the component's module script into <head>
+       either way. -->
+  <Analytics />
 </body>
 </html>

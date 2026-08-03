@@ -43,6 +43,7 @@ import "../styles/utilities.css";
 import Schema from "../components/Schema.astro";
 import MetaPixel from "../components/MetaPixel.astro";
 import ConsentBanner from "../components/ConsentBanner.astro";
+import Analytics from "@vercel/analytics/astro";
 import { organization } from "../lib/schema";
 import { buildAppStoreUrl } from "../lib/links";
 const TITLE = "BURS — Start your free trial";
@@ -112,6 +113,29 @@ const target = buildAppStoreUrl(null);
   </main>
 
   <ConsentBanner />
+
+  <!-- Vercel Web Analytics. THIS is the tag that finally makes a paid /go
+       landing countable. MetaPixel above only fires once the visitor has
+       accepted the consent banner, and a paid click is handed off to the
+       App Store ~700ms after load — long before anyone answers a banner —
+       so the pixel misses effectively every first-time paid visitor.
+       Vercel's beacon is cookieless and collects no personal data, so it
+       needs no consent gate and fires on every landing.
+
+       Repeated here on purpose: /go deliberately does NOT extend
+       Base.astro (see the header comment), so the <Analytics /> in that
+       layout never reaches this page — and this is the one page where the
+       measurement matters most. Keep the two in sync.
+
+       Placed at the end of <body>, NOT in <head> as vercel.com/docs shows.
+       It renders a <vercel-analytics> custom element, and the HTML parser
+       closes <head> at the first unknown element — Astro appends its own
+       <link rel=stylesheet>/<style>/hoisted <script> AFTER page head
+       content, so a <head> placement relocates every stylesheet into the
+       body (verified: 2 of 2 stylesheets moved). Loading is unaffected by
+       this position: Astro hoists the component's module script into
+       <head> either way. -->
+  <Analytics />
 
   <script is:inline define:vars={{ target }}>
     // Apple campaign-token attribution: /go?src=tt → ct=tt&mt=8 on the

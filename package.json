@@ -17,6 +17,7 @@
     "@astrojs/mdx": "^3.1.0",
     "@astrojs/rss": "^4.0.0",
     "@astrojs/sitemap": "^3.2.0",
+    "@vercel/analytics": "^2.0.1",
     "astro": "^4.16.0",
     "astro-og-canvas": "^0.5.0"
   },
