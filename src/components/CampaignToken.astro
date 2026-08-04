@@ -1,0 +1,135 @@
+---
+// src/components/CampaignToken.astro
+// THE campaign-token resolver for the browser. Renders one classic inline
+// script in <head> that reads window.location.search once and publishes the
+// result as `window.__bursCampaign`.
+//
+// WHY IT EXISTS: the token has three independent consumers and they must all
+// report the SAME value to App Store Connect / Meta —
+//   1. src/pages/go.astro — rewrites the CTA href and the timed handoff target
+//   2. src/components/MetaPixel.astro — the delegated InitiateAppStore click
+//      listener, which is what a MANUAL tap fires (and the only path an
+//      Android visitor has, since /go never auto-hands-off on Android)
+//   3. anything added later that needs to know which campaign drove the visit
+// Before this component, (1) resolved src → utm_campaign → utm_source while
+// (2) read `src` alone, so a consented Meta visitor who tapped the CTA before
+// the 700ms handoff logged InitiateAppStore as src:"direct" — a paid
+// conversion filed as organic. One resolver removes the drift by construction.
+//
+// NOT hand-mirrored from src/lib/links.ts. This script is `is:inline` (the
+// query string only exists in the browser; this is a static build with no SSR
+// adapter) so it cannot import at runtime — but `define:vars` serialises the
+// exports below into it at BUILD time, so the key order, the charset and the
+// fallback each exist exactly once in the repo. Keep the resolution semantics
+// identical to resolveCampaign(): first VALID param wins, whole value must
+// match or the param is skipped entirely, never a stripped/partial token.
+//
+// Consent: none needed, and none taken. This reads the URL the visitor already
+// requested and writes a string to a JS variable — no storage is written or
+// read, nothing leaves the page, so ePrivacy Art. 5(3) is not engaged. Sending
+// the token anywhere stays gated by whoever sends it (MetaPixel is).
+import {
+  CAMPAIGN_PARAM_KEYS,
+  CAMPAIGN_RE_SOURCE,
+  CAMPAIGN_FALLBACK,
+} from "../lib/links";
+---
+<script
+  is:inline
+  define:vars={{
+    CAMPAIGN_KEYS: [...CAMPAIGN_PARAM_KEYS],
+    CAMPAIGN_RE_SOURCE,
+    CAMPAIGN_FALLBACK,
+  }}
+>
+  window.__bursCampaign = (function () {
+    try {
+      var re = new RegExp(CAMPAIGN_RE_SOURCE);
+      var params = new URLSearchParams(window.location.search);
+      for (var i = 0; i < CAMPAIGN_KEYS.length; i++) {
+        var candidate = params.get(CAMPAIGN_KEYS[i]);
+        // First VALID, not first present: Meta's {{campaign.name}} macro
+        // expands to the human campaign name, so "BURS M4 SE" arrives as
+        // utm_campaign with spaces. Skipping it lets utm_source=meta still
+        // mark the click as paid instead of burying it in ct=direct.
+        if (candidate && re.test(candidate)) return candidate;
+      }
+    } catch (e) {
+      /* no URLSearchParams / hostile input → fall through to the fallback */
+    }
+    return CAMPAIGN_FALLBACK;
+  })();
+
+  // Stamp the resolved token onto EVERY App Store link on the page, not just
+  // /go's CTA.
+  //
+  // MetaPixel's delegated listener reports InitiateAppStore with this token
+  // from any page, but outside /go the links were the bare APP_STORE_URL with
+  // no Apple `ct` — so a click from /pricing?utm_campaign=meta-m4-se was filed
+  // under that campaign in Meta and under nothing in App Store Connect. Two
+  // reports of one conversion that cannot be reconciled, which is precisely
+  // what the shared resolver exists to prevent.
+  //
+  // Same URL shape as buildAppStoreUrl() in src/lib/links.ts: the query is
+  // REPLACED, not appended to, so re-running this is idempotent and a link
+  // that already carries a ct can't end up with two.
+  //
+  // No-JS degrades exactly like /go does — the rendered href stays valid and
+  // Apple buckets the install as organic. The pixel is JS too, so both signals
+  // are absent together rather than disagreeing.
+  (function () {
+    function stampOne(a) {
+      var href = a && a.getAttribute && a.getAttribute("href");
+      if (!href) return;
+      var ct = window.__bursCampaign || CAMPAIGN_FALLBACK;
+      a.setAttribute(
+        "href",
+        href.split("?")[0] + "?l=en-GB&ct=" + encodeURIComponent(ct) + "&mt=8",
+      );
+    }
+
+    function stampAll() {
+      try {
+        var links = document.querySelectorAll('a[href*="apps.apple.com"]');
+        for (var i = 0; i < links.length; i++) stampOne(links[i]);
+      } catch (e) {
+        /* leave the rendered hrefs untouched — a valid link beats a broken one */
+      }
+    }
+
+    // TWO passes, because either one alone leaves a hole.
+    //
+    // The sweep can only run once the body has been parsed, and on a Base page
+    // a CTA is painted — and clickable — while deferred module scripts are
+    // still holding DOMContentLoaded back. A tap inside that window followed
+    // the ORIGINAL href, which carries no `ct`, while MetaPixel's listener
+    // still reported the campaign: the exact Meta-attributed /
+    // ASC-unattributed split this stamping exists to close.
+    //
+    // So the click path stamps synchronously too. Registered in <head> at
+    // parse time on the CAPTURE phase, it runs before MetaPixel's own
+    // (bubble-phase) listener and before the navigation, so the href is
+    // already correct no matter how early the tap lands. `stampOne` replaces
+    // the query rather than appending, so the two passes are idempotent and a
+    // link stamped by the sweep is unchanged by the click.
+    document.addEventListener(
+      "click",
+      function (e) {
+        try {
+          var a =
+            e.target && e.target.closest && e.target.closest('a[href*="apps.apple.com"]');
+          if (a) stampOne(a);
+        } catch (err) {
+          /* never block the navigation the visitor asked for */
+        }
+      },
+      true,
+    );
+
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", stampAll);
+    } else {
+      stampAll();
+    }
+  })();
+</script>

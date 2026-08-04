@@ -1,19 +1,17 @@
 // tests/schema.smoke.ts
-import { describe, it, expect } from 'vitest';
-import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
-
-function walk(dir: string, files: string[] = []) {
-  for (const f of readdirSync(dir)) {
-    const p = join(dir, f);
-    if (statSync(p).isDirectory()) walk(p, files);
-    else if (p.endsWith('.html')) files.push(p);
-  }
-  return files;
-}
+// Asserts against the BUILT output — see tests/dist.ts. The walk lives in
+// beforeAll, not in the describe body (which runs at DISCOVERY time), so a
+// clean checkout without dist/ fails these suites with an explicit message
+// instead of aborting the entire Vitest run before any file executes.
+import { describe, it, expect, beforeAll } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { walkDist } from './dist';
 
 describe('schema.org JSON-LD', () => {
-  const htmls = walk('dist');
+  let htmls: string[] = [];
+  beforeAll(() => {
+    htmls = walkDist();
+  });
 
   it('every page has at least one ld+json block', () => {
     for (const p of htmls) {
