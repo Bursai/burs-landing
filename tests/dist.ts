@@ -16,6 +16,7 @@ import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 
 const DIST = 'dist';
+const SRC = 'src';
 
 function walk(dir: string, files: string[] = []) {
   for (const f of readdirSync(dir)) {
@@ -43,5 +44,66 @@ export function walkDist(): string[] {
   if (files.length === 0) {
     throw new Error(`${DIST}/ contains no .html files — the build produced nothing to assert against.`);
   }
+  assertBuildIsFresh(files);
   return files;
+}
+
+/** Newest mtime under a directory tree, or 0 if it can't be read. */
+function newestMtime(dir: string): number {
+  let newest = 0;
+  const stack = [dir];
+  while (stack.length > 0) {
+    const current = stack.pop() as string;
+    let entries: string[];
+    try {
+      entries = readdirSync(current);
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      const p = join(current, entry);
+      try {
+        const st = statSync(p);
+        if (st.isDirectory()) stack.push(p);
+        else if (st.mtimeMs > newest) newest = st.mtimeMs;
+      } catch {
+        /* raced with a rebuild — ignore this entry */
+      }
+    }
+  }
+  return newest;
+}
+
+/**
+ * Refuse to assert against a build that predates the sources.
+ *
+ * `pretest`/`pretest:watch` run `astro build` ONCE, before Vitest starts. In
+ * `npm run test:watch` that build is never repeated: editing a page or
+ * component re-runs these suites against the PREVIOUS dist/, and reading files
+ * establishes no dependency Vitest could invalidate. The suites would then
+ * report that the shipped-HTML invariants still hold after the source has
+ * already broken them — a green watch run asserting nothing about the code on
+ * screen, which is worse than no watch coverage at all.
+ *
+ * A one-off `npm test` always passes this: `pretest` just built. Only a stale
+ * artifact trips it, and the message names its own fix.
+ */
+function assertBuildIsFresh(files: string[]): void {
+  const newestSrc = newestMtime(SRC);
+  if (newestSrc === 0) return; // no readable src/ — nothing to compare against
+  const oldestBuilt = files.reduce((min, f) => {
+    try {
+      return Math.min(min, statSync(f).mtimeMs);
+    } catch {
+      return min;
+    }
+  }, Number.POSITIVE_INFINITY);
+  if (!Number.isFinite(oldestBuilt)) return;
+  if (newestSrc > oldestBuilt) {
+    throw new Error(
+      `${DIST}/ is older than ${SRC}/ — these suites assert against the BUILT HTML, so they would ` +
+        `be checking a previous build. Re-run \`npm run build\` (in watch mode, keep ` +
+        `\`npx astro build --watch\` running alongside \`npm run test:watch\`).`,
+    );
+  }
 }

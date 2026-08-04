@@ -103,3 +103,45 @@ describe('Vercel Web Analytics wiring', () => {
     }
   });
 });
+
+describe('privacy + attribution invariants added in Codex round 4 (PR #49)', () => {
+  it('the analytics hook validates campaign VALUES, not just their names', () => {
+    // An allowlist of parameter NAMES does not sanitize what those parameters
+    // carry: `?utm_content=user@example.com` has an allowlisted name and a
+    // value that is exactly the personal data the hook exists to strip. The
+    // shipped beacon must match each retained value WHOLE against the campaign
+    // charset. Asserted on the built HTML because the guard lives in an
+    // is:inline script — if it stops shipping, this fails.
+    const withHook = htmls.filter((p) =>
+      readFileSync(p, 'utf8').includes('webAnalyticsBeforeSend'),
+    );
+    expect(withHook.length).toBeGreaterThan(0);
+    for (const p of withHook) {
+      const html = readFileSync(p, 'utf8');
+      expect(html, p).toContain('tokenRe.test(value)');
+      // The charset is injected from links.ts, never hand-copied.
+      expect(html, p).toContain(CAMPAIGN_RE_SOURCE.replace(/\\/g, '\\\\'));
+    }
+  });
+
+  it('every page stamps its App Store links with the resolved campaign token', () => {
+    // MetaPixel reports InitiateAppStore with the token from ANY page, so if
+    // only /go rewrote its href the same conversion was campaign-attributed in
+    // Meta and unattributed in App Store Connect. One resolver, one token, both
+    // reports.
+    // NOTE ON WHAT THIS PROVES: it asserts the STAMPER shipped on every page
+    // that renders an App Store link — the selector it queries and the href it
+    // rebuilds. It does not execute it; the runtime behaviour is a browser
+    // concern (tests/a11y is the Playwright surface). The failure this guards
+    // is a real one that already happened: a page carrying App Store CTAs
+    // without the resolver, which is a silent attribution hole.
+    const withLinks = htmls.filter((p) => readFileSync(p, 'utf8').includes('apps.apple.com'));
+    expect(withLinks.length).toBeGreaterThan(1);
+    for (const p of withLinks) {
+      const html = readFileSync(p, 'utf8');
+      expect(html, p).toContain('a[href*="apps.apple.com"]');
+      // The rebuilt href shape, matching buildAppStoreUrl() in src/lib/links.ts.
+      expect(html, p).toContain('"?l=en-GB&ct=" + encodeURIComponent(ct) + "&mt=8"');
+    }
+  });
+});

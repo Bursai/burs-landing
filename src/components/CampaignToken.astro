@@ -59,4 +59,45 @@ import {
     }
     return CAMPAIGN_FALLBACK;
   })();
+
+  // Stamp the resolved token onto EVERY App Store link on the page, not just
+  // /go's CTA.
+  //
+  // MetaPixel's delegated listener reports InitiateAppStore with this token
+  // from any page, but outside /go the links were the bare APP_STORE_URL with
+  // no Apple `ct` — so a click from /pricing?utm_campaign=meta-m4-se was filed
+  // under that campaign in Meta and under nothing in App Store Connect. Two
+  // reports of one conversion that cannot be reconciled, which is precisely
+  // what the shared resolver exists to prevent.
+  //
+  // Same URL shape as buildAppStoreUrl() in src/lib/links.ts: the query is
+  // REPLACED, not appended to, so re-running this is idempotent and a link
+  // that already carries a ct can't end up with two.
+  //
+  // No-JS degrades exactly like /go does — the rendered href stays valid and
+  // Apple buckets the install as organic. The pixel is JS too, so both signals
+  // are absent together rather than disagreeing.
+  (function () {
+    function stamp() {
+      try {
+        var ct = window.__bursCampaign || CAMPAIGN_FALLBACK;
+        var links = document.querySelectorAll('a[href*="apps.apple.com"]');
+        for (var i = 0; i < links.length; i++) {
+          var href = links[i].getAttribute("href");
+          if (!href) continue;
+          links[i].setAttribute(
+            "href",
+            href.split("?")[0] + "?l=en-GB&ct=" + encodeURIComponent(ct) + "&mt=8",
+          );
+        }
+      } catch (e) {
+        /* leave the rendered hrefs untouched — a valid link beats a broken one */
+      }
+    }
+    if (document.readyState === "loading") {
+      document.addEventListener("DOMContentLoaded", stamp);
+    } else {
+      stamp();
+    }
+  })();
 </script>

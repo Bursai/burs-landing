@@ -31,9 +31,23 @@
 // it inside the custom-element constructor, which runs from a hoisted
 // `type="module"` script — deferred until after parsing — so this classic
 // inline script is always defined first.
+// ALLOWLISTING THE NAME IS NOT ENOUGH — THE VALUE MUST BE VALIDATED TOO.
+// `?utm_content=user@example.com` carries a name from the list above and a
+// value that is exactly the personal data this hook exists to strip, so a
+// name-only filter forwards it verbatim. Every retained value is therefore
+// matched WHOLE against the campaign charset and dropped if it fails.
+//
+// Reusing `CAMPAIGN_RE_SOURCE` rather than inventing a second pattern keeps
+// this in step with `resolveCampaign()` / `CampaignToken.astro`: a value too
+// loose to be a campaign token is already one this site refuses to report to
+// App Store Connect, so refusing to report it to analytics is the same rule,
+// not a new one. Concretely, Meta's `{{campaign.name}}` macro expanding to
+// "BURS M4 SE" is dropped in both places — consistently — while
+// `utm_source=meta` still marks the click as paid.
+import { CAMPAIGN_RE_SOURCE } from "../lib/links";
 import Analytics from "@vercel/analytics/astro";
 ---
-<script is:inline>
+<script is:inline define:vars={{ CAMPAIGN_RE_SOURCE }}>
   window.webAnalyticsBeforeSend = function (event) {
     try {
       var url = new URL(event.url);
@@ -46,9 +60,12 @@ import Analytics from "@vercel/analytics/astro";
         "utm_content",
         "utm_term",
       ];
+      var tokenRe = new RegExp(CAMPAIGN_RE_SOURCE);
       for (var i = 0; i < ALLOWED.length; i++) {
         var value = url.searchParams.get(ALLOWED[i]);
-        if (value) kept.set(ALLOWED[i], value);
+        // WHOLE-value match or drop the param entirely — never a truncated or
+        // partially-scrubbed value, which would still leak its prefix.
+        if (value && tokenRe.test(value)) kept.set(ALLOWED[i], value);
       }
       url.search = kept.toString();
       url.hash = "";
