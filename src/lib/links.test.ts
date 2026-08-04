@@ -268,13 +268,38 @@ describe('one browser-side campaign resolver', () => {
     );
   });
 
-  it('does not auto-navigate Android visitors to an iOS-only store', () => {
+  it('auto-navigates ONLY platforms that can install from the App Store link', () => {
     // `dest` is apps.apple.com and there is no Play listing to send them to,
     // so an automatic handoff drops an Android visitor in a store where they
     // cannot install anything — with the page they came for already unloaded.
     // They keep the rendered page and the CTA instead.
-    expect(goAstro).toContain('var isAndroid = /Android/i.test(navigator.userAgent');
-    expect(goAstro).toContain('if (!isAndroid) handoff = setTimeout(tick, HANDOFF_MS);');
+    //
+    // Codex round 5: `!isAndroid` was the wrong shape for that rule — Windows
+    // and Linux visitors were auto-navigated to the same unusable listing.
+    // Allowlist the platforms the link serves rather than denylisting the ones
+    // it doesn't, so a platform nobody thought about defaults to KEEPING the
+    // page. Desktop macOS is excluded on purpose (no Mac build); iPadOS is
+    // included via maxTouchPoints, since it reports a Macintosh UA.
+    expect(goAstro).toContain('/iPhone|iPad|iPod/i.test(ua)');
+    expect(goAstro).toContain('navigator.maxTouchPoints > 1');
+    expect(goAstro).toContain('if (isAppleMobile) handoff = setTimeout(tick, HANDOFF_MS);');
+    // The old denylist must be gone, not merely supplemented.
+    expect(goAstro).not.toContain('if (!isAndroid) handoff');
+  });
+
+  it('stamps the App Store href on click, not only at DOMContentLoaded', () => {
+    // A Base-page CTA is painted and clickable while deferred module scripts
+    // still hold DOMContentLoaded back. A tap in that window followed the
+    // unstamped href (no `ct`) while MetaPixel still reported the campaign —
+    // Meta-attributed, ASC-unattributed. The capture-phase listener is
+    // registered at parse time, so it runs before both MetaPixel's
+    // bubble-phase listener and the navigation.
+    const token = readRepoFile('src/components/CampaignToken.astro');
+    expect(token).toContain('"click"');
+    expect(token).toContain('true,'); // capture phase
+    expect(token).toContain('if (a) stampOne(a);');
+    // Idempotent: the query is REPLACED, so sweep-then-click can't double up.
+    expect(token).toContain('href.split("?")[0]');
   });
 
   it('fires InitiateAppStore in the handoff, since it pre-empts the click', () => {

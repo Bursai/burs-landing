@@ -219,15 +219,29 @@ const target = buildAppStoreUrl(null);
       var startedAt = Date.now();
       var handoff = null;
 
-      // ANDROID: no automatic handoff. `dest` is an apps.apple.com listing
-      // and BURS has no Google Play listing to send them to instead, so
-      // auto-navigating an Android visitor dumps them in a store where they
-      // cannot install anything, with the page they came for already gone.
-      // They keep the rendered page and the visible CTA. (The site's FAQ and
-      // terms do claim Android availability — that copy is wrong today and
-      // is a separate, marketing-owned problem, not something this redirect
-      // can paper over.)
-      var isAndroid = /Android/i.test(navigator.userAgent || '');
+      // AUTOMATIC HANDOFF IS OPT-IN, BY PLATFORM. `dest` is an apps.apple.com
+      // listing, so auto-navigating anyone who cannot install from it dumps
+      // them in a store that has nothing for them, with the page they came for
+      // already gone. That was written for Android, but "not Android" was the
+      // wrong test: Windows and Linux visitors were auto-navigated too. Gate on
+      // the platforms the link actually serves instead of enumerating the ones
+      // it doesn't. Everyone else keeps the rendered page and its visible CTA —
+      // still a working download path, just not a forced one.
+      //
+      // Desktop macOS is deliberately NOT included: BURS ships no Mac build, so
+      // a Mac visitor is in the same position as a Windows one. iPadOS 13+ is,
+      // because it reports a Macintosh UA — touch points are what tell the two
+      // apart.
+      //
+      // (The site's FAQ and terms do claim Android availability — that copy is
+      // wrong today and is a separate, marketing-owned problem, not something
+      // this redirect can paper over.)
+      var ua = navigator.userAgent || '';
+      var isAppleMobile =
+        /iPhone|iPad|iPod/i.test(ua) ||
+        (/Macintosh/i.test(ua) &&
+          typeof navigator.maxTouchPoints === 'number' &&
+          navigator.maxTouchPoints > 1);
 
       // ── SIGNAL 1 of 2: the Vercel analytics beacon ─────────────────────
       // Did the analytics beacon actually get a request out yet? On a cold
@@ -376,7 +390,7 @@ const target = buildAppStoreUrl(null);
         leave();
       }
 
-      if (!isAndroid) handoff = setTimeout(tick, HANDOFF_MS);
+      if (isAppleMobile) handoff = setTimeout(tick, HANDOFF_MS);
 
       // If the visitor acts first — taps the CTA, or the burs.me link —
       // their navigation wins. Cancelling stops the timer from overriding
