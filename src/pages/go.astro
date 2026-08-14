@@ -36,8 +36,9 @@ import MetaPixel from "../components/MetaPixel.astro";
 import ConsentBanner from "../components/ConsentBanner.astro";
 import { organization } from "../lib/schema";
 import { APP_STORE_URL } from "../lib/links";
+import { FOUNDING, TRIAL_DAYS, format } from "../lib/prices";
 const TITLE = "BURS — Start your free trial";
-const DESCRIPTION = "Outfits from clothes you already own. Start your 3-day free trial.";
+const DESCRIPTION = `Outfits from clothes you already own. Start your ${TRIAL_DAYS}-day free trial — founding members pay ${format(FOUNDING)} for their first year.`;
 const CANONICAL = "https://www.burs.me/go";
 ---
 <!doctype html>
@@ -85,8 +86,10 @@ const CANONICAL = "https://www.burs.me/go";
       <p class="go__tagline">Outfits from clothes you already own</p>
 
       <a id="go-cta" class="cta go__cta" href={APP_STORE_URL}>
-        Start your 3-day free trial <span class="cta__arrow" aria-hidden="true">→</span>
+        Start your {TRIAL_DAYS}-day free trial <span class="cta__arrow" aria-hidden="true">→</span>
       </a>
+
+      <p class="go__offer">Founding membership — {format(FOUNDING)} for your first year, then {format({ amount: FOUNDING.renewsAt, symbol: FOUNDING.symbol })}/year. Cancel anytime.</p>
 
       <a class="go__home" href="/">burs.me</a>
     </div>
@@ -157,6 +160,13 @@ const CANONICAL = "https://www.burs.me/go";
     justify-content: center;
     font-size: 15px;
     padding: 18px 30px;
+  }
+  .go__offer{
+    margin-top: 18px;
+    max-width: 34ch;
+    font-family: var(--serif); font-style: italic;
+    font-size: 13.5px; line-height: 1.5;
+    color: var(--charcoal-2); opacity: .8;
   }
   .go__home{
     margin-top: 24px;

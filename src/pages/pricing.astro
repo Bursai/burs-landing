@@ -4,14 +4,15 @@ import PriceCard from "../components/PriceCard.astro";
 import ComparisonTable from "../components/ComparisonTable.astro";
 import Schema from "../components/Schema.astro";
 import { product } from "../lib/schema";
+import { FOUNDING, TRIAL_DAYS, format } from "../lib/prices";
 ---
 <Page
   title="Pricing — BURS"
-  description="BURS Premium: €9.99/month or €79.99/year. No free tier. No ads. Cancel anytime."
+  description={`BURS Premium: ${TRIAL_DAYS} days free, then €29.99 for your founding first year. Standard €9.99/month or €79.99/year. No free tier. No ads. Cancel anytime.`}
   path="/pricing"
   eyebrow="Pricing"
   headline="One subscription. <em>Your</em> closet."
-  lede="A single tier, priced in euros. Annual saves about a third. Your app store bills in your local currency."
+  lede={`${TRIAL_DAYS} days free, for everybody. Join during the launch year and your first year is ${format(FOUNDING)}. A single tier after that, priced in euros — your app store bills in your local currency.`}
 >
   <Schema slot="head" json={product()} />
 
@@ -23,7 +24,7 @@ import { product } from "../lib/schema";
     <section class="pricing__not">
       <p class="eyebrow">— What's not included</p>
       <ul class="anti" style="color:var(--charcoal)" role="list">
-        <li>No free tier.</li>
+        <li>No free tier. {TRIAL_DAYS} days free, then you pay.</li>
         <li>No ads.</li>
         <li>No shopping. We never recommend pieces you don't own.</li>
         <li>No data sale. No training on your wardrobe.</li>
@@ -51,6 +52,9 @@ import { product } from "../lib/schema";
 
 <style>
   .pricing{display:grid;gap:80px;max-width:980px}
+  /* Grid items default to min-width:auto (their min-content), so any one wide
+     child sets the width of the shared column for all of them. */
+  .pricing > *{min-width:0}
   .pricing__cards{display:grid;grid-template-columns:1fr;justify-items:start}
   .pricing__not{display:grid;gap:18px}
   .pricing__honest{font-size:13px;opacity:.55;font-style:italic;margin-top:14px;max-width:54ch}

@@ -1,16 +1,38 @@
 ---
-import { PRICES, format, annualSavingsPct } from "../lib/prices";
+import { PRICES, FOUNDING, TRIAL_DAYS, format, annualSavingsPct, foundingSavingsPct } from "../lib/prices";
 import { APP_STORE_URL } from "../lib/links";
 interface Props { emphasize?: "month" | "year"; }
 const { emphasize = "year" } = Astro.props;
 const savings = annualSavingsPct();
+const foundingSavings = foundingSavingsPct();
 ---
 <article class="pc">
   <header class="pc__head">
     <p class="eyebrow">BURS Premium</p>
     <h3 class="pc__title">One subscription. <em>Your</em> closet.</h3>
   </header>
+
+  <!-- The launch offer leads, because it's what almost everyone will pay.
+       The standard tiers stay visible directly beneath it so the renewal
+       price is never something a reader has to go looking for. -->
+  <div class="pc__founding">
+    <p class="pc__founding-k">Founding membership</p>
+    <p class="pc__founding-amt">
+      {format(FOUNDING)}<span class="pc__founding-per">for your first year</span>
+    </p>
+    <p class="pc__founding-sub">
+      Save ~{foundingSavings}% on year one. Renews at {format({ amount: FOUNDING.renewsAt, symbol: FOUNDING.symbol })}/year.
+      Yours if you join during the launch year.
+    </p>
+  </div>
+
+  <p class="pc__trial">
+    <span class="pc__trial-badge">{TRIAL_DAYS} days free</span>
+    <span>Every plan starts with a {TRIAL_DAYS}-day free trial. Cancel before it ends and you pay nothing.</span>
+  </p>
+
   <ul class="pc__tiers" role="list">
+    <li class="pc__tiers-k">After the founding year — or if you'd rather pay monthly</li>
     {PRICES.map(t => (
       <li class={`pc__tier ${t.period === emphasize ? "is-on" : ""}`}>
         <span class="pc__amt">{format(t)}</span>
@@ -29,13 +51,62 @@ const savings = annualSavingsPct();
   </ul>
   <p class="pc__not">No free tier. No ads. Cancel anytime from account settings.</p>
   <p class="pc__bill">Billed by your app store in your local currency.</p>
-  <a class="cta" href={APP_STORE_URL}>Get the app <span class="cta__arrow">→</span></a>
+  <a class="cta" href={APP_STORE_URL}>Start {TRIAL_DAYS} days free <span class="cta__arrow">→</span></a>
 </article>
 <style>
   .pc{background:var(--cream-paper);border:1px solid rgba(28,25,23,.1);padding:40px 36px;max-width:520px;display:grid;gap:22px}
   .pc__title{font-size:clamp(28px,3.4vw,42px);font-weight:200;letter-spacing:-.025em;line-height:1.05;color:var(--charcoal);margin-top:8px}
   .pc__title em{font-style:italic;color:var(--gold);font-weight:300}
+
+  /* The launch offer */
+  .pc__founding{
+    display:grid;gap:6px;
+    padding:20px 22px;
+    background:rgba(201,168,108,.1);
+    border:1px solid rgba(201,168,108,.5);
+    border-radius:3px;
+  }
+  .pc__founding-k{
+    font-family:var(--mono);font-size:10px;letter-spacing:.24em;text-transform:uppercase;
+    /* Charcoal, not gold: gold-deep on the gold-tinted panel is 2.9:1, under
+       the 4.5:1 WCAG AA floor for text this size. The gold identity is
+       carried by the panel's tint and border instead. */
+    color:var(--charcoal);
+  }
+  .pc__founding-amt{
+    display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    font-family:var(--display);font-style:italic;font-weight:400;
+    font-size:clamp(34px,4.4vw,46px);letter-spacing:-.02em;line-height:1;
+    color:var(--charcoal);
+  }
+  .pc__founding-per{
+    font-family:var(--mono);font-style:normal;font-size:10px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--charcoal-2);opacity:.75;
+  }
+  .pc__founding-sub{
+    font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.5;
+    color:var(--charcoal-2);max-width:44ch;
+  }
+
+  /* The trial */
+  .pc__trial{
+    display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;
+    font-family:var(--serif);font-style:italic;font-size:14px;line-height:1.5;
+    color:var(--charcoal-2);margin-top:-8px;
+  }
+  .pc__trial-badge{
+    font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.2em;
+    text-transform:uppercase;color:var(--charcoal);
+    border:1px solid rgba(28,25,23,.35);border-radius:999px;
+    padding:5px 11px;white-space:nowrap;
+  }
+
   .pc__tiers{list-style:none;display:grid;gap:8px;border-top:1px solid rgba(28,25,23,.1);border-bottom:1px solid rgba(28,25,23,.1);padding:14px 0}
+  .pc__tiers-k{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+    /* No opacity fade — at 9.5px, .6 drops this to 3.96:1, under AA. */
+    color:var(--charcoal-2);margin-bottom:4px;
+  }
   .pc__tier{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:baseline;font-family:var(--mono);font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.7}
   .pc__tier.is-on{opacity:1}
   .pc__amt{font-family:var(--display);font-style:italic;font-weight:400;font-size:28px;letter-spacing:-.01em;text-transform:none;color:var(--charcoal)}
@@ -44,4 +115,20 @@ const savings = annualSavingsPct();
   .pc__incl li::before{content:"— ";color:var(--gold);font-weight:500}
   .pc__not{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.55}
   .pc__bill{font-family:var(--mono);font-size:10px;letter-spacing:.18em;text-transform:uppercase;opacity:.4;margin-top:-14px}
+
+  /* Narrow screens.
+     The tier row is `auto 1fr auto` — amount, period, savings — all of it
+     wide-tracked uppercase mono. Its min-content (~313px) plus the card's
+     72px of horizontal padding exceeded a 360px phone, and because the card
+     sits in a grid track that cannot shrink below min-content, the whole
+     .pricing column was pushed past the gutter and clipped off-screen. (The
+     page reported no horizontal scroll because the layout viewport simply
+     grew with it.) Dropping the savings badge onto its own line, and easing
+     the padding, brings min-content back inside the narrowest phone. */
+  @media (max-width:560px){
+    .pc{padding:28px 20px;gap:18px}
+    .pc__founding{padding:16px 16px}
+    .pc__tier{grid-template-columns:auto 1fr;row-gap:2px}
+    .pc__save{grid-column:1 / -1}
+  }
 </style>

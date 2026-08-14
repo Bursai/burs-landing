@@ -10,6 +10,7 @@
 // and keeps the fixed cream nav legible the whole way down.
 import { APP_STORE_URL } from "../lib/links";
 import { HANGER, GARMENTS } from "../lib/garments";
+import { FOUNDING, TRIAL_DAYS, format } from "../lib/prices";
 
 interface Day { dow: string; date: string; occasion: string; outfit: string; garment: string }
 const days: Day[] = [
@@ -82,7 +83,11 @@ const days: Day[] = [
   <div class="wrap week-close__inner">
     <p class="eyebrow">— EVERY MORNING, ALREADY DECIDED</p>
     <h2 class="week-close__h">Seven days. <em>Seven outfits.</em> None of them a decision.</h2>
-    <a class="cta cta--cream" href={APP_STORE_URL}>Get the app <span class="cta__arrow">→</span></a>
+    <a class="cta cta--cream" href={APP_STORE_URL}>Start {TRIAL_DAYS} days free <span class="cta__arrow">→</span></a>
+    <p class="week-close__offer">
+      {TRIAL_DAYS} days free, for everybody. Join during the launch year and
+      your founding first year is {format(FOUNDING)} — then {format({ amount: FOUNDING.renewsAt, symbol: FOUNDING.symbol })}/year. Cancel anytime.
+    </p>
   </div>
 </section>
 
@@ -194,6 +199,12 @@ const days: Day[] = [
     font-size: clamp(34px, 5.2vw, 76px); color: var(--cream); max-width: 20ch; text-wrap: balance;
   }
   .week-close__h em{ font-style: italic; color: var(--gold); font-weight: 300 }
+  .week-close__offer{
+    margin-top: -4px; max-width: 46ch;
+    font-family: var(--serif); font-style: italic;
+    font-size: clamp(13.5px, 1.3vw, 15px); line-height: 1.55;
+    color: rgba(245,240,232,.6);
+  }
 
   @media (max-width: 700px){
     .week__head{ top: clamp(16px, 8vh, 40px) }

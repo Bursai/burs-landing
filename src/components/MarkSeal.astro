@@ -8,6 +8,7 @@
 // Falls back to the finished mark (static poster) under reduced-motion and
 // no-JS.
 import { APP_STORE_URL } from "../lib/links";
+import { TRIAL_DAYS } from "../lib/prices";
 
 // FRAME_V busts browser/CDN caches when the frames are re-rendered.
 const FRAME_V = "4";
@@ -23,9 +24,9 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
 
     <div class="seal__copy">
       <h2 class="seal__line" data-seal-in="0.72,0.86">This is <em>BURS</em>.</h2>
-      <p class="seal__sub" data-seal-in="0.78,0.9">Your wardrobe, intelligently styled.</p>
+      <p class="seal__sub" data-seal-in="0.78,0.9">Your wardrobe, intelligently styled. {TRIAL_DAYS} days free.</p>
       <a class="cta cta--ink seal__cta" data-seal-in="0.84,0.95" href={APP_STORE_URL}>
-        Get the app <span class="cta__arrow">→</span>
+        Start {TRIAL_DAYS} days free <span class="cta__arrow">→</span>
       </a>
     </div>
   </div>

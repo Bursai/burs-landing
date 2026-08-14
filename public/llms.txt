@@ -12,7 +12,8 @@
 ## What BURS is
 
 - An AI wardrobe stylist on iOS and Android.
-- A premium, paid app: €9.99/mo or €79.99/yr — one price everywhere, billed by the app stores in the user's local currency.
+- A premium, paid app with a 30-day free trial for everybody: €9.99/mo or €79.99/yr — one price everywhere, billed by the app stores in the user's local currency.
+- Founding membership: subscribers who join during the launch year pay €29.99 for their first year (~63% off the standard annual price), then renew at €79.99/yr. Uncapped — no member limit.
 - Built for the eighty percent of the closet that never gets worn.
 
 ## What BURS is not
@@ -20,7 +21,7 @@
 - Not a shopping app. BURS never recommends pieces you don't own.
 - Not a feed. BURS opens with one outfit, not a grid.
 - Not a stylist that shops for you. The pieces it uses are already in your closet.
-- Not free. There is no free tier. There are no ads.
+- Not free. There is no free tier — there is a 30-day free trial, after which you pay. There are no ads.
 
 ## What BURS does
 
@@ -32,11 +33,15 @@
 
 ## Pricing table
 
-| Plan | Monthly | Annual | Annual saves |
+| Plan | Monthly | Annual | Saves |
 |---|---|---|---|
-| BURS Premium | €9.99 | €79.99 | ~33% |
+| BURS Premium | €9.99 | €79.99 | ~33% vs monthly |
+| Founding membership (first year) | — | €29.99 | ~63% vs standard annual |
 
-No free tier. No ads. Cancel anytime from account settings.
+Every plan starts with a 30-day free trial; payment details are taken at
+sign-up and the plan begins when the trial ends. The founding rate covers the
+first year for anyone subscribing during the launch year, then renews at
+€79.99/yr. No free tier. No ads. Cancel anytime from account settings.
 
 ## Privacy
 
@@ -71,7 +76,10 @@ BURS is an AI wardrobe stylist. It scans clothes you already own, reads the weat
 You point a phone camera at your clothes. BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes — twenty to thirty for a big wardrobe. No manual tagging.
 
 ### Is BURS free?
-No. BURS is a premium app — €9.99/mo or €79.99/yr, billed by the app stores in your local currency. No free tier, no ads. Cancel anytime.
+No, but it starts free. Everybody gets a 30-day free trial and pays nothing if they cancel before it ends. After that BURS is a premium app — €9.99/mo or €79.99/yr, billed by the app stores in your local currency. No free tier, no ads. Cancel anytime.
+
+### What is the founding membership?
+The launch offer: the first year for €29.99 instead of €79.99 (~63% off), after the 30-day trial, renewing at the standard €79.99/yr. Anyone who subscribes during the launch year gets it; there is no member cap.
 
 ### Does BURS work on iPhone and Android?
 Yes. Identical experience on both. Wardrobe syncs across every device you sign into.

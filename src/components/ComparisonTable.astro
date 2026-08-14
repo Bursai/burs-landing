@@ -11,6 +11,9 @@ function cell(v: string | boolean) {
 ---
 <figure class="cmp">
   {caption && <figcaption class="eyebrow">{caption}</figcaption>}
+  <!-- The table scrolls inside its own box on narrow screens. tabindex makes
+       that scroll reachable by keyboard, which a scrollable region needs. -->
+  <div class="cmp__scroll" tabindex="0" role="region" aria-label={caption ?? "Comparison"}>
   <table class="cmp__t" role="table">
     <thead>
       <tr>
@@ -31,10 +34,18 @@ function cell(v: string | boolean) {
       ))}
     </tbody>
   </table>
+  </div>
 </figure>
 <style>
-  .cmp{margin:48px 0}
-  .cmp__t{width:100%;border-collapse:collapse;font-size:14px;font-family:var(--body)}
+  /* min-width:0 lets this shrink inside a grid/flex parent. Without it the
+     item's automatic minimum size is its min-content — and a four-column
+     table's min-content (~390px) is wider than a phone, so the table silently
+     widened its whole grid column and pushed every sibling (the price card
+     included) past the page gutter. */
+  .cmp{margin:48px 0;min-width:0}
+  .cmp__scroll{overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .cmp__scroll:focus-visible{outline:2px solid var(--gold-deep);outline-offset:3px}
+  .cmp__t{width:100%;min-width:340px;border-collapse:collapse;font-size:14px;font-family:var(--body)}
   .cmp__t th,.cmp__t td{padding:14px 12px;border-bottom:1px solid rgba(28,25,23,.12);text-align:left;vertical-align:top}
   .cmp__t thead th{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;font-weight:500;color:var(--charcoal-2);border-bottom:1px solid var(--charcoal)}
   .cmp__t tbody th{font-weight:500;font-family:var(--display);font-style:italic;font-size:18px;color:var(--charcoal)}
