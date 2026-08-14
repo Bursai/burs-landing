@@ -20,7 +20,8 @@
 - Not a shopping app. BURS never recommends pieces you don't own.
 - Not a feed. BURS opens with one outfit, not a grid.
 - Not a stylist that shops for you. The pieces it uses are already in your closet.
-- Not free. There is no free tier. There are no ads.
+- Not ad-supported. There are no ads, ever.
+- Not free in full: the digital wardrobe is free forever, the AI stylist is a subscription.
 
 ## What BURS does
 
@@ -36,7 +37,7 @@
 |---|---|---|---|
 | BURS Premium | €9.99 | €79.99 | ~33% |
 
-No free tier. No ads. Cancel anytime from account settings.
+The digital wardrobe is free forever; BURS Premium unlocks the AI stylist. A 3-day free trial is offered on Premium. No ads. Cancel anytime from account settings.
 
 ## Privacy
 
@@ -71,7 +72,7 @@ BURS is an AI wardrobe stylist. It scans clothes you already own, reads the weat
 You point a phone camera at your clothes. BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes — twenty to thirty for a big wardrobe. No manual tagging.
 
 ### Is BURS free?
-No. BURS is a premium app — €9.99/mo or €79.99/yr, billed by the app stores in your local currency. No free tier, no ads. Cancel anytime.
+Your digital wardrobe is free forever — scanning and organising your clothes costs nothing (fair-use limits apply to AI scanning). The AI stylist is BURS Premium — €9.99/mo or €79.99/yr, billed by the app stores in your local currency, with a 3-day free trial. No ads. Cancel anytime.
 
 ### Does BURS work on iPhone and Android?
 Yes. Identical experience on both. Wardrobe syncs across every device you sign into.
