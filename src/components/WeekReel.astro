@@ -226,7 +226,10 @@ const days: Day[] = [
   const DOW = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
   const N = dayEls.length;
-  let active = -1;
+  // Seeded from the DOM, not from -1: Monday ships with `is-active` already
+  // on it, so starting at -1 leaves that class behind the first time the
+  // focus moves — two cards lit at once for the rest of the page.
+  let active = dayEls.findIndex(el => el.classList.contains('is-active'));
   let worn = -1;
   const dist = new Array(dayEls.length).fill(-1);
   // Track geometry, measured by the engine outside the scroll — the old
