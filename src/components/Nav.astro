@@ -469,23 +469,19 @@ const links = [
 </style>
 
 <script>
+  import { watch } from "../lib/scroll";
+
+  // On the shared engine's frame rather than a listener of its own — this is
+  // state, not motion, so it runs under reduced motion too.
   const nav = document.querySelector('[data-nav]');
-  let scheduled = false;
   let lastState: boolean | null = null;
-  const onScroll = () => {
-    if (scheduled) return;
-    scheduled = true;
-    requestAnimationFrame(() => {
-      scheduled = false;
-      if (!nav) return;
-      const next = window.scrollY > 60;
-      if (next === lastState) return;          // skip redundant class toggles
-      lastState = next;
-      nav.classList.toggle('is-scrolled', next);
-    });
-  };
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
+  watch((y) => {
+    if (!nav) return;
+    const next = y > 60;
+    if (next === lastState) return;            // skip redundant class toggles
+    lastState = next;
+    nav.classList.toggle('is-scrolled', next);
+  });
 
   const toggle = document.querySelector('[data-nav-toggle]') as HTMLButtonElement | null;
   const drawer = document.querySelector('[data-nav-drawer]') as HTMLElement | null;

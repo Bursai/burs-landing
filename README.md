@@ -22,5 +22,8 @@ npm test         # unit tests (Vitest)
 
 ## Notes
 
+- Scroll-driven scenes run on the shared scroll engine, `src/lib/scroll.ts` —
+  one listener, one rAF loop, damped progress, no per-frame layout reads. See
+  [docs/scroll-engine.md](docs/scroll-engine.md) before adding or changing one.
 - The home hero is a background film (`HeroVideo`); the editorial rack image (`HeroRack`) appears in the mid‑page reprise band.
 - Production deploys run automatically from `main` via Vercel.

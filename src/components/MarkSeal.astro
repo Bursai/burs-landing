@@ -8,6 +8,7 @@
 // Falls back to the finished mark (static poster) under reduced-motion and
 // no-JS.
 import { APP_STORE_URL } from "../lib/links";
+import { TRIAL_DAYS } from "../lib/prices";
 
 // FRAME_V busts browser/CDN caches when the frames are re-rendered.
 const FRAME_V = "4";
@@ -23,9 +24,9 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
 
     <div class="seal__copy">
       <h2 class="seal__line" data-seal-in="0.72,0.86">This is <em>BURS</em>.</h2>
-      <p class="seal__sub" data-seal-in="0.78,0.9">Your wardrobe, intelligently styled.</p>
+      <p class="seal__sub" data-seal-in="0.78,0.9">Your wardrobe, intelligently styled. Free to keep, {TRIAL_DAYS} days of Premium free.</p>
       <a class="cta cta--ink seal__cta" data-seal-in="0.84,0.95" href={APP_STORE_URL}>
-        Get the app <span class="cta__arrow">→</span>
+        Start {TRIAL_DAYS} days free <span class="cta__arrow">→</span>
       </a>
     </div>
   </div>
@@ -101,6 +102,8 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
 </style>
 
 <script>
+  import { scene, ramp } from "../lib/scroll";
+
   const seal = document.querySelector<HTMLElement>('[data-seal]');
   const canvas = document.querySelector<HTMLCanvasElement>('[data-seal-canvas]');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -116,12 +119,13 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
     let armed = false;
 
     // Repaint (coalesced) as frames arrive, so a mid-runway landing on a
-    // still-loading frame fills in the moment it decodes.
+    // still-loading frame fills in the moment it decodes. `refresh()` wakes
+    // the engine, which re-renders this scene with its current progress.
     let paintQueued = false;
     function queueRender() {
       if (paintQueued) return;
       paintQueued = true;
-      requestAnimationFrame(() => { paintQueued = false; render(); });
+      requestAnimationFrame(() => { paintQueued = false; render(lastP); });
     }
 
     // Load the sequence only once the seal approaches (it's the last section;
@@ -186,50 +190,45 @@ const POSTER = `/assets/logo-seq/frame_100.webp?v=${FRAME_V}`;
     }
 
     // ---- Sign-off overlays -------------------------------------------------
-    const ramp = (p: number, a: number, b: number) =>
-      Math.min(1, Math.max(0, (p - a) / (b - a)));
     const overlays = Array.from(seal.querySelectorAll<HTMLElement>('[data-seal-in]')).map(el => {
       const [a, b] = (el.dataset.sealIn ?? '0,1').split(',').map(Number);
       return { el, a, b };
     });
 
-    function computeProgress() {
-      const rect = seal!.getBoundingClientRect();
-      const total = seal!.offsetHeight - window.innerHeight;
-      const scrolled = Math.min(Math.max(-rect.top, 0), total);
-      return total > 0 ? scrolled / total : 0;
-    }
+    let lastP = 0;
+    let lastFrame = -1;
 
-    function render() {
-      const p = computeProgress();
+    function render(p: number) {
+      lastP = p;
       // The mark stitches in over the first ~80% of the runway, then holds.
       const scrub = ramp(p, 0, 0.8);
       const target = Math.round(scrub * (FRAME_COUNT - 1));
-      const painted = paint(target);
-      // Swap the finished-mark poster for the canvas only once the canvas is
-      // actually caught up to the viewer's position — a slow connection
-      // landing mid-runway keeps the poster instead of a near-empty frame 1.
-      if (painted >= 0 && painted >= target - 4 && !seal!.hasAttribute('data-ready')) {
-        seal!.setAttribute('data-ready', '');
+      // Only touch the canvas when the sequence has actually advanced a
+      // frame; damped progress moves continuously, but the sequence is only
+      // 100 frames deep, so most frames would redraw the same image.
+      if (target !== lastFrame) {
+        lastFrame = target;
+        const painted = paint(target);
+        // Swap the finished-mark poster for the canvas only once the canvas
+        // is actually caught up to the viewer's position — a slow connection
+        // landing mid-runway keeps the poster instead of a near-empty frame 1.
+        if (painted >= 0 && painted >= target - 4 && !seal!.hasAttribute('data-ready')) {
+          seal!.setAttribute('data-ready', '');
+        }
       }
       for (const o of overlays) {
         const v = ramp(p, o.a, o.b);
         o.el.style.opacity = String(v);
-        o.el.style.transform = `translateY(${(1 - v) * 14}px)`;
+        o.el.style.transform = `translate3d(0, ${((1 - v) * 14).toFixed(1)}px, 0)`;
         o.el.style.visibility = v > 0.02 ? 'visible' : 'hidden';
       }
     }
 
-    let ticking = false;
-    function onScroll() {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => { ticking = false; render(); });
-    }
-
-    resize();
-    render();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', () => { resize(); render(); }, { passive: true });
+    scene(seal, ({ p }) => render(p), {
+      // The mark is a 100-frame sequence: damping here is what turns a wheel
+      // notch from a jump of several frames into a continuous stitch.
+      damp: 85,
+      measure: () => { resize(); lastFrame = -1; },
+    });
   }
 </script>

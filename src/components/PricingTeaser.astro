@@ -3,18 +3,24 @@
 // ACTION — the page's one ask. The stitched thread hangs the price tag here.
 import PriceHangTag from "./PriceHangTag.astro";
 import { APP_STORE_URL } from "../lib/links";
+import { FOUNDING, TRIAL_DAYS, format } from "../lib/prices";
 ---
 <section class="pteaser" data-action aria-label="Pricing">
   <div class="wrap pteaser__grid">
     <div class="reveal">
       <p class="eyebrow">— THE DECISION</p>
       <h2 class="pteaser__h2">Every morning, <em>answered</em>.</h2>
-      <p class="lede pteaser__lede">One subscription, one price everywhere — less per month than the next impulse buy you'll never wear. No free tier. No ads. Cancel anytime.</p>
+      <p class="lede pteaser__lede">
+        Your wardrobe is free, forever. The stylist is the subscription — and it
+        starts with {TRIAL_DAYS} days free. Join during the launch year and your
+        first year is {format(FOUNDING)}, less than the next impulse buy you'll
+        never wear. No ads. Cancel anytime.
+      </p>
       <div class="pteaser__cta">
-        <a class="cta" href={APP_STORE_URL}>Get the app <span class="cta__arrow">→</span></a>
+        <a class="cta" href={APP_STORE_URL}>Start {TRIAL_DAYS} days free <span class="cta__arrow">→</span></a>
         <a class="cta cta--ghost" href="/pricing">See full pricing <span class="cta__arrow">→</span></a>
       </div>
-      <p class="pteaser__assure">Set up in one evening · Your photos stay yours · Cancel in two taps</p>
+      <p class="pteaser__assure">Wardrobe free forever · {TRIAL_DAYS} days of Premium free · Your photos stay yours · Cancel in two taps</p>
     </div>
     <div>
       <PriceHangTag />

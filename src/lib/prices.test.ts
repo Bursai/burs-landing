@@ -1,6 +1,6 @@
 // src/lib/prices.test.ts
 import { describe, it, expect } from 'vitest';
-import { PRICES, format, annualSavingsPct } from './prices';
+import { PRICES, FOUNDING, TRIAL_DAYS, format, annualSavingsPct, foundingSavingsPct } from './prices';
 
 describe('prices', () => {
   it('single EUR price list (monthly + yearly)', () => {
@@ -16,5 +16,33 @@ describe('prices', () => {
 
   it('annual savings ~33%', () => {
     expect(annualSavingsPct()).toBe(33);
+  });
+});
+
+describe('founding membership', () => {
+  it('is €29.99 for the first year', () => {
+    expect(FOUNDING.amount).toBe(29.99);
+    expect(FOUNDING.currency).toBe('EUR');
+    expect(FOUNDING.period).toBe('year');
+    expect(format(FOUNDING)).toBe('€29.99');
+  });
+
+  it('renews at the standard annual price', () => {
+    const year = PRICES.find(p => p.period === 'year')!;
+    expect(FOUNDING.renewsAt).toBe(year.amount);
+  });
+
+  it('saves ~63% against the standard annual price', () => {
+    expect(foundingSavingsPct()).toBe(63);
+  });
+
+  it('is cheaper than the standard year it replaces', () => {
+    expect(FOUNDING.amount).toBeLessThan(FOUNDING.renewsAt);
+  });
+});
+
+describe('free trial', () => {
+  it('is 30 days', () => {
+    expect(TRIAL_DAYS).toBe(30);
   });
 });

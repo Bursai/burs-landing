@@ -1,4 +1,6 @@
 // src/lib/schema.ts
+import { PRICES, FOUNDING, TRIAL_DAYS } from "./prices";
+
 export const SITE = "https://www.burs.me";
 export const BRAND = "BURS";
 
@@ -34,11 +36,8 @@ export function softwareApplication() {
     name: BRAND,
     applicationCategory: "LifestyleApplication",
     operatingSystem: "iOS, Android",
-    description: "An AI wardrobe stylist. Scans your closet, reads the day, recommends one outfit.",
-    offers: [
-      offerObject("EUR", 9.99, "P1M"),
-      offerObject("EUR", 79.99, "P1Y")
-    ]
+    description: "An AI wardrobe stylist. The digital wardrobe is free forever; BURS Premium unlocks the stylist — it reads the day and recommends one outfit.",
+    offers: standardOffers()
   });
 }
 
@@ -47,11 +46,8 @@ export function product() {
     "@type": "Product",
     name: "BURS Premium",
     brand: { "@type": "Brand", name: BRAND },
-    description: "Wardrobe scanning, context-aware outfit of the day, AI Stylist chat, week planner, travel capsule builder.",
-    offers: [
-      offerObject("EUR", 9.99, "P1M"),
-      offerObject("EUR", 79.99, "P1Y")
-    ]
+    description: "BURS Premium unlocks the stylist: context-aware outfit of the day, AI Stylist chat, week planner, travel capsule builder and wardrobe insights. Garment scanning and the digital wardrobe are free forever.",
+    offers: standardOffers()
   });
 }
 
@@ -109,8 +105,31 @@ export function breadcrumbs(items: Array<{ name: string; url: string }>) {
   });
 }
 
-function offerObject(currency: string, price: number, duration: "P1M" | "P1Y") {
-  return {
+/**
+ * Every plan we sell, each carrying the 30-day trial, plus the founding
+ * membership for the launch year. Driven off prices.ts so the advertised
+ * price and the structured data can never drift apart.
+ */
+function standardOffers() {
+  const month = PRICES.find(p => p.period === "month")!;
+  const year = PRICES.find(p => p.period === "year")!;
+  return [
+    offerObject(month.currency, month.amount, "P1M", { trialDays: TRIAL_DAYS }),
+    offerObject(year.currency, year.amount, "P1Y", { trialDays: TRIAL_DAYS }),
+    offerObject(FOUNDING.currency, FOUNDING.amount, "P1Y", {
+      name: "Founding membership — first year",
+      trialDays: TRIAL_DAYS
+    })
+  ];
+}
+
+function offerObject(
+  currency: string,
+  price: number,
+  duration: "P1M" | "P1Y",
+  opts: { name?: string; trialDays?: number } = {}
+) {
+  const offer: Record<string, unknown> = {
     "@type": "Offer",
     price,
     priceCurrency: currency,
@@ -122,8 +141,24 @@ function offerObject(currency: string, price: number, duration: "P1M" | "P1Y") {
       unitCode: duration === "P1M" ? "MON" : "ANN"
     }
   };
+  if (opts.name) offer.name = opts.name;
+  // The trial is expressed as a zero-price introductory term on the same
+  // offer, so the advertised price and the free period travel together
+  // rather than reading as a separate free product.
+  if (opts.trialDays) {
+    offer.eligibleDuration = {
+      "@type": "QuantitativeValue",
+      value: opts.trialDays,
+      unitCode: "DAY",
+      name: `${opts.trialDays}-day free trial`
+    };
+  }
+  return offer;
 }
 
-function wrap(obj: Record<string, unknown>) {
-  return { "@context": "https://schema.org", ...obj };
+// Generic so the returned type keeps the caller's own keys. Typed as
+// `Record<string, unknown>` the spread was erased down to `{ "@context" }`,
+// which made every property access on a built schema a type error.
+function wrap<T extends Record<string, unknown>>(obj: T) {
+  return { "@context": "https://schema.org" as const, ...obj };
 }

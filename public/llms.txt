@@ -12,7 +12,10 @@
 ## What BURS is
 
 - An AI wardrobe stylist on iOS and Android.
-- A premium, paid app: €9.99/mo or €79.99/yr — one price everywhere, billed by the app stores in the user's local currency.
+- Free forever: the AI garment scan and the digital wardrobe built from it (fair-use limits apply to AI scanning). No subscription required.
+- Paid: the AI stylist — outfit of the day, stylist chat, week planner, travel capsule, wardrobe insights. This is BURS Premium: €9.99/mo or €79.99/yr, one price everywhere, billed by the app stores in the user's local currency.
+- Every Premium plan starts with a 30-day free trial, for everybody.
+- Founding membership: subscribers who join during the launch year pay €29.99 for their first Premium year (~63% off the standard annual price), then renew at €79.99/yr. Uncapped — no member limit.
 - Built for the eighty percent of the closet that never gets worn.
 
 ## What BURS is not
@@ -20,7 +23,8 @@
 - Not a shopping app. BURS never recommends pieces you don't own.
 - Not a feed. BURS opens with one outfit, not a grid.
 - Not a stylist that shops for you. The pieces it uses are already in your closet.
-- Not free. There is no free tier. There are no ads.
+- Not ad-supported. There are no ads, ever.
+- Not free in full: the digital wardrobe is free forever, the AI stylist is a subscription.
 
 ## What BURS does
 
@@ -32,11 +36,18 @@
 
 ## Pricing table
 
-| Plan | Monthly | Annual | Annual saves |
+| Plan | Monthly | Annual | Saves |
 |---|---|---|---|
-| BURS Premium | €9.99 | €79.99 | ~33% |
+| Digital wardrobe | free | free | — |
+| BURS Premium (the stylist) | €9.99 | €79.99 | ~33% vs monthly |
+| Founding membership (first Premium year) | — | €29.99 | ~63% vs standard annual |
 
-No free tier. No ads. Cancel anytime from account settings.
+The digital wardrobe is free forever and needs no subscription; BURS Premium
+unlocks the stylist. Every Premium plan starts with a 30-day free trial;
+payment details are taken at sign-up and the plan begins when the trial ends.
+The founding rate covers the first year for anyone subscribing during the
+launch year, then renews at €79.99/yr. No ads. Cancel anytime from account
+settings.
 
 ## Privacy
 
@@ -71,7 +82,13 @@ BURS is an AI wardrobe stylist. It scans clothes you already own, reads the weat
 You point a phone camera at your clothes. BURS uses computer vision to catalogue every piece (colour, fabric, silhouette) in under ten minutes — twenty to thirty for a big wardrobe. No manual tagging.
 
 ### Is BURS free?
-No. BURS is a premium app — €9.99/mo or €79.99/yr, billed by the app stores in your local currency. No free tier, no ads. Cancel anytime.
+Your digital wardrobe is free forever — scanning and organising your clothes costs nothing (fair-use limits apply to AI scanning). The AI stylist is BURS Premium — €9.99/mo or €79.99/yr, billed by the app stores in your local currency, and it starts with a 30-day free trial for everybody. No ads. Cancel anytime.
+
+### What's free and what's paid?
+Free, forever: camera garment scanning and the digital wardrobe built from it. Paid (BURS Premium): outfit of the day, stylist chat, week planner, travel capsule, wardrobe insights.
+
+### What is the founding membership?
+The launch offer on Premium: the first year for €29.99 instead of €79.99 (~63% off), after the 30-day trial, renewing at the standard €79.99/yr. Anyone who subscribes during the launch year gets it; there is no member cap.
 
 ### Does BURS work on iPhone and Android?
 Yes. Identical experience on both. Wardrobe syncs across every device you sign into.
