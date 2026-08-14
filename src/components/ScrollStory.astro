@@ -667,169 +667,170 @@ const sources = ["YOUR CLOTHES", "HOW YOU FEEL", "THE WEATHER", "THE OCCASION"];
 </style>
 
 <script>
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Four scenes on the shared scroll engine (src/lib/scroll.ts): it owns the
+  // single scroll listener and rAF loop, hands each render a damped progress
+  // value, and gates the scenes on visibility. Everything below is pure
+  // choreography — read nothing, write only.
+  import { scene, ramp, clamp01 } from "../lib/scroll";
 
-  if (!reduced) {
-    const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-    const ramp = (p: number, a: number, b: number) => clamp01((p - a) / (b - a));
+  const $ = <T extends Element>(s: string) => document.querySelector<T>(s);
+  const $$ = <T extends Element>(s: string) => [...document.querySelectorAll<T>(s)];
 
-    // Progress of a pinned section's own runway: 0 when its top hits the
-    // viewport top, 1 when its bottom leaves.
-    const progressOf = (el: HTMLElement) => {
-      const total = el.offsetHeight - window.innerHeight;
-      return total > 0 ? clamp01(-el.getBoundingClientRect().top / total) : 0;
-    };
+  // A class toggle is a style invalidation even when the value doesn't
+  // change, and these run on every element every frame. Only touch the DOM
+  // when the answer actually moved.
+  const setClass = (el: Element, name: string, on: boolean, memo: Set<string>) => {
+    const key = name;
+    const had = memo.has(key);
+    if (had === on) return;
+    if (on) memo.add(key); else memo.delete(key);
+    el.classList.toggle(name, on);
+  };
+  const memo = new WeakMap<Element, Set<string>>();
+  const flags = (el: Element) => {
+    let s = memo.get(el);
+    // Seed from what's actually on the element, so a class rendered by the
+    // server is never shadowed by an empty cache.
+    if (!s) { s = new Set(el.classList); memo.set(el, s); }
+    return s;
+  };
+  const flag = (el: Element | null, name: string, on: boolean) => {
+    if (el) setClass(el, name, on, flags(el));
+  };
 
-    // ---- 01 · THE SCAN --------------------------------------------------
-    // The phone assembles from its lines, then reads five pieces one by one:
-    // each draws in under the sweeping beam, its details are read off, and it
-    // drops into the closet while the counter climbs 000 → 148.
-    const scan = document.querySelector<HTMLElement>('[data-scene="scan"]');
-    const phone = document.querySelector<HTMLElement>('[data-scan-phone]');
-    const view = document.querySelector<HTMLElement>('[data-scan-view]');
-    const beam = document.querySelector<HTMLElement>('[data-scan-beam]');
-    const vgs = [...document.querySelectorAll<HTMLElement>('[data-vg]')];
-    const details = [...document.querySelectorAll<HTMLElement>('[data-detail]')];
-    const addedSlots = [...document.querySelectorAll<HTMLElement>('[data-added]')];
-    const scanCounts = [...document.querySelectorAll<HTMLElement>('[data-scan-count]')];
-    const PIECES = 148;
+  // ---- 01 · THE SCAN ------------------------------------------------------
+  // The phone assembles from its lines, then reads five pieces one by one:
+  // each draws in under the sweeping beam, its details are read off, and it
+  // drops into the closet while the counter climbs 000 → 148.
+  const scan = $<HTMLElement>('[data-scene="scan"]');
+  const phone = $<HTMLElement>('[data-scan-phone]');
+  const view = $<HTMLElement>('[data-scan-view]');
+  const beam = $<HTMLElement>('[data-scan-beam]');
+  const vgs = $$<HTMLElement>('[data-vg]');
+  const details = $$<HTMLElement>('[data-detail]');
+  const addedSlots = $$<HTMLElement>('[data-added]');
+  const scanCounts = $$<HTMLElement>('[data-scan-count]');
+  const PIECES = 148;
 
-    function renderScan() {
-      if (!scan || !phone || !vgs.length) return;
-      const p = progressOf(scan);
-      const N = vgs.length;
+  // Measured out of band by the engine — reading it per frame (as this used
+  // to) forces a layout on every single scroll frame.
+  let viewH = 0;
+  let lastCount = '';
 
-      // the phone draws itself in from its lines
-      phone.style.setProperty('--pd', ramp(p, 0, 0.12).toFixed(3));
+  scene(scan, ({ p }) => {
+    const N = vgs.length;
+    if (!phone || !N) return;
 
-      // the five-piece scan occupies the middle of the runway
-      const A = 0.16, B = 0.90;
-      const seg = (B - A) / N;
-      const active = Math.min(N - 1, Math.max(0, Math.floor((p - A) / seg)));
-      const local = clamp01((p - (A + active * seg)) / seg);   // phase in current piece
+    // the phone draws itself in from its lines
+    phone.style.setProperty('--pd', ramp(p, 0, 0.12).toFixed(3));
 
-      // the gold beam sweeps top→bottom as the garment draws; then it locks
-      const drawR = ramp(local, 0.06, 0.60);
-      const scanning = p >= A && p < B && local > 0.02 && local < 0.64;
-      if (beam) {
-        beam.style.opacity = scanning ? '1' : '0';
-        const vh = view ? view.clientHeight : 0;
-        beam.style.transform = `translateY(${(drawR * (vh - 2)).toFixed(1)}px)`;
-      }
-      if (view) view.classList.toggle('is-lock', p >= A && p < B && local >= 0.58 && local < 0.76);
+    // the five-piece scan occupies the middle of the runway
+    const A = 0.16, B = 0.90;
+    const seg = (B - A) / N;
+    const active = Math.min(N - 1, Math.max(0, Math.floor((p - A) / seg)));
+    const local = clamp01((p - (A + active * seg)) / seg);   // phase in current piece
 
-      // the piece in the frame: slide in, draw under the beam, then drop away
-      // as it's filed into the closet
-      vgs.forEach((g, i) => {
-        if (i !== active || p < A) { g.style.opacity = '0'; return; }
-        const enterR = ramp(local, 0, 0.16);
-        const fileR = ramp(local, 0.72, 0.98);
-        g.style.setProperty('--draw', drawR.toFixed(3));
-        const inX = (1 - enterR) * 20;             // slide in from the right
-        const outY = fileR * 26;                   // drop as it files
-        const sc = 1 - fileR * 0.45;               // shrink as it files
-        g.style.opacity = Math.min(enterR, 1 - fileR).toFixed(3);
-        g.style.transform = `translate(-50%, -50%) translate(${inX.toFixed(1)}px, ${outY.toFixed(1)}px) scale(${sc.toFixed(3)})`;
-      });
+    // the gold beam sweeps top→bottom as the garment draws; then it locks
+    const drawR = ramp(local, 0.06, 0.60);
+    const scanning = p >= A && p < B && local > 0.02 && local < 0.64;
+    if (beam) {
+      beam.style.opacity = scanning ? '1' : '0';
+      beam.style.transform = `translate3d(0, ${(drawR * (viewH - 2)).toFixed(1)}px, 0)`;
+    }
+    flag(view, 'is-lock', p >= A && p < B && local >= 0.58 && local < 0.76);
 
-      // the details, read off the active piece; "added" once it locks
-      details.forEach((d, i) => {
-        const onEnd = i === N - 1 && p >= B;
-        d.classList.toggle('show', (i === active && p >= A && p < B) || onEnd);
-        d.classList.toggle('added', i < active || (i === active && local >= 0.64) || onEnd);
-      });
-
-      // each read piece drops into its closet slot and stays
-      addedSlots.forEach((s, i) => {
-        s.classList.toggle('is-in', i < active || (i === active && local >= 0.66) || p >= B);
-      });
-
-      // counter climbs to 148 as the last piece is filed
-      const n = String(Math.round(ramp(p, A, B) * PIECES)).padStart(3, '0');
-      scanCounts.forEach(el => { el.textContent = n; });
+    // the piece in the frame: slide in, draw under the beam, then drop away
+    // as it's filed into the closet
+    for (let i = 0; i < N; i++) {
+      const g = vgs[i];
+      if (i !== active || p < A) { g.style.opacity = '0'; continue; }
+      const enterR = ramp(local, 0, 0.16);
+      const fileR = ramp(local, 0.72, 0.98);
+      g.style.setProperty('--draw', drawR.toFixed(3));
+      const inX = (1 - enterR) * 20;             // slide in from the right
+      const outY = fileR * 26;                   // drop as it files
+      const sc = 1 - fileR * 0.45;               // shrink as it files
+      g.style.opacity = Math.min(enterR, 1 - fileR).toFixed(3);
+      g.style.transform = `translate(-50%, -50%) translate3d(${inX.toFixed(1)}px, ${outY.toFixed(1)}px, 0) scale(${sc.toFixed(3)})`;
     }
 
-    // ---- 02 · THEN, NOTHING ---------------------------------------------
-    const ask = document.querySelector<HTMLElement>('[data-scene="ask"]');
-    const askChips = [...document.querySelectorAll<HTMLElement>('[data-ask-chip]')];
-
-    function renderAsk() {
-      if (!ask) return;
-      const p = progressOf(ask);
-      askChips.forEach((el, i) => {
-        el.classList.toggle('in', p > 0.22 + i * 0.18);
-      });
+    // the details, read off the active piece; "added" once it locks
+    for (let i = 0; i < details.length; i++) {
+      const onEnd = i === N - 1 && p >= B;
+      flag(details[i], 'show', (i === active && p >= A && p < B) || onEnd);
+      flag(details[i], 'added', i < active || (i === active && local >= 0.64) || onEnd);
     }
 
-    // ---- 03 · OR JUST TALK ----------------------------------------------
-    const talk = document.querySelector<HTMLElement>('[data-scene="talk"]');
-    const bubbles = [...document.querySelectorAll<HTMLElement>('[data-bubble]')];
-    const talkFit = document.querySelector<HTMLElement>('[data-talk-fit]');
-
-    // [bubble-in start, text-wipe start, text-wipe end]
-    const BUBLINES: [number, number, number][] = [
-      [0.14, 0.18, 0.38],
-      [0.44, 0.48, 0.68],
-    ];
-
-    function renderTalk() {
-      if (!talk) return;
-      const p = progressOf(talk);
-      bubbles.forEach((el, i) => {
-        const [a, t0, t1] = BUBLINES[i] ?? [0, 0, 1];
-        el.classList.toggle('in', p > a);
-        const txt = el.querySelector<HTMLElement>('.bubble__txt');
-        if (txt) txt.style.setProperty('--t', ramp(p, t0, t1).toFixed(3));
-      });
-      if (talkFit) {
-        talkFit.classList.toggle('in', p > 0.66);
-        talkFit.style.setProperty('--draw', ramp(p, 0.68, 0.88).toFixed(3));
-      }
+    // each read piece drops into its closet slot and stays
+    for (let i = 0; i < addedSlots.length; i++) {
+      flag(addedSlots[i], 'is-in', i < active || (i === active && local >= 0.66) || p >= B);
     }
 
-    // ---- 04 · THE REAL STYLIST -------------------------------------------
-    const real = document.querySelector<HTMLElement>('[data-scene="real"]');
-    const realSrcs = [...document.querySelectorAll<HTMLElement>('[data-real-src]')];
-    const realLines = [...document.querySelectorAll<SVGPathElement>('[data-real-line]')];
-    const realFit = document.querySelector<HTMLElement>('[data-real-fit]');
-    const strikes = [...document.querySelectorAll<HTMLElement>('[data-strike]')];
-    const realNever = document.querySelector<HTMLElement>('[data-real-never]');
-    const realLede = document.querySelector<HTMLElement>('[data-real-lede]');
-
-    function renderReal() {
-      if (!real) return;
-      const p = progressOf(real);
-      realSrcs.forEach((el, i) => el.classList.toggle('in', p > 0.1 + i * 0.06));
-      realLines.forEach((el, i) => {
-        el.style.setProperty('--draw', ramp(p, 0.16 + i * 0.07, 0.36 + i * 0.07).toFixed(3));
-      });
-      if (realFit) realFit.style.setProperty('--draw', ramp(p, 0.42, 0.66).toFixed(3));
-      strikes.forEach((el, i) => {
-        const sx = ramp(p, 0.66 + i * 0.09, 0.74 + i * 0.09);
-        el.style.setProperty('--sx', sx.toFixed(3));
-        el.classList.toggle('is-dead', sx >= 1);
-      });
-      if (realNever) realNever.classList.toggle('in', p > 0.84);
-      if (realLede) realLede.classList.toggle('in', p > 0.88);
+    // counter climbs to 148 as the last piece is filed
+    const n = String(Math.round(ramp(p, A, B) * PIECES)).padStart(3, '0');
+    if (n !== lastCount) {
+      lastCount = n;
+      for (const el of scanCounts) el.textContent = n;
     }
+  }, {
+    damp: 80,
+    measure: () => { viewH = view ? view.clientHeight : 0; },
+  });
 
-    // ---- one rAF-throttled listener for the whole story -------------------
-    function renderAll() {
-      renderScan();
-      renderAsk();
-      renderTalk();
-      renderReal();
+  // ---- 02 · THEN, NOTHING -------------------------------------------------
+  const askChips = $$<HTMLElement>('[data-ask-chip]');
+  scene($<HTMLElement>('[data-scene="ask"]'), ({ p }) => {
+    for (let i = 0; i < askChips.length; i++) {
+      flag(askChips[i], 'in', p > 0.22 + i * 0.18);
     }
+  }, { damp: 95 });
 
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => { ticking = false; renderAll(); });
-    };
+  // ---- 03 · OR JUST TALK --------------------------------------------------
+  const bubbles = $$<HTMLElement>('[data-bubble]').map(el => ({
+    el, txt: el.querySelector<HTMLElement>('.bubble__txt'),
+  }));
+  const talkFit = $<HTMLElement>('[data-talk-fit]');
 
-    renderAll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-  }
+  // [bubble-in start, text-wipe start, text-wipe end]
+  const BUBLINES: [number, number, number][] = [
+    [0.14, 0.18, 0.38],
+    [0.44, 0.48, 0.68],
+  ];
+
+  scene($<HTMLElement>('[data-scene="talk"]'), ({ p }) => {
+    for (let i = 0; i < bubbles.length; i++) {
+      const [a, t0, t1] = BUBLINES[i] ?? [0, 0, 1];
+      flag(bubbles[i].el, 'in', p > a);
+      bubbles[i].txt?.style.setProperty('--t', ramp(p, t0, t1).toFixed(3));
+    }
+    if (talkFit) {
+      flag(talkFit, 'in', p > 0.66);
+      talkFit.style.setProperty('--draw', ramp(p, 0.68, 0.88).toFixed(3));
+    }
+  }, { damp: 95 });
+
+  // ---- 04 · THE REAL STYLIST ----------------------------------------------
+  const realSrcs = $$<HTMLElement>('[data-real-src]');
+  const realLines = $$<SVGPathElement>('[data-real-line]');
+  const realFit = $<HTMLElement>('[data-real-fit]');
+  const strikes = $$<HTMLElement>('[data-strike]');
+  const realNever = $<HTMLElement>('[data-real-never]');
+  const realLede = $<HTMLElement>('[data-real-lede]');
+
+  scene($<HTMLElement>('[data-scene="real"]'), ({ p }) => {
+    for (let i = 0; i < realSrcs.length; i++) {
+      flag(realSrcs[i], 'in', p > 0.1 + i * 0.06);
+    }
+    for (let i = 0; i < realLines.length; i++) {
+      realLines[i].style.setProperty('--draw', ramp(p, 0.16 + i * 0.07, 0.36 + i * 0.07).toFixed(3));
+    }
+    realFit?.style.setProperty('--draw', ramp(p, 0.42, 0.66).toFixed(3));
+    for (let i = 0; i < strikes.length; i++) {
+      const sx = ramp(p, 0.66 + i * 0.09, 0.74 + i * 0.09);
+      strikes[i].style.setProperty('--sx', sx.toFixed(3));
+      flag(strikes[i], 'is-dead', sx >= 1);
+    }
+    flag(realNever, 'in', p > 0.84);
+    flag(realLede, 'in', p > 0.88);
+  }, { damp: 90 });
 </script>

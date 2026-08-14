@@ -16,6 +16,7 @@ const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo
     </video>
     <div class="hero__veil"></div>
   </div>
+  <div class="hero__dusk" aria-hidden="true"></div>
 
   <div class="hero__copy">
     <p class="hero__eyebrow">An AI wardrobe stylist</p>
@@ -44,7 +45,11 @@ const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo
     background: var(--ink);
   }
 
-  .hero__video{ position: absolute; inset: 0 }
+  .hero__video{
+    position: absolute; inset: 0;
+    transform: scale(var(--sink, 1));
+    will-change: transform;
+  }
   .hero__video video{
     width: 100%; height: 100%; object-fit: cover;
     filter: contrast(1.02) saturate(.96);
@@ -55,12 +60,25 @@ const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo
       rgba(14,13,12,.5) 0%, rgba(14,13,12,.12) 32%,
       rgba(14,13,12,.18) 64%, rgba(14,13,12,.6) 100%);
   }
+  /* The ink the story opens on, brought up over the film as it leaves —
+     the two sections meet on the same colour instead of butting together. */
+  .hero__dusk{
+    position: absolute; inset: 0; pointer-events: none;
+    background: var(--ink);
+    opacity: var(--dusk, 0);
+  }
 
+  /* --lift / --veil / --cue are driven by the scroll engine as the hero is
+     left behind, so the film hands off to the story instead of cutting to
+     it. Their defaults are the at-rest state: no-JS and reduced-motion get a
+     hero that simply sits there, which is what it should do. */
   .hero__copy{
     position: absolute; left: 50%; top: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, calc(-50% + var(--lift, 0px)));
     width: min(960px, 92vw);
     text-align: center;
+    opacity: var(--fade, 1);
+    will-change: transform, opacity;
   }
   .hero__eyebrow{
     font-family: var(--mono); font-size: 11px; letter-spacing: .3em;
@@ -79,6 +97,8 @@ const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo
     display: flex; flex-direction: column; align-items: center; gap: 12px;
     font-family: var(--mono); font-size: 9px; letter-spacing: .3em;
     color: rgba(245,240,232,.75); text-transform: uppercase;
+    opacity: var(--cue, 1);
+    will-change: opacity;
   }
   .hero__cue-line{
     width: 1px; height: 44px;
@@ -113,10 +133,25 @@ const HERO_VIDEO = "https://d8j0ntlcm91z4.cloudfront.net/user_39xEmGU99Nuf1tLPDo
 </style>
 
 <script>
+  import { scene, ramp } from "../lib/scroll";
+
   const hero = document.querySelector<HTMLElement>('[data-hero]');
   const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
   const toggle = document.querySelector<HTMLButtonElement>('[data-hero-toggle]');
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // The handoff. Rather than cutting from film to story, the hero is *left*:
+  // the title lifts and thins out, the film sinks a little behind it, and the
+  // story's ink rises over the whole frame — so the seam between the two
+  // sections is a dissolve on a shared colour instead of an edge.
+  // `exit` range: 0 at rest, 1 once a full hero height has scrolled past.
+  scene(hero, ({ p }) => {
+    hero!.style.setProperty('--lift', `${(p * -72).toFixed(1)}px`);
+    hero!.style.setProperty('--fade', (1 - ramp(p, 0.12, 0.72)).toFixed(3));
+    hero!.style.setProperty('--sink', (1 + p * 0.07).toFixed(4));
+    hero!.style.setProperty('--dusk', ramp(p, 0.35, 1).toFixed(3));
+    hero!.style.setProperty('--cue', (1 - ramp(p, 0, 0.18)).toFixed(3));
+  }, { range: 'exit', damp: 70 });
 
   if (hero && video && !reduced) {
     const still = () => hero.classList.add('is-still');

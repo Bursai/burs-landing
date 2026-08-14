@@ -130,12 +130,16 @@ const days: Day[] = [
     border-radius: 3px;
     padding: clamp(18px, 2vw, 28px);
     display: flex; flex-direction: column; align-items: center;
-    transition: transform .55s var(--eo), opacity .55s var(--eo),
-                border-color .55s var(--eo), background .55s var(--eo);
+    /* Scale and opacity are scrubbed per frame by the scroll engine, so they
+       must NOT be transitioned — a 550ms ease on a value that changes every
+       frame lags behind the scroll instead of following it. The discrete
+       focus treatment below still eases, because it flips between states. */
+    transition: border-color .55s var(--eo), background .55s var(--eo),
+                box-shadow .55s var(--eo);
     transform: scale(.9); opacity: .4;
+    will-change: transform, opacity;
   }
   .day.is-active .day__card{
-    transform: scale(1); opacity: 1;
     border-color: rgba(201,168,108,.5);
     background: rgba(245,240,232,.05);
     box-shadow: 0 40px 90px -50px rgba(0,0,0,.9), 0 0 0 1px rgba(201,168,108,.12);
@@ -211,61 +215,88 @@ const days: Day[] = [
 </style>
 
 <script>
+  import { scene, clamp01, mix } from "../lib/scroll";
+
   const section = document.querySelector<HTMLElement>('[data-week]');
   const track = document.querySelector<HTMLElement>('[data-week-track]');
   const dowEl = document.querySelector<HTMLElement>('[data-week-dow]');
   const idxEl = document.querySelector<HTMLElement>('[data-week-idx]');
   const dayEls = [...document.querySelectorAll<HTMLElement>('[data-day]')];
+  const cards = dayEls.map(el => el.querySelector<HTMLElement>('.day__card'));
   const DOW = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
-  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  if (section && track && dayEls.length && !reduced) {
-    const N = dayEls.length;
-    const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
-    let active = -1;
+  const N = dayEls.length;
+  let active = -1;
+  let worn = -1;
+  const dist = new Array(dayEls.length).fill(-1);
+  // Track geometry, measured by the engine outside the scroll — the old
+  // version read offsetLeft/offsetWidth off two cards on every frame, which
+  // forced a synchronous layout each time the track moved.
+  let c0 = 0, c1 = 0;
 
-    function render() {
-      const total = section!.offsetHeight - window.innerHeight;
-      const p = total > 0 ? clamp01(-section!.getBoundingClientRect().top / total) : 0;
-      const q = p * (N - 1);   // continuous "centred day" index
-      // The draw index overshoots so Sunday finishes stitching around 90% of
-      // the runway instead of on its literal last pixel (which scroll
-      // rounding / anchoring can land short of).
-      const qd = p * (N - 1 + 0.6);
+  scene(section, ({ p }) => {
+    if (!track || !N) return;
+    const q = p * (N - 1);   // continuous "centred day" index
+    // The draw index overshoots so Sunday finishes stitching around 90% of
+    // the runway instead of on its literal last pixel (which scroll
+    // rounding / anchoring can land short of).
+    const qd = p * (N - 1 + 0.6);
 
-      // Glide the track so day q sits on the centre line.
-      const mid = window.innerWidth / 2;
-      const first = dayEls[0], last = dayEls[N - 1];
-      const c0 = first.offsetLeft + first.offsetWidth / 2;
-      const c1 = last.offsetLeft + last.offsetWidth / 2;
-      const x = c0 + (c1 - c0) * (q / (N - 1)) - mid;
-      track!.style.transform = `translate3d(${-x}px,0,0)`;
+    // Glide the track so day q sits on the centre line.
+    const x = mix(c0, c1, N > 1 ? q / (N - 1) : 0);
+    track.style.transform = `translate3d(${-x.toFixed(2)}px,0,0)`;
 
-      const nowActive = Math.round(q);
-      dayEls.forEach((el, i) => {
-        // draw the outfit in as the day approaches the centre; hold it after
-        const draw = clamp01((qd - (i - 0.7)) / 0.7);
-        el.style.setProperty('--draw', draw.toFixed(3));
-        el.classList.toggle('is-active', i === nowActive);
-        el.classList.toggle('is-worn', q > i + 0.4);
-      });
+    const nowActive = Math.round(q);
+    for (let i = 0; i < N; i++) {
+      // Draw the outfit in as the day approaches the centre; hold it after.
+      dayEls[i].style.setProperty('--draw', clamp01((qd - (i - 0.7)) / 0.7).toFixed(3));
 
-      if (nowActive !== active) {
-        active = nowActive;
-        if (dowEl) dowEl.textContent = DOW[active] ?? 'MON';
-        if (idxEl) idxEl.textContent = String(active + 1);
+      // The card's own presence follows its distance from the centre line as
+      // a continuous value rather than an is-active class. The class version
+      // snapped between two states on a 550ms transition, so a card could
+      // still be easing into focus while the scroll had already carried it
+      // back out — off the scroll and visibly behind it. This tracks the
+      // scroll exactly, which is the whole point of a scrubbed scene.
+      const card = cards[i];
+      if (card) {
+        // Quantised so a card that is already at rest (every card but the two
+        // or three around the centre line) is not re-styled every frame.
+        const d = Math.round(Math.min(1, Math.abs(i - q)) * 500) / 500;
+        if (d !== dist[i]) {
+          dist[i] = d;
+          card.style.transform = `scale(${mix(1, 0.9, d).toFixed(4)})`;
+          card.style.opacity = mix(1, 0.4, d).toFixed(3);
+        }
       }
     }
 
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => { ticking = false; render(); });
-    };
-
-    render();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-  }
+    // Focus ring and "worn" tick stay class-driven — they're discrete states,
+    // and only touched when the index actually changes.
+    if (nowActive !== active) {
+      const prev = active;
+      active = nowActive;
+      if (prev >= 0) dayEls[prev]?.classList.remove('is-active');
+      dayEls[active]?.classList.add('is-active');
+      if (dowEl) dowEl.textContent = DOW[active] ?? 'MON';
+      if (idxEl) idxEl.textContent = String(active + 1);
+    }
+    const nowWorn = Math.floor(q - 0.4);
+    if (nowWorn !== worn) {
+      for (let i = Math.min(worn, nowWorn) + 1; i <= Math.max(worn, nowWorn); i++) {
+        dayEls[i]?.classList.toggle('is-worn', i <= nowWorn);
+      }
+      worn = nowWorn;
+    }
+  }, {
+    // The reel is the page's longest single move, so it carries the most
+    // damping: a wheel notch here would otherwise jump the track a full card.
+    damp: 110,
+    measure: () => {
+      if (!N) return;
+      const first = dayEls[0], last = dayEls[N - 1];
+      const mid = window.innerWidth / 2;
+      c0 = first.offsetLeft + first.offsetWidth / 2 - mid;
+      c1 = last.offsetLeft + last.offsetWidth / 2 - mid;
+    },
+  });
 </script>
