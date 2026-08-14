@@ -26,11 +26,39 @@ export const FOUNDING = {
 };
 
 /**
- * Free trial, in days — for everybody, on either plan. Payment details are
- * taken at sign-up and the chosen plan begins when the trial ends, so this
- * is a trial, NOT a free tier. Copy must keep those two distinct.
+ * Free trial of Premium, in days — for everybody, on either plan. Payment
+ * details are taken at sign-up and the chosen plan begins when the trial
+ * ends.
  */
 export const TRIAL_DAYS = 30;
+
+/**
+ * The free/paid boundary, read from the app rather than from marketing
+ * intent (bursai #1305 moved the paywall off the shell and onto the
+ * features; shipped in iOS 1.1.6):
+ *
+ *   FREE, forever — scanning garments with the camera and the digital
+ *     wardrobe built from them. Fair-use limits apply to AI scanning, and
+ *     copy must say so rather than implying "unlimited".
+ *   PAID (Premium) — the stylist: outfit of the day, stylist chat, week
+ *     planner, travel capsule, wardrobe insights.
+ *
+ * The site must NOT claim "no free tier" anywhere: there is a free tier, it
+ * is the wardrobe. The trial above is a trial OF PREMIUM, which is a
+ * different thing again — keep all three distinct.
+ */
+export const FREE_FEATURES = [
+  "Camera garment scanning (fair-use limits apply)",
+  "Your digital wardrobe, kept forever"
+];
+
+export const PREMIUM_FEATURES = [
+  "Context-aware outfit of the day",
+  "AI Stylist chat",
+  "Week planner",
+  "Travel capsule builder",
+  "Wardrobe insights · Priority support"
+];
 
 export function format(t: { amount: number; symbol: string }): string {
   const a = Number.isInteger(t.amount) ? t.amount.toString() : t.amount.toFixed(2);

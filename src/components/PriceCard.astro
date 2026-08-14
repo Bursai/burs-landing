@@ -1,5 +1,5 @@
 ---
-import { PRICES, FOUNDING, TRIAL_DAYS, format, annualSavingsPct, foundingSavingsPct } from "../lib/prices";
+import { PRICES, FOUNDING, TRIAL_DAYS, FREE_FEATURES, PREMIUM_FEATURES, format, annualSavingsPct, foundingSavingsPct } from "../lib/prices";
 import { APP_STORE_URL } from "../lib/links";
 interface Props { emphasize?: "month" | "year"; }
 const { emphasize = "year" } = Astro.props;
@@ -9,14 +9,23 @@ const foundingSavings = foundingSavingsPct();
 <article class="pc">
   <header class="pc__head">
     <p class="eyebrow">BURS Premium</p>
-    <h3 class="pc__title">One subscription. <em>Your</em> closet.</h3>
+    <h3 class="pc__title">Your wardrobe is <em>free</em>.</h3>
   </header>
+
+  <!-- The free half first. The paywall sits on the stylist, not the app, so
+       the card has to say what costs nothing before it asks for anything. -->
+  <div class="pc__free">
+    <p class="pc__free-k">Free, forever · no subscription</p>
+    <ul class="pc__incl" role="list">
+      {FREE_FEATURES.map(f => <li>{f}</li>)}
+    </ul>
+  </div>
 
   <!-- The launch offer leads, because it's what almost everyone will pay.
        The standard tiers stay visible directly beneath it so the renewal
        price is never something a reader has to go looking for. -->
   <div class="pc__founding">
-    <p class="pc__founding-k">Founding membership</p>
+    <p class="pc__founding-k">Founding membership · BURS Premium</p>
     <p class="pc__founding-amt">
       {format(FOUNDING)}<span class="pc__founding-per">for your first year</span>
     </p>
@@ -28,11 +37,11 @@ const foundingSavings = foundingSavingsPct();
 
   <p class="pc__trial">
     <span class="pc__trial-badge">{TRIAL_DAYS} days free</span>
-    <span>Every plan starts with a {TRIAL_DAYS}-day free trial. Cancel before it ends and you pay nothing.</span>
+    <span>Every Premium plan starts with a {TRIAL_DAYS}-day free trial. Cancel before it ends and you pay nothing — your wardrobe stays either way.</span>
   </p>
 
   <ul class="pc__tiers" role="list">
-    <li class="pc__tiers-k">After the founding year — or if you'd rather pay monthly</li>
+    <li class="pc__tiers-k">Premium after the founding year — or if you'd rather pay monthly</li>
     {PRICES.map(t => (
       <li class={`pc__tier ${t.period === emphasize ? "is-on" : ""}`}>
         <span class="pc__amt">{format(t)}</span>
@@ -41,15 +50,11 @@ const foundingSavings = foundingSavingsPct();
       </li>
     ))}
   </ul>
+  <p class="pc__incl-k">Premium unlocks the stylist</p>
   <ul class="pc__incl" role="list">
-    <li>Unlimited wardrobe scanning</li>
-    <li>Context-aware outfit of the day</li>
-    <li>AI Stylist chat</li>
-    <li>Week planner</li>
-    <li>Travel capsule builder</li>
-    <li>Wardrobe insights · Priority support</li>
+    {PREMIUM_FEATURES.map(f => <li>{f}</li>)}
   </ul>
-  <p class="pc__not">No free tier. No ads. Cancel anytime from account settings.</p>
+  <p class="pc__not">Your wardrobe is free, forever. No ads. Cancel anytime from account settings.</p>
   <p class="pc__bill">Billed by your app store in your local currency.</p>
   <a class="cta" href={APP_STORE_URL}>Start {TRIAL_DAYS} days free <span class="cta__arrow">→</span></a>
 </article>
@@ -57,6 +62,13 @@ const foundingSavings = foundingSavingsPct();
   .pc{background:var(--cream-paper);border:1px solid rgba(28,25,23,.1);padding:40px 36px;max-width:520px;display:grid;gap:22px}
   .pc__title{font-size:clamp(28px,3.4vw,42px);font-weight:200;letter-spacing:-.025em;line-height:1.05;color:var(--charcoal);margin-top:8px}
   .pc__title em{font-style:italic;color:var(--gold);font-weight:300}
+
+  .pc__free{display:grid;gap:8px}
+  .pc__free-k,.pc__incl-k{
+    font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--charcoal-2);
+  }
+  .pc__incl-k{margin-bottom:-14px}
 
   /* The launch offer */
   .pc__founding{

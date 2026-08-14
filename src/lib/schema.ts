@@ -36,7 +36,7 @@ export function softwareApplication() {
     name: BRAND,
     applicationCategory: "LifestyleApplication",
     operatingSystem: "iOS, Android",
-    description: "An AI wardrobe stylist. Scans your closet, reads the day, recommends one outfit.",
+    description: "An AI wardrobe stylist. The digital wardrobe is free forever; BURS Premium unlocks the stylist — it reads the day and recommends one outfit.",
     offers: standardOffers()
   });
 }
@@ -46,7 +46,7 @@ export function product() {
     "@type": "Product",
     name: "BURS Premium",
     brand: { "@type": "Brand", name: BRAND },
-    description: "Wardrobe scanning, context-aware outfit of the day, AI Stylist chat, week planner, travel capsule builder.",
+    description: "BURS Premium unlocks the stylist: context-aware outfit of the day, AI Stylist chat, week planner, travel capsule builder and wardrobe insights. Garment scanning and the digital wardrobe are free forever.",
     offers: standardOffers()
   });
 }

@@ -38,7 +38,7 @@ import { organization } from "../lib/schema";
 import { APP_STORE_URL } from "../lib/links";
 import { FOUNDING, TRIAL_DAYS, format } from "../lib/prices";
 const TITLE = "BURS — Start your free trial";
-const DESCRIPTION = `Outfits from clothes you already own. Start your ${TRIAL_DAYS}-day free trial — founding members pay ${format(FOUNDING)} for their first year.`;
+const DESCRIPTION = `Outfits from clothes you already own. Your wardrobe is free forever; start your ${TRIAL_DAYS}-day free trial of the stylist — founding members pay ${format(FOUNDING)} for their first year.`;
 const CANONICAL = "https://www.burs.me/go";
 ---
 <!doctype html>
@@ -89,7 +89,7 @@ const CANONICAL = "https://www.burs.me/go";
         Start your {TRIAL_DAYS}-day free trial <span class="cta__arrow" aria-hidden="true">→</span>
       </a>
 
-      <p class="go__offer">Founding membership — {format(FOUNDING)} for your first year, then {format({ amount: FOUNDING.renewsAt, symbol: FOUNDING.symbol })}/year. Cancel anytime.</p>
+      <p class="go__offer">Your wardrobe is free, forever. Founding membership on the stylist — {format(FOUNDING)} for your first year, then {format({ amount: FOUNDING.renewsAt, symbol: FOUNDING.symbol })}/year. Cancel anytime.</p>
 
       <a class="go__home" href="/">burs.me</a>
     </div>
