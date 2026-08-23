@@ -1,0 +1,188 @@
+---
+// JUICEBOX creator dashboard — burs.me/juicebox/analyze
+//
+// Borna, 2026-08-23. Juicebox enters the code he was given and sees how many
+// PAYING customers his JUICEBOX50 offer has brought in.
+//
+// This page is a shell. It holds no code, no key, and no data — everything
+// comes from POST /api/juicebox-stats, which does the checking server-side.
+// See that file for why. If you are tempted to move the comparison here to
+// "save a request": don't. That ships the code to the browser.
+//
+// The entered code is kept in a JS variable only. Not localStorage, not a
+// cookie — a shared creator code on a shared laptop should not outlive the
+// tab, and a refresh asking for it again is the correct amount of friction.
+const TITLE = 'JUICEBOX · BURS';
+---
+
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{TITLE}</title>
+    <!-- Private surface: never index, never follow, and no referrer leak. -->
+    <meta name="robots" content="noindex, nofollow, noarchive" />
+    <meta name="referrer" content="no-referrer" />
+    <style>
+      :root {
+        --bg: #f4ecdd;
+        --card: #fbf7ef;
+        --fg: #1d1916;
+        --fg2: #69625b;
+        --border: #ddd0bb;
+        --accent: #946c20;
+        --accent-fg: #fff;
+        --danger: #b5432a;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px;
+      }
+      .wrap { width: 100%; max-width: 640px; }
+      .eyebrow {
+        text-transform: uppercase;
+        letter-spacing: .18em;
+        font-size: 11px;
+        /* Full-strength fg2 (5.11:1), never faded — the app's shared Eyebrow
+           applies opacity .7 and lands at 2.86:1, which fails WCAG AA. */
+        color: var(--fg2);
+        margin: 0 0 6px;
+      }
+      h1 { font-size: 30px; line-height: 1.15; margin: 0 0 8px; font-weight: 600; }
+      p.sub { color: var(--fg2); margin: 0 0 24px; line-height: 1.5; }
+      .card {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 22px;
+      }
+      label { display: block; font-size: 13px; color: var(--fg2); margin-bottom: 6px; }
+      input {
+        width: 100%; padding: 13px 14px; font-size: 16px;
+        border: 1px solid var(--border); border-radius: 10px;
+        background: #fff; color: var(--fg);
+      }
+      input:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+      button {
+        margin-top: 12px; width: 100%; padding: 13px 16px; font-size: 15px;
+        font-weight: 600; border: 0; border-radius: 10px;
+        background: var(--accent); color: var(--accent-fg); cursor: pointer;
+      }
+      button[disabled] { opacity: .6; cursor: default; }
+      .err { color: var(--danger); font-size: 14px; margin-top: 10px; min-height: 20px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+      .stat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 18px; }
+      .stat .n { font-size: 40px; font-weight: 650; line-height: 1; }
+      .stat .l { font-size: 12px; color: var(--fg2); margin-top: 6px; text-transform: uppercase; letter-spacing: .1em; }
+      table { width: 100%; border-collapse: collapse; margin-top: 8px; font-size: 14px; }
+      th, td { text-align: left; padding: 8px 4px; border-bottom: 1px solid var(--border); }
+      th { color: var(--fg2); font-weight: 500; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+      .muted { color: var(--fg2); font-size: 13px; line-height: 1.55; }
+      [hidden] { display: none !important; }
+      @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+          --bg: #11100e; --card: #1b1916; --fg: #f4ecdd;
+          --fg2: #a99e89; --border: #2f2c26; --accent: #cda56c; --accent-fg: #17140f;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="wrap">
+      <p class="eyebrow">BURS · Creator</p>
+      <h1>Juicebox</h1>
+      <p class="sub">Paying customers from your JUICEBOX50 code.</p>
+
+      <section id="gate" class="card">
+        <form id="form">
+          <label for="code">Access code</label>
+          <input id="code" name="code" type="password" autocomplete="off"
+                 autocapitalize="none" spellcheck="false" required />
+          <button id="go" type="submit">Open dashboard</button>
+          <p class="err" id="err" role="alert" aria-live="polite"></p>
+        </form>
+      </section>
+
+      <section id="dash" hidden>
+        <div class="grid">
+          <div class="stat"><div class="n" id="s-total">—</div><div class="l">Paying total</div></div>
+          <div class="stat"><div class="n" id="s-active">—</div><div class="l">Still active</div></div>
+          <div class="stat"><div class="n" id="s-churn">—</div><div class="l">Cancelled</div></div>
+        </div>
+
+        <div class="card" style="margin-top:14px">
+          <table>
+            <thead><tr><th>Day</th><th>New paying</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+          <p class="muted" id="empty" hidden>
+            No redemptions yet. This fills in as soon as someone redeems JUICEBOX50 and pays.
+          </p>
+        </div>
+
+        <p class="muted" style="margin-top:14px">
+          Counts only — BURS never shares who its customers are. Updated <span id="ts">—</span>.
+        </p>
+      </section>
+    </main>
+
+    <script is:inline>
+      (function () {
+        var form = document.getElementById('form');
+        var err = document.getElementById('err');
+        var go = document.getElementById('go');
+
+        function paint(d) {
+          document.getElementById('s-total').textContent = d.paying_total;
+          document.getElementById('s-active').textContent = d.paying_active;
+          document.getElementById('s-churn').textContent = d.churned;
+          var rows = document.getElementById('rows');
+          rows.textContent = '';
+          (d.per_day || []).forEach(function (r) {
+            var tr = document.createElement('tr');
+            var a = document.createElement('td'); a.textContent = r.day;
+            var b = document.createElement('td'); b.textContent = r.n;
+            tr.appendChild(a); tr.appendChild(b); rows.appendChild(tr);
+          });
+          document.getElementById('empty').hidden = (d.per_day || []).length > 0;
+          document.getElementById('ts').textContent =
+            new Date(d.generated_at).toLocaleString();
+          document.getElementById('gate').hidden = true;
+          document.getElementById('dash').hidden = false;
+        }
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          err.textContent = '';
+          go.disabled = true;
+          var code = document.getElementById('code').value;
+          fetch('/api/juicebox-stats', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: code })
+          })
+            .then(function (r) {
+              return r.json().then(function (j) { return { status: r.status, body: j }; });
+            })
+            .then(function (r) {
+              if (r.status === 200) { paint(r.body); return; }
+              if (r.status === 401) { err.textContent = 'That code is not right.'; return; }
+              if (r.status === 429) { err.textContent = 'Too many tries — wait a minute.'; return; }
+              if (r.status === 503) { err.textContent = 'Dashboard is not configured yet.'; return; }
+              err.textContent = 'Something went wrong. Try again.';
+            })
+            .catch(function () { err.textContent = 'Network error. Try again.'; })
+            .then(function () { go.disabled = false; });
+        });
+      })();
+    </script>
+  </body>
+</html>
