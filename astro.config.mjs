@@ -13,7 +13,10 @@ export default defineConfig({
   integrations: [
     mdx(),
     sitemap({
-      filter: (page) => !page.includes('/draft/')
+      // `/juicebox/` is a private creator dashboard — it carries noindex, but
+      // listing it in the sitemap would be actively inviting a crawl of the
+      // one URL we do not want discovered.
+      filter: (page) => !page.includes('/draft/') && !page.includes('/juicebox/')
     })
   ],
   vite: {
