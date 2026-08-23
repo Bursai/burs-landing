@@ -20,6 +20,8 @@
 // and the campaign does not need it. Counts only. If a future change adds a
 // per-user list here, that is a GDPR decision, not a UI decision.
 
+import { createHash, timingSafeEqual } from 'node:crypto';
+
 export const config = { runtime: 'nodejs' };
 
 /** Public project URL — not a secret, it is in every app bundle already. */
@@ -72,13 +74,17 @@ function fold(value: string): string {
 
 /** Length-independent comparison so the response time leaks nothing. */
 function constantTimeEqual(a: string, b: string): boolean {
-  const ab = Buffer.from(a, 'utf8');
-  const bb = Buffer.from(b, 'utf8');
   // Hash both to a fixed width first: timingSafeEqual throws on length
   // mismatch, and the throw itself would be the leak.
-  const { createHash, timingSafeEqual } = require('node:crypto') as typeof import('node:crypto');
-  const ah = createHash('sha256').update(ab).digest();
-  const bh = createHash('sha256').update(bb).digest();
+  //
+  // `node:crypto` is imported at the TOP of this file, not required here.
+  // This module is an ES module (it uses `export`), so `require` is not
+  // defined at runtime — a call-time require() threw ReferenceError and
+  // Vercel returned FUNCTION_INVOCATION_FAILED. It only surfaced once the
+  // env vars were set, because the `not_configured` guard returns before
+  // this line is ever reached.
+  const ah = createHash('sha256').update(Buffer.from(a, 'utf8')).digest();
+  const bh = createHash('sha256').update(Buffer.from(b, 'utf8')).digest();
   return timingSafeEqual(ah, bh);
 }
 
